@@ -1,0 +1,41 @@
+version: "2"
+
+services:
+  agony-forge:
+    image: scionaltera/agony-forge-demo:latest
+    tty: true
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    links:
+      - mysql
+      - activemq
+    env_file:
+      - agonyforge.env
+  mysql:
+    image: mysql:5.6
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: agonyforge
+      MYSQL_USER: agonyforge
+      MYSQL_PASSWORD: agonyforge
+      MYSQL_DATABASE: agonyforge
+  activemq:
+    image: webcenter/activemq:5.14.3
+    ports:
+      - "61613:61613"
+      - "8161:8161"
+    environment:
+      # remove default accounts and require authentication like we would in production
+      ACTIVEMQ_ENABLED_AUTH: "true"
+      ACTIVEMQ_REMOVE_DEFAULT_ACCOUNT: "true"
+
+      # user with access to web UI
+      ACTIVEMQ_ADMIN_LOGIN: admin
+      ACTIVEMQ_ADMIN_PASSWORD: admin
+
+      # user with access to broker
+      ACTIVEMQ_OWNER_LOGIN: agonyforge
+      ACTIVEMQ_OWNER_PASSWORD: agonyforge

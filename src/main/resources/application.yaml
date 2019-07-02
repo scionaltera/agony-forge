@@ -1,0 +1,34 @@
+agony:
+  login:
+    prompt:
+      askNew: "[default]Create a new character? [y/N]: "
+      loginAskName: "[default]Name: "
+      loginAskPassword: "[default]Password: "
+      createChooseName: "[default]Please choose a name: "
+      createConfirmName: "[default]Are you sure '%name%' is the name you want? [y/N]: "
+      createChoosePassword: "[default]Please choose a password: "
+      createConfirmPassword: "[default]Please confirm your password: "
+      inGame: "[default]%name%> "
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true # Hides a warning on startup.
+    open-in-view: false # Hides a warning on startup.
+    show-sql: false # Very spammy, but enabling this can be handy for debugging.
+
+logging:
+  level:
+    org:
+      springframework:
+        session:
+          web:
+            socket:
+              handler:
+                # This class writes a stack trace at the ERROR level when new websocket connections are established
+                # but no HTTP session exists. It's not a fatal error because the session gets created and everything
+                # still works out. It's the only log message in the class, so let's turn it off.
+                WebSocketConnectHandlerDecoratorFactory: OFF

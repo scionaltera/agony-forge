@@ -1,0 +1,10 @@
+#
+# The following greeting will be displayed whenever someone connects to the game for the first time. Lines starting
+# with # are treated as comments and will be ignored. Spaces will be replaced with non-breaking spaces (&nbsp;) so that
+# you can include things like ASCII art. If you do not want non-breaking spaces you may begin the line with an
+# asterisk (*) and it will get regular spaces instead.
+#
+*[red]The Agony Forge [dwhite]Copyright &copy; 2019 [yellow]Peter Keeler[dwhite].
+*[red]The Agony Forge [dwhite]is licensed under the <a class="white" target="_blank" href="https://raw.githubusercontent.com/scionaltera/agony-forge-core/master/LICENSE">MIT License</a>.
+*[red]The Agony Forge [dwhite]is <a class="white" target="_blank" href="https://github.com/scionaltera/agony-forge-core">free, open source software</a> that you can contribute to, modify and distribute as you wish.
+*[red]The Agony Forge [dwhite]offers no warranties or guarantees. Play at your own risk.

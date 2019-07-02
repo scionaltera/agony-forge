@@ -1,0 +1,14 @@
+body {
+    background-color: black;
+    color: #CCC;
+    font-weight: 400;
+}
+
+.heading {
+    font-size: 72px;
+    color: darkred;
+}
+
+.buffer {
+    margin-bottom: 38px;
+}
