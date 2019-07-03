@@ -1,4 +1,4 @@
-group 'com.agonyengine'
+group 'com.agonyforge'
 version '0.1.0-SNAPSHOT'
 
 apply plugin: 'java'
@@ -62,8 +62,8 @@ build.dependsOn project.tasks.buildDocker
 
 pitest {
     excludedClasses = [
-        'com.agonyengine.forge.demo.AgonyForge',
-        'com.agonyengine.forge.demo.config.*'
+        'com.agonyforge.demo.AgonyForge',
+        'com.agonyforge.demo.config.*'
     ]
     excludedMethods = [
         'hashCode',
