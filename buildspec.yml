@@ -7,6 +7,8 @@ env:
 
 phases:
   install:
+    runtime-versions:
+      docker: 18
     commands:
       - chmod +x ./gradlew
   pre_build:
