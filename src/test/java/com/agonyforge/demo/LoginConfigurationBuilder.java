@@ -5,9 +5,8 @@ import com.agonyforge.core.config.LoginConfiguration;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO there is one of these in Core that needs to be made public
-public class LoginConfigurationBuilder {
-    public LoginConfiguration build() {
+class LoginConfigurationBuilder {
+    LoginConfiguration build() {
         LoginConfiguration loginConfiguration = new LoginConfiguration();
         Map<String, String> prompts = new HashMap<>();
 
