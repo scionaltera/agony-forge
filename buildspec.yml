@@ -33,7 +33,7 @@ phases:
           fi
           docker push scionaltera/agony-forge-demo:${PROJECT_VERSION}
         fi
-      - docker push scionaltera/arbitrader:${BRANCH_TAG}
+      - docker push scionaltera/agony-forge-demo:${BRANCH_TAG}
       - printf '[{"name":"agonyengine","imageUri":"%s"}]' scionaltera/agony-engine:${PROJECT_VERSION} > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
