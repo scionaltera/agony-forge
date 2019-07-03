@@ -6,9 +6,9 @@
     <#else>
     <title>The Agony Forge</title>
     </#if>
-    <meta name="description" content="The Agony Forge is a web based MUD platform."/>
+    <meta name="description" content="The Agony Forge is a web based MUD."/>
     <meta name="viewport" content="width=device-width"/>
-    <link rel="canonical" href="https://forge.agonyengine.com${path!}"/>
+    <link rel="canonical" href="https://agonyforge.com${path!}"/>
     <link rel="stylesheet" type="text/css"
           href="<@spring.url 'https://fonts.googleapis.com/css?family=Inconsolata'/>">
     <link rel="stylesheet" type="text/css" href="<@spring.url '/webjars/bootstrap/css/bootstrap.min.css'/>"/>
