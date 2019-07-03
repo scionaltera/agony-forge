@@ -1,6 +1,7 @@
 agony:
   login:
     prompt:
+      reconnect: "[green]Press &#91;Enter&#93; to reconnect..."
       askNew: "[default]Create a new character? [y/N]: "
       loginAskName: "[default]Name: "
       loginAskPassword: "[default]Password: "
