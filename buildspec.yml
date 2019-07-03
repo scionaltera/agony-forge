@@ -25,7 +25,6 @@ phases:
     commands:
       - echo "CodeBuild Initiator is ${CODEBUILD_INITIATOR}"
       - docker tag scionaltera/agony-forge-demo:latest scionaltera/agony-forge-demo:${PROJECT_VERSION}
-      - docker tag scionaltera/agony-forge-demo:latest scionaltera/agony-forge-demo:${BRANCH_TAG}
       - |
         if expr "${CODEBUILD_INITIATOR}" : "codepipeline*" >/dev/null; then
           if expr "${PROJECT_VERSION}" : "v\([0-9]\{1,\}\.\)\{2\}[0-9]\{1,\}$" >/dev/null; then
