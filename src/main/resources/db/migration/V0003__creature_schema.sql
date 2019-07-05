@@ -1,10 +1,11 @@
 CREATE TABLE connection (
   id BINARY(16) NOT NULL,
   session_username VARCHAR(36),
-  session_id VARCHAR(36),
+  session_id VARCHAR(36) UNIQUE,
   http_session_id VARCHAR(36),
   remote_address VARCHAR(16),
   name VARCHAR(191),
+  disconnected TIMESTAMP NULL,
   primary_state VARCHAR(191),
   secondary_state VARCHAR(191),
   PRIMARY KEY (id)
