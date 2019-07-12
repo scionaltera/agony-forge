@@ -1,4 +1,4 @@
-package com.agonyforge.demo;
+package com.agonyforge.core.controller.interpret;
 
 import com.agonyforge.core.config.LoginConfiguration;
 
@@ -10,6 +10,7 @@ class LoginConfigurationBuilder {
         LoginConfiguration loginConfiguration = new LoginConfiguration();
         Map<String, String> prompts = new HashMap<>();
 
+        prompts.put("reconnect", "[default]Press [yellow]&#91;Enter&#93; [default]to reconnect as %name%. Or, log in a &#91;N&#93;ew character: ");
         prompts.put("askNew", "[default]Create a new character? [y/N]: ");
         prompts.put("loginAskName", "[default]Name: ");
         prompts.put("loginAskPassword", "[default]Password: ");

@@ -20,18 +20,18 @@ phases:
       - docker login -u ${DOCKER_HUB_USERNAME} -p ${DOCKER_HUB_PASSWORD}
   build:
     commands:
-      - docker build -t scionaltera/agony-forge-demo:latest -f src/main/docker/codebuild/Dockerfile .
+      - docker build -t scionaltera/agony-forge:latest -f src/main/docker/codebuild/Dockerfile .
   post_build:
     commands:
       - echo "CodeBuild Initiator is ${CODEBUILD_INITIATOR}"
-      - docker tag scionaltera/agony-forge-demo:latest scionaltera/agony-forge-demo:${PROJECT_VERSION}
+      - docker tag scionaltera/agony-forge:latest scionaltera/agony-forge:${PROJECT_VERSION}
       - |
         if expr "${CODEBUILD_INITIATOR}" : "codepipeline*" >/dev/null; then
           if expr "${PROJECT_VERSION}" : "v\([0-9]\{1,\}\.\)\{2\}[0-9]\{1,\}$" >/dev/null; then
-            docker push scionaltera/agony-forge-demo:latest
+            docker push scionaltera/agony-forge:latest
           fi
-          docker push scionaltera/agony-forge-demo:${PROJECT_VERSION}
+          docker push scionaltera/agony-forge:${PROJECT_VERSION}
         fi
-      - printf '[{"name":"agony-forge-demo","imageUri":"%s"}]' scionaltera/agony-forge-demo:${PROJECT_VERSION} > imagedefinitions.json
+      - printf '[{"name":"agony-forge","imageUri":"%s"}]' scionaltera/agony-forge:${PROJECT_VERSION} > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json

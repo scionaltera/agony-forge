@@ -1,21 +1,17 @@
-package com.agonyforge.demo;
+package com.agonyforge.core.controller.interpret;
 
 import com.agonyforge.core.config.LoginConfiguration;
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
-import com.agonyforge.core.controller.interpret.InGameInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.repository.CreatureRepository;
-import org.springframework.stereotype.Component;
 
-@Component
-public class DemoInGameInterpreterDelegate implements InGameInterpreterDelegate {
+public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelegate {
     private CreatureRepository creatureRepository;
-    private LoginConfiguration loginConfiguration;
+    private LoginConfiguration loginConfiguration; // TODO need to break this configuration apart
 
-    public DemoInGameInterpreterDelegate(
+    public DefaultInGameInterpreterDelegate(
         CreatureRepository creatureRepository,
         LoginConfiguration loginConfiguration) {
 
@@ -31,9 +27,9 @@ public class DemoInGameInterpreterDelegate implements InGameInterpreterDelegate 
             .orElseThrow(() -> new NullPointerException("Unable to find Creature for Connection " + connection.getId()));
 
         output
-            .append("[dmagenta]You gossip '" + input.toString() + "[dmagenta]'")
+            .append("[green]You gossip '" + input.toString() + "[green]'")
             .append(primary.prompt(connection));
-        primary.echoToWorld(new Output("[dmagenta]" + connection.getName() + " gossips '" + input.toString() + "[dmagenta]'"), creature);
+        primary.echoToWorld(new Output("[green]" + connection.getName() + " gossips '" + input.toString() + "[green]'"), creature);
 
         return output;
     }
