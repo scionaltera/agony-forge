@@ -14,11 +14,6 @@ public class PublicControllerTest {
     }
 
     @Test
-    public void testPrivacyController() {
-        assertEquals("privacy", controller.privacy());
-    }
-
-    @Test
     public void testPlayController() {
         assertEquals("play", controller.play());
     }
