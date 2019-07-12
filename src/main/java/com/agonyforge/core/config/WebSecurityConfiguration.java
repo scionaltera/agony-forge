@@ -51,7 +51,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers(
                 "/",
                 "/error",
-                "/play",
                 "/mud/**",
                 "/favicon.ico",
                 "/public/**",
