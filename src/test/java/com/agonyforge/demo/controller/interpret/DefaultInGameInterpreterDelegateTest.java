@@ -1,12 +1,11 @@
-package com.agonyforge.demo;
+package com.agonyforge.demo.controller.interpret;
 
-import com.agonyforge.core.config.LoginConfiguration;
-import com.agonyforge.core.controller.Input;
-import com.agonyforge.core.controller.Output;
-import com.agonyforge.core.controller.interpret.Interpreter;
-import com.agonyforge.core.model.Connection;
-import com.agonyforge.core.model.Creature;
-import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.demo.config.LoginConfiguration;
+import com.agonyforge.demo.controller.Input;
+import com.agonyforge.demo.controller.Output;
+import com.agonyforge.demo.model.Connection;
+import com.agonyforge.demo.model.Creature;
+import com.agonyforge.demo.repository.CreatureRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -21,14 +20,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DemoInGameInterpreterTest {
+public class DefaultInGameInterpreterDelegateTest {
     @Mock
     private CreatureRepository creatureRepository;
 
     @Mock
     private Interpreter primary;
 
-    private DemoInGameInterpreterDelegate interpreter;
+    private DefaultInGameInterpreterDelegate interpreter;
     private Creature me = new Creature();
 
     @Before
@@ -46,7 +45,7 @@ public class DemoInGameInterpreterTest {
             return interpreter.prompt(primary, connection);
         });
 
-        interpreter = new DemoInGameInterpreterDelegate(
+        interpreter = new DefaultInGameInterpreterDelegate(
             creatureRepository,
             loginConfiguration
         );
