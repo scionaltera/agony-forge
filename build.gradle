@@ -88,8 +88,8 @@ build.dependsOn project.tasks.buildDocker
 
 pitest {
     excludedClasses = [
-        'com.agonyforge.demo.AgonyForge',
-        'com.agonyforge.demo.config.*'
+        'com.agonyforge.core.AgonyForge',
+        'com.agonyforge.core.config.*'
     ]
     excludedMethods = [
         'hashCode',
