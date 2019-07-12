@@ -2,7 +2,7 @@ version: "2"
 
 services:
   agony-forge:
-    image: scionaltera/agony-forge-demo:latest
+    image: scionaltera/agony-forge:latest
     tty: true
     ports:
       - "8080:8080"
