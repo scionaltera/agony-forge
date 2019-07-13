@@ -83,7 +83,7 @@ public class WebSocketController {
 
             attributes.put(AGONY_CONNECTION_ID_KEY, saved.getId());
 
-            LOGGER.info("New connection from {}", attributes.get(AGONY_REMOTE_IP_KEY));
+            LOGGER.info("New connection {}@{}", saved.getSessionId(), attributes.get(AGONY_REMOTE_IP_KEY));
 
             return new Output(greeting).append(interpreter.prompt(connection));
         }

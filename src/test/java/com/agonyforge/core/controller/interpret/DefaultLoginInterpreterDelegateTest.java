@@ -27,9 +27,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static com.agonyforge.core.model.Connection.DEFAULT_SECONDARY_STATE;
 import static com.agonyforge.core.model.DefaultLoginConnectionState.*;
-import static com.agonyforge.core.model.PrimaryConnectionState.IN_GAME;
-import static com.agonyforge.core.model.PrimaryConnectionState.LOGIN;
+import static com.agonyforge.core.model.PrimaryConnectionState.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -138,10 +138,12 @@ public class DefaultLoginInterpreterDelegateTest {
     @Test
     public void testReconnect() {
         Connection oldConnection = new Connection();
+        oldConnection.setId(UUID.randomUUID());
         oldConnection.setName("Dani");
         oldConnection.setDisconnected(new Date());
 
         Connection connection = new Connection();
+        connection.setId(UUID.randomUUID());
         connection.setName("Dani");
         connection.setPrimaryState(LOGIN);
         connection.setSecondaryState(RECONNECT.name());
@@ -153,7 +155,7 @@ public class DefaultLoginInterpreterDelegateTest {
         Input input = new Input();
         input.setInput("");
 
-        when(creatureRepository.findByConnectionDisconnectedIsNotNull())
+        when(creatureRepository.findByConnectionIsNotNull())
             .thenReturn(Stream.of(creature));
 
         doAnswer(invocation -> {
@@ -169,9 +171,12 @@ public class DefaultLoginInterpreterDelegateTest {
         Output result = interpreter.interpret(primary, input, connection);
 
         assertEquals("[yellow]Welcome back, Dani!\n\n[default]Dani> ", result.toString());
+        assertEquals(DISCONNECTED, oldConnection.getPrimaryState());
+        assertEquals(DEFAULT_SECONDARY_STATE, oldConnection.getSecondaryState());
 
-        verify(connectionRepository).delete(eq(oldConnection));
-        verify(creatureRepository, atLeastOnce()).save(eq(creature));
+        verify(primary).echo(eq(creature), any());
+        verify(connectionRepository).save(eq(oldConnection));
+        verify(creatureRepository).save(eq(creature));
     }
 
     @Test
@@ -747,7 +752,7 @@ public class DefaultLoginInterpreterDelegateTest {
         assertEquals("[yellow]Welcome, Dani!\n\n[default]Dani> ", result.toString());
         assertFalse(result.getSecret());
         assertEquals(IN_GAME, connection.getPrimaryState());
-        assertEquals("DEFAULT", connection.getSecondaryState());
+        assertEquals(DEFAULT_SECONDARY_STATE, connection.getSecondaryState());
 
         SecurityContext securityContext = securityContextCaptor.getValue();
         Authentication authentication = securityContext.getAuthentication();

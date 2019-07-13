@@ -34,7 +34,7 @@ public class SessionDisconnectListener implements ApplicationListener<SessionDis
         Map<String, Object> attributes = headerAccessor.getSessionAttributes();
 
         if (attributes != null) {
-            LOGGER.info("Lost connection from {}", attributes.get(AGONY_REMOTE_IP_KEY));
+            LOGGER.info("Lost connection {}@{}", event.getSessionId(), attributes.get(AGONY_REMOTE_IP_KEY));
 
             List<Connection> updated = new ArrayList<>();
 

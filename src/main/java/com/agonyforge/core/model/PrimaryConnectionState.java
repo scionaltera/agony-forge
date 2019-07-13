@@ -7,7 +7,8 @@ public enum PrimaryConnectionState implements PersistentEnum {
     LOGIN(0),
     CREATION(1),
     IN_GAME(2),
-    MENU(3);
+    MENU(3),
+    DISCONNECTED(4);
 
     private int index;
 

@@ -39,6 +39,7 @@ public class DefaultPrimaryInterpreter extends BaseInterpreter {
         switch (primaryState) {
             case LOGIN: return loginInterpreter.interpret(this, input, connection);
             case IN_GAME: return inGameInterpreter.interpret(this, input, connection);
+            case DISCONNECTED: return new Output("");
             default:
                 LOGGER.error("Reached default state in interpret()!");
                 return new Output("[red]Oops! Something went wrong. The error has been logged.");
@@ -52,6 +53,7 @@ public class DefaultPrimaryInterpreter extends BaseInterpreter {
         switch (primaryState) {
             case LOGIN: return loginInterpreter.prompt(this, connection);
             case IN_GAME: return inGameInterpreter.prompt(this, connection);
+            case DISCONNECTED: return new Output("");
             default:
                 LOGGER.error("Reached default state in prompt()!");
                 return new Output("[red]Oops! Something went wrong. The error has been logged.");

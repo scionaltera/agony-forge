@@ -53,13 +53,11 @@ public class Creature {
         if (this == o) return true;
         if (!(o instanceof Creature)) return false;
         Creature creature = (Creature) o;
-        return Objects.equals(getId(), creature.getId()) &&
-            Objects.equals(getName(), creature.getName()) &&
-            Objects.equals(getConnection(), creature.getConnection());
+        return Objects.equals(getId(), creature.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getConnection());
+        return Objects.hash(getId());
     }
 }
