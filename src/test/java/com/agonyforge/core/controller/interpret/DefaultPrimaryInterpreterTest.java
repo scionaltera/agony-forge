@@ -10,8 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import static com.agonyforge.core.model.PrimaryConnectionState.IN_GAME;
-import static com.agonyforge.core.model.PrimaryConnectionState.LOGIN;
+import static com.agonyforge.core.model.PrimaryConnectionState.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -86,6 +85,21 @@ public class DefaultPrimaryInterpreterTest {
     }
 
     @Test
+    public void testInterpretDisconnected() {
+        Connection connection = new Connection();
+        Input input = new Input();
+
+        input.setInput("Foo");
+        connection.setPrimaryState(DISCONNECTED);
+
+        Output output = primary.interpret(input, connection);
+
+        verifyZeroInteractions(loginInterpreterDelegate, inGameInterpreterDelegate);
+
+        assertEquals("", output.toString());
+    }
+
+    @Test
     public void testPromptLogin() {
         Connection connection = new Connection();
 
@@ -111,5 +125,18 @@ public class DefaultPrimaryInterpreterTest {
         verifyZeroInteractions(loginInterpreterDelegate);
 
         assertEquals("In Game Prompt!", output.toString());
+    }
+
+    @Test
+    public void testPromptDisconnected() {
+        Connection connection = new Connection();
+
+        connection.setPrimaryState(DISCONNECTED);
+
+        Output output = primary.prompt(connection);
+
+        verifyZeroInteractions(loginInterpreterDelegate, inGameInterpreterDelegate);
+
+        assertEquals("", output.toString());
     }
 }

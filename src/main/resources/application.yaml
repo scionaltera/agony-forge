@@ -1,7 +1,7 @@
 agony:
   login:
     prompt:
-      reconnect: "[default]Press [yellow]&#91;Enter&#93; [default]to reconnect as %name%. Or, log in a &#91;N&#93;ew character: "
+      reconnect: "[default]Press [yellow]&#91;Enter&#93; [default]to reconnect as [white]%name%[default]. Or, log in a [yellow]&#91;N&#93;[default]ew character: "
       askNew: "[default]Create a new character? [y/N]: "
       loginAskName: "[default]Name: "
       loginAskPassword: "[default]Password: "

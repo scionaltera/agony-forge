@@ -2,6 +2,7 @@ package com.agonyforge.core.service;
 
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
+import com.agonyforge.core.repository.ConnectionRepository;
 import com.agonyforge.core.repository.CreatureRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +23,14 @@ public class ReaperServiceTest {
     @Mock
     private CreatureRepository creatureRepository;
 
+    @Mock
+    private ConnectionRepository connectionRepository;
+
     @Captor
     private ArgumentCaptor<List<Creature>> creatureListCaptor;
+
+    @Captor
+    private ArgumentCaptor<List<Connection>> connectionListCaptor;
 
     private ReaperService reaperService;
 
@@ -37,6 +44,9 @@ public class ReaperServiceTest {
         Connection dead2c = new Connection();
         dead2c.setDisconnected(new Date());
 
+        Connection dead3c = new Connection();
+        dead3c.setDisconnected(new Date());
+
         Creature dead1 = new Creature();
         dead1.setName("Dead1");
         dead1.setConnection(dead1c);
@@ -48,28 +58,39 @@ public class ReaperServiceTest {
         when(creatureRepository.findByConnectionDisconnectedIsNotNull())
             .thenReturn(Stream.of(dead1, dead2));
 
-        reaperService = new ReaperService(creatureRepository);
+        when(connectionRepository.findByDisconnectedIsNotNull())
+            .thenReturn(Stream.of(dead3c));
+
+        reaperService = new ReaperService(creatureRepository, connectionRepository);
     }
 
     @Test
     public void testReap() {
-        reaperService.reapLinkDeadCreatures();
+        reaperService.reapTheDead();
 
         verify(creatureRepository).deleteInBatch(creatureListCaptor.capture());
+        verify(connectionRepository).deleteInBatch(connectionListCaptor.capture());
 
         List<Creature> deletedCreatures = creatureListCaptor.getValue();
+        List<Connection> deletedConnections = connectionListCaptor.getValue();
 
         assertEquals(2, deletedCreatures.size());
+        assertEquals(1, deletedConnections.size());
+
         deletedCreatures.forEach(creature -> assertNotNull(creature.getConnection().getDisconnected()));
+        deletedConnections.forEach(connection -> assertNotNull(connection.getDisconnected()));
     }
 
     @Test
     public void testEmptyReap() {
         when(creatureRepository.findByConnectionDisconnectedIsNotNull())
             .thenReturn(Stream.empty());
+        when(connectionRepository.findByDisconnectedIsNotNull())
+            .thenReturn(Stream.empty());
 
-        reaperService.reapLinkDeadCreatures();
+        reaperService.reapTheDead();
 
         verify(creatureRepository, never()).deleteInBatch(anyIterable());
+        verify(connectionRepository, never()).deleteInBatch(anyIterable());
     }
 }

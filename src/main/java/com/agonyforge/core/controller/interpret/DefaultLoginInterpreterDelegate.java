@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static com.agonyforge.core.model.DefaultLoginConnectionState.*;
+import static com.agonyforge.core.model.PrimaryConnectionState.DISCONNECTED;
 import static com.agonyforge.core.model.PrimaryConnectionState.IN_GAME;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
@@ -72,10 +73,10 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                 if (!StringUtils.isEmpty(input.toString())) {
                     connection.setSecondaryState(DEFAULT.name());
                 } else {
-                    findOrBuildCreature(connection.getName(), connection);
+                    findOrBuildCreature(primary, connection.getName(), connection);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
-                    LOGGER.info("Reconnected {} from {}", connection.getName(), connection.getRemoteAddress());
+                    LOGGER.info("Reconnected {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
                 }
                 break;
             case DEFAULT:
@@ -96,14 +97,14 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
             case LOGIN_ASK_PASSWORD:
                 try {
                     logUserIn(connection.getName(), input.toString(), connection);
-                    findOrBuildCreature(connection.getName(), connection);
+                    findOrBuildCreature(primary, connection.getName(), connection);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
 
-                    LOGGER.info("Successful login for {} from {}", connection.getName(), connection.getRemoteAddress());
+                    LOGGER.info("Successful login {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
                 } catch (BadCredentialsException e) {
                     output.append("[red]Sorry! Please try again!");
-                    LOGGER.warn("Bad password attempt for {} from {}", connection.getName(), connection.getRemoteAddress());
+                    LOGGER.warn("Bad password attempt for {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
                     connection.setSecondaryState(DEFAULT.name());
                 }
                 break;
@@ -154,11 +155,11 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
             case CREATE_CONFIRM_PASSWORD:
                 try {
                     logUserIn(connection.getName(), validatePassword(input.toString()), connection);
-                    findOrBuildCreature(connection.getName(), connection);
+                    findOrBuildCreature(primary, connection.getName(), connection);
 
                     output.append("[yellow]Welcome, " + connection.getName() + "!");
 
-                    LOGGER.info("New player {} from {}", connection.getName(), connection.getRemoteAddress());
+                    LOGGER.info("New player {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
                 } catch (InvalidInputException e) {
                     output.append("[red]" + e.getMessage());
                 } catch (BadCredentialsException e) {
@@ -248,9 +249,10 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         sessionRepository.save(session);
     }
 
-    private void findOrBuildCreature(String name, Connection connection) {
+    private void findOrBuildCreature(Interpreter primary, String name, Connection connection) {
         Optional<Creature> optionalCreature = creatureRepository
-            .findByConnectionDisconnectedIsNotNull()
+            .findByConnectionIsNotNull()
+            .filter(c -> !c.getConnection().equals(connection))
             .filter(c -> c.getName().equals(name))
             .findFirst();
 
@@ -265,10 +267,11 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         if (creature.getConnection() != null) {
             Connection oldConnection = creature.getConnection();
 
-            creature.setConnection(null);
+            oldConnection.setPrimaryState(DISCONNECTED);
 
-            creatureRepository.save(creature);
-            connectionRepository.delete(oldConnection);
+            connectionRepository.save(oldConnection);
+
+            primary.echo(creature, new Output("[yellow]This character has been reconnected in another browser. Goodbye!"));
         }
 
         creature.setConnection(connection);

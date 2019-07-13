@@ -14,6 +14,8 @@ import java.util.UUID;
 
 @Entity
 public class Connection {
+    public static final String DEFAULT_SECONDARY_STATE = "DEFAULT";
+
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -97,7 +99,7 @@ public class Connection {
     }
 
     public String getSecondaryState() {
-        return secondaryState == null ? "DEFAULT" : secondaryState;
+        return secondaryState == null ? DEFAULT_SECONDARY_STATE : secondaryState;
     }
 
     public void setSecondaryState(String secondaryState) {
