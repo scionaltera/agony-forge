@@ -5,6 +5,7 @@ import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
+import com.agonyforge.core.model.CreatureFactory;
 import com.agonyforge.core.repository.ConnectionRepository;
 import com.agonyforge.core.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
@@ -74,6 +75,7 @@ public class DefaultLoginInterpreterDelegateTest {
         MockitoAnnotations.initMocks(this);
 
         LoginConfiguration loginConfiguration = new LoginConfigurationBuilder().build();
+        CreatureFactory creatureFactory = new CreatureFactory(creatureRepository);
 
         when(primary.prompt(any(Connection.class))).thenAnswer(invocation -> {
             Connection connection = invocation.getArgument(0);
@@ -88,12 +90,24 @@ public class DefaultLoginInterpreterDelegateTest {
         when(connectionRepository.save(any(Connection.class))).thenAnswer(invocation -> {
             Connection connection = invocation.getArgument(0);
 
-            connection.setId(UUID.randomUUID());
+            if (connection.getId() == null) {
+                connection.setId(UUID.randomUUID());
+            }
 
             return connection;
         });
 
         Creature creature = new Creature();
+
+        when(creatureRepository.save(any())).thenAnswer(invocation -> {
+            Creature c = invocation.getArgument(0);
+
+            if (c.getId() == null) {
+                c.setId(UUID.randomUUID());
+            }
+
+            return c;
+        });
 
         when(creatureRepository.findByConnection(any(Connection.class))).thenReturn(Optional.of(creature));
 
@@ -104,6 +118,7 @@ public class DefaultLoginInterpreterDelegateTest {
             sessionRepository,
             connectionRepository,
             creatureRepository,
+            creatureFactory,
             commService);
     }
 
@@ -175,6 +190,7 @@ public class DefaultLoginInterpreterDelegateTest {
 
         Output result = interpreter.interpret(primary, input, connection);
 
+        assertEquals(connection, creature.getConnection());
         assertEquals("[yellow]Welcome back, Dani!\n\n[default]Dani> ", result.toString());
         assertEquals(DISCONNECTED, oldConnection.getPrimaryState());
         assertEquals(DEFAULT_SECONDARY_STATE, oldConnection.getSecondaryState());

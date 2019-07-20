@@ -4,6 +4,7 @@ import com.agonyforge.core.controller.interpret.DefaultInGameInterpreterDelegate
 import com.agonyforge.core.controller.interpret.DefaultLoginInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.InGameInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.LoginInterpreterDelegate;
+import com.agonyforge.core.model.CreatureFactory;
 import com.agonyforge.core.repository.ConnectionRepository;
 import com.agonyforge.core.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
@@ -24,6 +25,7 @@ public class InterpreterAutoConfiguration {
     private SessionRepository sessionRepository;
     private ConnectionRepository connectionRepository;
     private CreatureRepository creatureRepository;
+    private CreatureFactory creatureFactory;
     private CommService commService;
 
     @Inject
@@ -34,6 +36,7 @@ public class InterpreterAutoConfiguration {
         SessionRepository sessionRepository,
         ConnectionRepository connectionRepository,
         CreatureRepository creatureRepository,
+        CreatureFactory creatureFactory,
         CommService commService) {
 
         this.loginConfiguration = loginConfiguration;
@@ -42,6 +45,7 @@ public class InterpreterAutoConfiguration {
         this.sessionRepository = sessionRepository;
         this.connectionRepository = connectionRepository;
         this.creatureRepository = creatureRepository;
+        this.creatureFactory = creatureFactory;
         this.commService = commService;
     }
 
@@ -55,6 +59,7 @@ public class InterpreterAutoConfiguration {
             sessionRepository,
             connectionRepository,
             creatureRepository,
+            creatureFactory,
             commService
         );
     }
