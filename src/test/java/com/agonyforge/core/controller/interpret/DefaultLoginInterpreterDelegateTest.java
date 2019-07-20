@@ -7,6 +7,7 @@ import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.repository.ConnectionRepository;
 import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.service.CommService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -50,6 +51,9 @@ public class DefaultLoginInterpreterDelegateTest {
 
     @Mock
     private CreatureRepository creatureRepository;
+
+    @Mock
+    private CommService commService;
 
     @Mock
     private Session session;
@@ -99,7 +103,8 @@ public class DefaultLoginInterpreterDelegateTest {
             authenticationManager,
             sessionRepository,
             connectionRepository,
-            creatureRepository);
+            creatureRepository,
+            commService);
     }
 
     @Test
@@ -174,7 +179,7 @@ public class DefaultLoginInterpreterDelegateTest {
         assertEquals(DISCONNECTED, oldConnection.getPrimaryState());
         assertEquals(DEFAULT_SECONDARY_STATE, oldConnection.getSecondaryState());
 
-        verify(primary).echo(eq(creature), any());
+        verify(commService).echo(eq(creature), eq(primary), any());
         verify(connectionRepository).save(eq(oldConnection));
         verify(creatureRepository).save(eq(creature));
     }

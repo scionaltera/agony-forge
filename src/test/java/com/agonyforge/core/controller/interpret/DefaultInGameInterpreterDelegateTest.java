@@ -6,6 +6,7 @@ import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.service.CommService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,6 +28,9 @@ public class DefaultInGameInterpreterDelegateTest {
     @Mock
     private Interpreter primary;
 
+    @Mock
+    private CommService commService;
+
     private DefaultInGameInterpreterDelegate interpreter;
     private Creature me = new Creature();
 
@@ -47,7 +51,8 @@ public class DefaultInGameInterpreterDelegateTest {
 
         interpreter = new DefaultInGameInterpreterDelegate(
             creatureRepository,
-            loginConfiguration
+            loginConfiguration,
+            commService
         );
     }
 
@@ -63,7 +68,7 @@ public class DefaultInGameInterpreterDelegateTest {
         assertTrue(output.toString().contains("You gossip"));
         assertTrue(output.toString().contains(input.toString()));
 
-        verify(primary).echoToWorld(any(), eq(me));
+        verify(commService).echoToWorld(any(), eq(primary), eq(me));
     }
 
     @Test

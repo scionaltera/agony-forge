@@ -3,12 +3,10 @@ package com.agonyforge.core.controller.interpret;
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Connection;
-import com.agonyforge.core.repository.CreatureRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import static com.agonyforge.core.model.PrimaryConnectionState.*;
 import static org.junit.Assert.assertEquals;
@@ -17,12 +15,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class DefaultPrimaryInterpreterTest {
-    @Mock
-    private CreatureRepository creatureRepository;
-
-    @Mock
-    private SimpMessagingTemplate simpMessagingTemplate;
-
     @Mock
     private LoginInterpreterDelegate loginInterpreterDelegate;
 
@@ -36,8 +28,6 @@ public class DefaultPrimaryInterpreterTest {
         MockitoAnnotations.initMocks(this);
 
         primary = new DefaultPrimaryInterpreter(
-            creatureRepository,
-            simpMessagingTemplate,
             loginInterpreterDelegate,
             inGameInterpreterDelegate
         );

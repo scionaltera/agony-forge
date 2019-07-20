@@ -1,6 +1,7 @@
-package com.agonyforge.core.controller.interpret;
+package com.agonyforge.core.service;
 
 import com.agonyforge.core.controller.Output;
+import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.repository.CreatureRepository;
@@ -17,20 +18,26 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class BaseInterpreterTest {
+public class CommServiceTest {
     @Mock
     private CreatureRepository creatureRepository;
 
     @Mock
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Mock
     private Interpreter interpreter;
+
+    @Mock
+    private CommService commService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        interpreter = new EchoInterpreter(creatureRepository, simpMessagingTemplate);
+        when(interpreter.prompt(any())).thenReturn(new Output("[default]> "));
+
+        commService = new CommService(creatureRepository, simpMessagingTemplate);
     }
 
     @Test
@@ -42,7 +49,7 @@ public class BaseInterpreterTest {
         connection.setSessionUsername("username");
         creature.setConnection(connection);
 
-        interpreter.echo(creature, output);
+        commService.echo(creature, interpreter, output);
 
         verify(simpMessagingTemplate).convertAndSendToUser(eq("username"), eq("/queue/output"), eq(output));
         verifyZeroInteractions(creatureRepository);
@@ -55,7 +62,7 @@ public class BaseInterpreterTest {
         Creature creature = new Creature();
         Output output = new Output("Hello");
 
-        interpreter.echo(creature, output);
+        commService.echo(creature, interpreter, output);
 
         verifyZeroInteractions(simpMessagingTemplate, creatureRepository);
     }
@@ -68,7 +75,7 @@ public class BaseInterpreterTest {
 
         creature.setConnection(connection);
 
-        interpreter.echo(creature, output);
+        commService.echo(creature, interpreter, output);
 
         verifyZeroInteractions(simpMessagingTemplate, creatureRepository);
     }
@@ -94,7 +101,7 @@ public class BaseInterpreterTest {
         when(creatureRepository.findByConnectionIsNotNull())
             .thenReturn(Stream.of(included, excluded));
 
-        interpreter.echoToWorld(output, excluded);
+        commService.echoToWorld(output, interpreter, excluded);
 
         verify(simpMessagingTemplate).convertAndSendToUser(
             eq("included"),
