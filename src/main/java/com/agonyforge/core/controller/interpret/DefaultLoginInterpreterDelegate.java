@@ -5,6 +5,7 @@ import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
+import com.agonyforge.core.model.CreatureFactory;
 import com.agonyforge.core.model.DefaultLoginConnectionState;
 import com.agonyforge.core.repository.ConnectionRepository;
 import com.agonyforge.core.repository.CreatureRepository;
@@ -28,7 +29,6 @@ import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
-import java.util.Optional;
 
 import static com.agonyforge.core.model.DefaultLoginConnectionState.*;
 import static com.agonyforge.core.model.PrimaryConnectionState.DISCONNECTED;
@@ -45,6 +45,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
     private SessionRepository sessionRepository;
     private ConnectionRepository connectionRepository;
     private CreatureRepository creatureRepository;
+    private CreatureFactory creatureFactory;
     private CommService commService;
 
     public DefaultLoginInterpreterDelegate(
@@ -54,6 +55,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         SessionRepository sessionRepository,
         ConnectionRepository connectionRepository,
         CreatureRepository creatureRepository,
+        CreatureFactory creatureFactory,
         CommService commService) {
 
         this.loginConfiguration = loginConfiguration;
@@ -63,6 +65,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         this.sessionRepository = sessionRepository;
         this.connectionRepository = connectionRepository;
         this.creatureRepository = creatureRepository;
+        this.creatureFactory = creatureFactory;
         this.commService = commService;
     }
 
@@ -77,7 +80,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                 if (!StringUtils.isEmpty(input.toString())) {
                     connection.setSecondaryState(DEFAULT.name());
                 } else {
-                    findOrBuildCreature(primary, connection.getName(), connection);
+                    findOrBuildPlayer(primary, connection.getName(), connection);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
                     LOGGER.info("Reconnected {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
@@ -101,7 +104,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
             case LOGIN_ASK_PASSWORD:
                 try {
                     logUserIn(connection.getName(), input.toString(), connection);
-                    findOrBuildCreature(primary, connection.getName(), connection);
+                    findOrBuildPlayer(primary, connection.getName(), connection);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
 
@@ -159,7 +162,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
             case CREATE_CONFIRM_PASSWORD:
                 try {
                     logUserIn(connection.getName(), validatePassword(input.toString()), connection);
-                    findOrBuildCreature(primary, connection.getName(), connection);
+                    findOrBuildPlayer(primary, connection.getName(), connection);
 
                     output.append("[yellow]Welcome, " + connection.getName() + "!");
 
@@ -253,34 +256,20 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         sessionRepository.save(session);
     }
 
-    private void findOrBuildCreature(Interpreter primary, String name, Connection connection) {
-        Optional<Creature> optionalCreature = creatureRepository
-            .findByConnectionIsNotNull()
-            .filter(c -> !c.getConnection().equals(connection))
-            .filter(c -> c.getName().equals(name))
-            .findFirst();
+    private void findOrBuildPlayer(Interpreter primary, String name, Connection connection) {
+        Creature creature = creatureFactory.build(name, connection);
 
-        Creature creature = optionalCreature.orElseGet(() -> {
-            Creature c = new Creature();
-
-            c.setName(name);
-
-            return c;
-        });
-
-        if (creature.getConnection() != null) {
+        if (!connection.equals(creature.getConnection())) {
             Connection oldConnection = creature.getConnection();
 
             oldConnection.setPrimaryState(DISCONNECTED);
-
             connectionRepository.save(oldConnection);
 
             commService.echo(creature, primary, new Output("[yellow]This character has been reconnected in another browser. Goodbye!"));
+
+            creature.setConnection(connection);
+            creatureRepository.save(creature);
         }
-
-        creature.setConnection(connection);
-
-        creatureRepository.save(creature);
 
         connection.setPrimaryState(IN_GAME);
         connection.setSecondaryState(null);
