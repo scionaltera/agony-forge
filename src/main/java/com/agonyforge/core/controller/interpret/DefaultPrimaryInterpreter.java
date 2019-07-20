@@ -4,10 +4,8 @@ import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.PrimaryConnectionState;
-import com.agonyforge.core.repository.CreatureRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -21,12 +19,8 @@ public class DefaultPrimaryInterpreter extends BaseInterpreter {
 
     @Inject
     public DefaultPrimaryInterpreter(
-        CreatureRepository creatureRepository,
-        SimpMessagingTemplate simpMessagingTemplate,
         LoginInterpreterDelegate loginInterpreterDelegate,
         InGameInterpreterDelegate inGameInterpreterDelegate) {
-
-        super(creatureRepository, simpMessagingTemplate);
 
         this.loginInterpreter = loginInterpreterDelegate;
         this.inGameInterpreter = inGameInterpreterDelegate;

@@ -8,6 +8,7 @@ import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.DefaultLoginConnectionState;
 import com.agonyforge.core.repository.ConnectionRepository;
 import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,6 +45,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
     private SessionRepository sessionRepository;
     private ConnectionRepository connectionRepository;
     private CreatureRepository creatureRepository;
+    private CommService commService;
 
     public DefaultLoginInterpreterDelegate(
         LoginConfiguration loginConfiguration,
@@ -51,7 +53,8 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         AuthenticationManager authenticationManager,
         SessionRepository sessionRepository,
         ConnectionRepository connectionRepository,
-        CreatureRepository creatureRepository) {
+        CreatureRepository creatureRepository,
+        CommService commService) {
 
         this.loginConfiguration = loginConfiguration;
         this.userDetailsManager = userDetailsManager;
@@ -60,6 +63,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         this.sessionRepository = sessionRepository;
         this.connectionRepository = connectionRepository;
         this.creatureRepository = creatureRepository;
+        this.commService = commService;
     }
 
     @Transactional
@@ -271,7 +275,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
 
             connectionRepository.save(oldConnection);
 
-            primary.echo(creature, new Output("[yellow]This character has been reconnected in another browser. Goodbye!"));
+            commService.echo(creature, primary, new Output("[yellow]This character has been reconnected in another browser. Goodbye!"));
         }
 
         creature.setConnection(connection);

@@ -6,17 +6,21 @@ import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.service.CommService;
 
 public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelegate {
     private CreatureRepository creatureRepository;
     private LoginConfiguration loginConfiguration; // TODO need to break this configuration apart
+    private CommService commService;
 
     public DefaultInGameInterpreterDelegate(
         CreatureRepository creatureRepository,
-        LoginConfiguration loginConfiguration) {
+        LoginConfiguration loginConfiguration,
+        CommService commService) {
 
         this.creatureRepository = creatureRepository;
         this.loginConfiguration = loginConfiguration;
+        this.commService = commService;
     }
 
     @Override
@@ -29,7 +33,7 @@ public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelega
         output
             .append("[green]You gossip '" + input.toString() + "[green]'")
             .append(primary.prompt(connection));
-        primary.echoToWorld(new Output("[green]" + connection.getName() + " gossips '" + input.toString() + "[green]'"), creature);
+        commService.echoToWorld(new Output("[green]" + connection.getName() + " gossips '" + input.toString() + "[green]'"), primary, creature);
 
         return output;
     }
