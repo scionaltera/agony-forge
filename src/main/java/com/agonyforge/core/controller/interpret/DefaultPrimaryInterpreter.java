@@ -15,14 +15,17 @@ public class DefaultPrimaryInterpreter extends BaseInterpreter {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrimaryInterpreter.class);
 
     private LoginInterpreterDelegate loginInterpreter;
+    private CharacterCreationInterpreterDelegate characterCreationInterpreterDelegate;
     private InGameInterpreterDelegate inGameInterpreter;
 
     @Inject
     public DefaultPrimaryInterpreter(
         LoginInterpreterDelegate loginInterpreterDelegate,
+        CharacterCreationInterpreterDelegate characterCreationInterpreterDelegate,
         InGameInterpreterDelegate inGameInterpreterDelegate) {
 
         this.loginInterpreter = loginInterpreterDelegate;
+        this.characterCreationInterpreterDelegate = characterCreationInterpreterDelegate;
         this.inGameInterpreter = inGameInterpreterDelegate;
     }
 
@@ -32,6 +35,7 @@ public class DefaultPrimaryInterpreter extends BaseInterpreter {
 
         switch (primaryState) {
             case LOGIN: return loginInterpreter.interpret(this, input, connection);
+            case CREATION: return characterCreationInterpreterDelegate.interpret(this, input, connection);
             case IN_GAME: return inGameInterpreter.interpret(this, input, connection);
             case DISCONNECTED: return new Output("");
             default:
@@ -46,6 +50,7 @@ public class DefaultPrimaryInterpreter extends BaseInterpreter {
 
         switch (primaryState) {
             case LOGIN: return loginInterpreter.prompt(this, connection);
+            case CREATION: return characterCreationInterpreterDelegate.prompt(this, connection);
             case IN_GAME: return inGameInterpreter.prompt(this, connection);
             case DISCONNECTED: return new Output("");
             default:

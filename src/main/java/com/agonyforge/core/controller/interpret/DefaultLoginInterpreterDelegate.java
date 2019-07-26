@@ -31,8 +31,7 @@ import javax.transaction.Transactional;
 import java.util.Collections;
 
 import static com.agonyforge.core.model.DefaultLoginConnectionState.*;
-import static com.agonyforge.core.model.PrimaryConnectionState.DISCONNECTED;
-import static com.agonyforge.core.model.PrimaryConnectionState.IN_GAME;
+import static com.agonyforge.core.model.PrimaryConnectionState.*;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate {
@@ -162,9 +161,8 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
             case CREATE_CONFIRM_PASSWORD:
                 try {
                     logUserIn(connection.getName(), validatePassword(input.toString()), connection);
-                    findOrBuildPlayer(primary, connection.getName(), connection);
-
-                    output.append("[yellow]Welcome, " + connection.getName() + "!");
+                    connection.setPrimaryState(CREATION);
+                    connection.setSecondaryState(null);
 
                     LOGGER.info("New player {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
                 } catch (InvalidInputException e) {

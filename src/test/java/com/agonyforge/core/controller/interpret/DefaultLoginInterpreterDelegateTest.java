@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.Optional;
@@ -768,11 +769,10 @@ public class DefaultLoginInterpreterDelegateTest {
         verify(sessionRepository).findById(anyString());
         verify(session).setAttribute(eq(SPRING_SECURITY_CONTEXT_KEY), securityContextCaptor.capture());
         verify(sessionRepository).save(session);
-        verify(creatureRepository).save(creatureCaptor.capture());
 
-        assertEquals("[yellow]Welcome, Dani!\n\n[default]Dani> ", result.toString());
+        assertFalse(StringUtils.isEmpty(result.toString()));
         assertFalse(result.getSecret());
-        assertEquals(IN_GAME, connection.getPrimaryState());
+        assertEquals(CREATION, connection.getPrimaryState());
         assertEquals(DEFAULT_SECONDARY_STATE, connection.getSecondaryState());
 
         SecurityContext securityContext = securityContextCaptor.getValue();
@@ -780,11 +780,6 @@ public class DefaultLoginInterpreterDelegateTest {
 
         assertEquals("Dani", authentication.getPrincipal());
         assertEquals("Not!A_Real123Password", authentication.getCredentials());
-
-        Creature creature = creatureCaptor.getValue();
-
-        assertEquals("Dani", creature.getName());
-        assertEquals(connection, creature.getConnection());
     }
 
     @Test

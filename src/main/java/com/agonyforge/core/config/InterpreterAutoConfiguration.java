@@ -1,5 +1,7 @@
 package com.agonyforge.core.config;
 
+import com.agonyforge.core.controller.interpret.CharacterCreationInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.DefaultCharacterCreationInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.DefaultInGameInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.DefaultLoginInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.InGameInterpreterDelegate;
@@ -61,6 +63,15 @@ public class InterpreterAutoConfiguration {
             creatureRepository,
             creatureFactory,
             commService
+        );
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(CharacterCreationInterpreterDelegate.class)
+    public CharacterCreationInterpreterDelegate characterCreationInterpreterDelegate() {
+        return new DefaultCharacterCreationInterpreterDelegate(
+            creatureFactory,
+            creatureRepository
         );
     }
 
