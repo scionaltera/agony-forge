@@ -136,7 +136,8 @@ public class DefaultLoginInterpreterDelegateTest {
             sessionRepository,
             connectionRepository,
             creatureDefinitionRepository,
-            creatureFactory);
+            creatureFactory,
+            commService);
     }
 
     @Test
@@ -225,6 +226,7 @@ public class DefaultLoginInterpreterDelegateTest {
         assertEquals(DEFAULT_SECONDARY_STATE, oldConnection.getSecondaryState());
 
         verify(commService).echo(eq(creature), eq(primary), any());
+        verify(commService).echoToWorld(any(), eq(primary), eq(creature));
         verify(connectionRepository).save(eq(oldConnection));
         verify(creatureRepository).save(eq(creature));
     }
@@ -439,6 +441,7 @@ public class DefaultLoginInterpreterDelegateTest {
         verify(session).setAttribute(eq(SPRING_SECURITY_CONTEXT_KEY), securityContextCaptor.capture());
         verify(sessionRepository).save(session);
         verify(creatureRepository).save(creatureCaptor.capture());
+        verify(commService).echoToWorld(any(), eq(primary), any());
 
         assertEquals("[yellow]Welcome back, Dani!\n\n[default]Dani> ", result.toString());
         assertFalse(result.getSecret());

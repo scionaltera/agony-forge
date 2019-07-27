@@ -10,6 +10,9 @@ import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.Gender;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
+import com.agonyforge.core.service.CommService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -17,19 +20,24 @@ import static com.agonyforge.core.model.Gender.*;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.IN_GAME;
 
 public class DefaultCharacterCreationInterpreterDelegate implements CharacterCreationInterpreterDelegate {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCharacterCreationInterpreterDelegate.class);
+
     private CreatureFactory creatureFactory;
     private CreatureRepository creatureRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
+    private CommService commService;
 
     @Inject
     public DefaultCharacterCreationInterpreterDelegate(
         CreatureFactory creatureFactory,
         CreatureRepository creatureRepository,
-        CreatureDefinitionRepository creatureDefinitionRepository) {
+        CreatureDefinitionRepository creatureDefinitionRepository,
+        CommService commService) {
 
         this.creatureFactory = creatureFactory;
         this.creatureRepository = creatureRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
+        this.commService = commService;
     }
 
     @Override
@@ -66,12 +74,15 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         connection.setPrimaryState(IN_GAME);
         connection.setSecondaryState(null);
 
-        output.append("[yellow]Welcome, " + connection.getName() + "!");
-
         creature.setConnection(connection);
         creatureRepository.save(creature);
 
+        output.append("[yellow]Welcome, " + connection.getName() + "!");
         output.append(primary.prompt(connection));
+
+        commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game for the first time."), primary, creature);
+
+        LOGGER.info("New player {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
 
         return output;
     }

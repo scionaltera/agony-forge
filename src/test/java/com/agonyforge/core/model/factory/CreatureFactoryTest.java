@@ -16,6 +16,8 @@ import org.mockito.MockitoAnnotations;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static com.agonyforge.core.model.Gender.FEMALE;
+import static com.agonyforge.core.model.Gender.MALE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -56,23 +58,19 @@ public class CreatureFactoryTest {
     public void testBuildNewPlayer() {
         Connection connection = new Connection();
         CreatureDefinition definition = new CreatureDefinition();
-        Creature creature = new Creature();
 
         definition.setPlayer(true);
         definition.setName("Result");
-        definition.setGender(Gender.FEMALE);
+        definition.setGender(FEMALE);
 
-        creature.setDefinition(definition);
-        creature.setConnection(connection);
-        creature.setName(definition.getName());
-        creature.setGender(definition.getGender());
-
-        when(creatureRepository.findByDefinition(eq(definition))).thenReturn(Stream.of(creature));
+        when(creatureRepository.findByDefinition(eq(definition))).thenReturn(Stream.empty());
 
         Creature result = creatureFactory.build(definition, primary, connection);
 
         assertNotNull(result.getConnection());
+        assertEquals(definition, result.getDefinition());
         assertEquals("Result", result.getName());
+        assertEquals(FEMALE, result.getGender());
 
         verify(creatureRepository).save(any());
     }
@@ -97,7 +95,9 @@ public class CreatureFactoryTest {
         Creature result = creatureFactory.build(definition, primary, connection);
 
         assertEquals(connection, result.getConnection());
+        assertEquals(definition, result.getDefinition());
         assertEquals("Bob", result.getName());
+        assertEquals(MALE, result.getGender());
 
         verify(creatureRepository).save(any());
     }

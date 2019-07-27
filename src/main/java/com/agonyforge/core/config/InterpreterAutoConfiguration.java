@@ -65,7 +65,8 @@ public class InterpreterAutoConfiguration {
             sessionRepository,
             connectionRepository,
             creatureDefinitionRepository,
-            creatureFactory
+            creatureFactory,
+            commService
         );
     }
 
@@ -75,7 +76,8 @@ public class InterpreterAutoConfiguration {
         return new DefaultCharacterCreationInterpreterDelegate(
             creatureFactory,
             creatureRepository,
-            creatureDefinitionRepository
+            creatureDefinitionRepository,
+            commService
         );
     }
 
