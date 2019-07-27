@@ -4,8 +4,12 @@ import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
+import com.agonyforge.core.model.CreatureDefinition;
 import com.agonyforge.core.model.CreatureFactory;
+import com.agonyforge.core.repository.ConnectionRepository;
+import com.agonyforge.core.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.service.CommService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -15,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.UUID;
 
+import static com.agonyforge.core.model.Gender.MALE;
 import static com.agonyforge.core.model.PrimaryConnectionState.IN_GAME;
 import static com.agonyforge.core.model.DefaultCharacterCreationConnectionState.DEFAULT;
 import static org.junit.Assert.assertEquals;
@@ -24,7 +29,16 @@ import static org.mockito.Mockito.*;
 
 public class DefaultCharacterCreationInterpreterDelegateTest {
     @Mock
+    private CommService commService;
+
+    @Mock
     private CreatureRepository creatureRepository;
+
+    @Mock
+    private CreatureDefinitionRepository creatureDefinitionRepository;
+
+    @Mock
+    private ConnectionRepository connectionRepository;
 
     @Mock
     private Interpreter primary;
@@ -38,7 +52,7 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        CreatureFactory creatureFactory = new CreatureFactory(creatureRepository);
+        CreatureFactory creatureFactory = new CreatureFactory(commService, creatureRepository, connectionRepository);
 
         when(creatureRepository.save(any())).thenAnswer(invocation -> {
             Creature creature = invocation.getArgument(0);
@@ -50,7 +64,17 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
             return creature;
         });
 
-        delegate = new DefaultCharacterCreationInterpreterDelegate(creatureFactory, creatureRepository);
+        when(creatureDefinitionRepository.save(any())).thenAnswer(invocation -> {
+            CreatureDefinition definition = invocation.getArgument(0);
+
+            if (definition.getId() == null) {
+                definition.setId(UUID.randomUUID());
+            }
+
+            return definition;
+        });
+
+        delegate = new DefaultCharacterCreationInterpreterDelegate(creatureFactory, creatureRepository, creatureDefinitionRepository);
     }
 
     @Test
@@ -71,6 +95,8 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
 
         assertNotNull(result);
         assertEquals(connection, captured.getConnection());
+        assertEquals(connection.getName(), captured.getName());
+        assertEquals(MALE, captured.getGender());
         assertEquals(IN_GAME, connection.getPrimaryState());
         assertEquals(DEFAULT.name(), connection.getSecondaryState());
     }

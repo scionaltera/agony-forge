@@ -5,8 +5,11 @@ import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
+import com.agonyforge.core.model.CreatureDefinition;
 import com.agonyforge.core.model.CreatureFactory;
+import com.agonyforge.core.model.Gender;
 import com.agonyforge.core.repository.ConnectionRepository;
+import com.agonyforge.core.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
 import org.junit.Before;
@@ -55,6 +58,9 @@ public class DefaultLoginInterpreterDelegateTest {
     private CreatureRepository creatureRepository;
 
     @Mock
+    private CreatureDefinitionRepository creatureDefinitionRepository;
+
+    @Mock
     private CommService commService;
 
     @Mock
@@ -76,7 +82,7 @@ public class DefaultLoginInterpreterDelegateTest {
         MockitoAnnotations.initMocks(this);
 
         LoginConfiguration loginConfiguration = new LoginConfigurationBuilder().build();
-        CreatureFactory creatureFactory = new CreatureFactory(creatureRepository);
+        CreatureFactory creatureFactory = new CreatureFactory(commService, creatureRepository, connectionRepository);
 
         when(primary.prompt(any(Connection.class))).thenAnswer(invocation -> {
             Connection connection = invocation.getArgument(0);
@@ -112,15 +118,24 @@ public class DefaultLoginInterpreterDelegateTest {
 
         when(creatureRepository.findByConnection(any(Connection.class))).thenReturn(Optional.of(creature));
 
+        when(creatureDefinitionRepository.save(any())).thenAnswer(invocation -> {
+            CreatureDefinition definition = invocation.getArgument(0);
+
+            if (definition.getId() == null) {
+                definition.setId(UUID.randomUUID());
+            }
+
+            return definition;
+        });
+
         interpreter = new DefaultLoginInterpreterDelegate(
             loginConfiguration,
             userDetailsManager,
             authenticationManager,
             sessionRepository,
             connectionRepository,
-            creatureRepository,
-            creatureFactory,
-            commService);
+            creatureDefinitionRepository,
+            creatureFactory);
     }
 
     @Test
@@ -169,14 +184,25 @@ public class DefaultLoginInterpreterDelegateTest {
         connection.setPrimaryState(LOGIN);
         connection.setSecondaryState(RECONNECT.name());
 
+        CreatureDefinition definition = new CreatureDefinition();
+        definition.setPlayer(true);
+        definition.setName("Dani");
+        definition.setGender(Gender.MALE);
+        definition.setId(UUID.randomUUID());
+
         Creature creature = new Creature();
+        creature.setDefinition(definition);
         creature.setName("Dani");
+        creature.setGender(Gender.MALE);
         creature.setConnection(oldConnection);
 
         Input input = new Input();
         input.setInput("");
 
-        when(creatureRepository.findByConnectionIsNotNull())
+        when(creatureDefinitionRepository.findByPlayerIsTrueAndName(eq("Dani")))
+            .thenReturn(Optional.of(definition));
+
+        when(creatureRepository.findByDefinition(eq(definition)))
             .thenReturn(Stream.of(creature));
 
         doAnswer(invocation -> {
@@ -192,6 +218,7 @@ public class DefaultLoginInterpreterDelegateTest {
         Output result = interpreter.interpret(primary, input, connection);
 
         assertEquals(connection, creature.getConnection());
+        assertNotEquals(oldConnection, creature.getConnection());
         assertEquals("[yellow]Welcome back, Dani!\n\n[default]Dani> ", result.toString());
         assertEquals(DISCONNECTED, oldConnection.getPrimaryState());
         assertEquals(DEFAULT_SECONDARY_STATE, oldConnection.getSecondaryState());
