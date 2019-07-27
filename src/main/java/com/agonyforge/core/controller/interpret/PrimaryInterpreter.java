@@ -13,15 +13,15 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 
 @Component
-public class DefaultPrimaryInterpreter extends BaseInterpreter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrimaryInterpreter.class);
+public class PrimaryInterpreter extends BaseInterpreter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrimaryInterpreter.class);
 
     private LoginInterpreterDelegate loginInterpreter;
     private CharacterCreationInterpreterDelegate characterCreationInterpreterDelegate;
     private InGameInterpreterDelegate inGameInterpreter;
 
     @Inject
-    public DefaultPrimaryInterpreter(
+    public PrimaryInterpreter(
         LoginInterpreterDelegate loginInterpreterDelegate,
         CharacterCreationInterpreterDelegate characterCreationInterpreterDelegate,
         InGameInterpreterDelegate inGameInterpreterDelegate) {

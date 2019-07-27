@@ -17,7 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class DefaultPrimaryInterpreterTest {
+public class PrimaryInterpreterTest {
     @Mock
     private LoginInterpreterDelegate loginInterpreterDelegate;
 
@@ -27,13 +27,13 @@ public class DefaultPrimaryInterpreterTest {
     @Mock
     private InGameInterpreterDelegate inGameInterpreterDelegate;
 
-    private DefaultPrimaryInterpreter primary;
+    private PrimaryInterpreter primary;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        primary = new DefaultPrimaryInterpreter(
+        primary = new PrimaryInterpreter(
             loginInterpreterDelegate,
             characterCreationInterpreterDelegate,
             inGameInterpreterDelegate

@@ -75,7 +75,11 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
             return definition;
         });
 
-        delegate = new DefaultCharacterCreationInterpreterDelegate(creatureFactory, creatureRepository, creatureDefinitionRepository);
+        delegate = new DefaultCharacterCreationInterpreterDelegate(
+            creatureFactory,
+            creatureRepository,
+            creatureDefinitionRepository,
+            commService);
     }
 
     @Test

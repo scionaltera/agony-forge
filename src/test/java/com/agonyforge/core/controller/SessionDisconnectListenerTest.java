@@ -1,7 +1,11 @@
 package com.agonyforge.core.controller;
 
+import com.agonyforge.core.controller.interpret.PrimaryInterpreter;
 import com.agonyforge.core.model.Connection;
+import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.repository.ConnectionRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
+import com.agonyforge.core.service.CommService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -31,6 +35,15 @@ public class SessionDisconnectListenerTest {
     @Mock
     private ConnectionRepository connectionRepository;
 
+    @Mock
+    private CreatureRepository creatureRepository;
+
+    @Mock
+    private PrimaryInterpreter interpreter;
+
+    @Mock
+    private CommService commService;
+
     @Captor
     private ArgumentCaptor<List<Connection>> connectionListCaptor;
 
@@ -41,12 +54,21 @@ public class SessionDisconnectListenerTest {
         MockitoAnnotations.initMocks(this);
 
         Connection connection = new Connection();
+        Creature creature = new Creature();
 
         when(connectionRepository
             .findBySessionId(any()))
             .thenReturn(Optional.of(connection));
 
-        listener = new SessionDisconnectListener(connectionRepository);
+        when(creatureRepository
+            .findByConnection(any()))
+            .thenReturn(Optional.of(creature));
+
+        listener = new SessionDisconnectListener(
+            connectionRepository,
+            creatureRepository,
+            interpreter,
+            commService);
     }
 
     @Test
@@ -56,6 +78,7 @@ public class SessionDisconnectListenerTest {
 
         listener.onApplicationEvent(event);
 
+        verify(commService).echoToWorld(any(), eq(interpreter), any());
         verify(connectionRepository).saveAll(connectionListCaptor.capture());
 
         List<Connection> updated = connectionListCaptor.getValue();
@@ -70,11 +93,12 @@ public class SessionDisconnectListenerTest {
 
         listener.onApplicationEvent(event);
 
+        verify(commService, never()).echoToWorld(any(), eq(interpreter), any());
         verify(connectionRepository, never()).saveAll(anyList());
     }
 
     @Test
-    public void testOnApplicationEventNoCreature() {
+    public void testOnApplicationEventNoConnection() {
         Message<byte[]> message = buildMockMessage(true);
         SessionDisconnectEvent event = new SessionDisconnectEvent("source", message, "ffff", CloseStatus.NORMAL);
 
@@ -84,7 +108,23 @@ public class SessionDisconnectListenerTest {
 
         listener.onApplicationEvent(event);
 
+        verify(commService, never()).echoToWorld(any(), eq(interpreter), any());
         verify(connectionRepository, never()).saveAll(anyList());
+    }
+
+    @Test
+    public void testOnApplicationEventNoCreature() {
+        Message<byte[]> message = buildMockMessage(true);
+        SessionDisconnectEvent event = new SessionDisconnectEvent("source", message, "ffff", CloseStatus.NORMAL);
+
+        when(creatureRepository
+            .findByConnection(any()))
+            .thenReturn(Optional.empty());
+
+        listener.onApplicationEvent(event);
+
+        verify(commService, never()).echoToWorld(any(), eq(interpreter), any());
+        verify(connectionRepository).saveAll(anyList());
     }
 
     private Message<byte[]> buildMockMessage(boolean includeAttributes) {

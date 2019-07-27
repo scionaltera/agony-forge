@@ -5,11 +5,13 @@ import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
+import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
 import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.Gender;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
+import com.agonyforge.core.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,6 +47,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
     private ConnectionRepository connectionRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
     private CreatureFactory creatureFactory;
+    private CommService commService;
 
     public DefaultLoginInterpreterDelegate(
         LoginConfiguration loginConfiguration,
@@ -53,7 +56,8 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         SessionRepository sessionRepository,
         ConnectionRepository connectionRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
-        CreatureFactory creatureFactory) {
+        CreatureFactory creatureFactory,
+        CommService commService) {
 
         this.loginConfiguration = loginConfiguration;
         this.userDetailsManager = userDetailsManager;
@@ -63,11 +67,13 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         this.connectionRepository = connectionRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
         this.creatureFactory = creatureFactory;
+        this.commService = commService;
     }
 
     @Transactional
     @Override
     public Output interpret(Interpreter primary, Input input, Connection connection) {
+        Creature creature;
         Output output = new Output();
         DefaultLoginConnectionState secondaryState = DefaultLoginConnectionState.valueOf(connection.getSecondaryState());
 
@@ -76,9 +82,11 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                 if (!StringUtils.isEmpty(input.toString())) {
                     connection.setSecondaryState(DEFAULT.name());
                 } else {
-                    findOrBuildPlayer(connection.getName(), primary, connection);
+                    creature = findOrBuildPlayer(connection.getName(), primary, connection);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
+                    commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has reconnected."), primary, creature);
+
                     LOGGER.info("Reconnected {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
                 }
                 break;
@@ -100,9 +108,10 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
             case LOGIN_ASK_PASSWORD:
                 try {
                     logUserIn(connection.getName(), input.toString(), connection);
-                    findOrBuildPlayer(connection.getName(), primary, connection);
+                    creature = findOrBuildPlayer(connection.getName(), primary, connection);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
+                    commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game."), primary, creature);
 
                     LOGGER.info("Successful login {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
                 } catch (BadCredentialsException e) {
@@ -160,8 +169,6 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                     logUserIn(connection.getName(), validatePassword(input.toString()), connection);
                     connection.setPrimaryState(CREATION);
                     connection.setSecondaryState(null);
-
-                    LOGGER.info("New player {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
                 } catch (InvalidInputException e) {
                     output.append("[red]" + e.getMessage());
                 } catch (BadCredentialsException e) {
@@ -251,7 +258,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         sessionRepository.save(session);
     }
 
-    private void findOrBuildPlayer(String name, Interpreter primary, Connection connection) {
+    private Creature findOrBuildPlayer(String name, Interpreter primary, Connection connection) {
         CreatureDefinition definition = creatureDefinitionRepository
             .findByPlayerIsTrueAndName(name)
             .orElseGet(() -> {
@@ -265,9 +272,11 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                 return creatureDefinitionRepository.save(def);
             });
 
-        creatureFactory.build(definition, primary, connection);
+        Creature creature = creatureFactory.build(definition, primary, connection);
 
         connection.setPrimaryState(IN_GAME);
         connection.setSecondaryState(null);
+
+        return creature;
     }
 }
