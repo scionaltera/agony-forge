@@ -1,4 +1,4 @@
-package com.agonyforge.core.repository;
+package com.agonyforge.core.model.repository;
 
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;

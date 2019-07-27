@@ -1,8 +1,9 @@
 package com.agonyforge.core.model;
 
+import com.agonyforge.core.controller.interpret.PrimaryConnectionState;
 import org.junit.Test;
 
-import static com.agonyforge.core.model.PrimaryConnectionState.LOGIN;
+import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.LOGIN;
 import static org.junit.Assert.assertEquals;
 
 public class PrimaryConnectionStateTest {

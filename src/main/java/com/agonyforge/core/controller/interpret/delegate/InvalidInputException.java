@@ -1,4 +1,4 @@
-package com.agonyforge.core.controller.interpret;
+package com.agonyforge.core.controller.interpret.delegate;
 
 class InvalidInputException extends Exception {
     InvalidInputException(String message) {

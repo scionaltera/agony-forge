@@ -4,7 +4,7 @@ import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
-import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

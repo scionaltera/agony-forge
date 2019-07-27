@@ -1,4 +1,4 @@
-package com.agonyforge.core.model;
+package com.agonyforge.core.controller.interpret.delegate;
 
 import com.agonyforge.core.model.util.BaseEnumSetConverter;
 import com.agonyforge.core.model.util.PersistentEnum;

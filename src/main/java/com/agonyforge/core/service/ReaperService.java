@@ -2,8 +2,8 @@ package com.agonyforge.core.service;
 
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
-import com.agonyforge.core.repository.ConnectionRepository;
-import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.model.repository.ConnectionRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;

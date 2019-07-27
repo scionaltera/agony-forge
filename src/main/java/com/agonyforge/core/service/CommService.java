@@ -3,7 +3,7 @@ package com.agonyforge.core.service;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Creature;
-import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
