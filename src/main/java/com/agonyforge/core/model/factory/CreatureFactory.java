@@ -1,15 +1,18 @@
-package com.agonyforge.core.model;
+package com.agonyforge.core.model.factory;
 
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
-import com.agonyforge.core.repository.ConnectionRepository;
-import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.model.Connection;
+import com.agonyforge.core.model.Creature;
+import com.agonyforge.core.model.CreatureDefinition;
+import com.agonyforge.core.model.repository.ConnectionRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
-import static com.agonyforge.core.model.PrimaryConnectionState.DISCONNECTED;
+import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.DISCONNECTED;
 
 @Component
 public class CreatureFactory {

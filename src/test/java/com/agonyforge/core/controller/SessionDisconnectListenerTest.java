@@ -1,7 +1,7 @@
 package com.agonyforge.core.controller;
 
 import com.agonyforge.core.model.Connection;
-import com.agonyforge.core.repository.ConnectionRepository;
+import com.agonyforge.core.model.repository.ConnectionRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

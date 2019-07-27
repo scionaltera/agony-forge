@@ -1,14 +1,15 @@
-package com.agonyforge.core.controller.interpret;
+package com.agonyforge.core.controller.interpret.delegate;
 
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
+import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
-import com.agonyforge.core.model.CreatureFactory;
-import com.agonyforge.core.repository.ConnectionRepository;
-import com.agonyforge.core.repository.CreatureDefinitionRepository;
-import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.model.factory.CreatureFactory;
+import com.agonyforge.core.model.repository.ConnectionRepository;
+import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,8 +21,8 @@ import org.mockito.MockitoAnnotations;
 import java.util.UUID;
 
 import static com.agonyforge.core.model.Gender.MALE;
-import static com.agonyforge.core.model.PrimaryConnectionState.IN_GAME;
-import static com.agonyforge.core.model.DefaultCharacterCreationConnectionState.DEFAULT;
+import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.IN_GAME;
+import static com.agonyforge.core.controller.interpret.delegate.DefaultCharacterCreationConnectionState.DEFAULT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;

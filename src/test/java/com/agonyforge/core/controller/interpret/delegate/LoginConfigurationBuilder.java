@@ -1,4 +1,4 @@
-package com.agonyforge.core.controller.interpret;
+package com.agonyforge.core.controller.interpret.delegate;
 
 import com.agonyforge.core.config.LoginConfiguration;
 

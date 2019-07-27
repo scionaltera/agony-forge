@@ -3,8 +3,8 @@ package com.agonyforge.core.controller;
 import com.agonyforge.core.controller.greeting.GreetingLoader;
 import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
-import com.agonyforge.core.model.PrimaryConnectionState;
-import com.agonyforge.core.repository.ConnectionRepository;
+import com.agonyforge.core.controller.interpret.PrimaryConnectionState;
+import com.agonyforge.core.model.repository.ConnectionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;
@@ -27,7 +27,7 @@ import java.util.UUID;
 
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_CONNECTION_ID_KEY;
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP_KEY;
-import static com.agonyforge.core.model.DefaultLoginConnectionState.RECONNECT;
+import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.RECONNECT;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import static org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME;
 

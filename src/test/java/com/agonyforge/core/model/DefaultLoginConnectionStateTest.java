@@ -1,8 +1,9 @@
 package com.agonyforge.core.model;
 
+import com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState;
 import org.junit.Test;
 
-import static com.agonyforge.core.model.DefaultLoginConnectionState.DEFAULT;
+import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.DEFAULT;
 import static org.junit.Assert.assertEquals;
 
 public class DefaultLoginConnectionStateTest {

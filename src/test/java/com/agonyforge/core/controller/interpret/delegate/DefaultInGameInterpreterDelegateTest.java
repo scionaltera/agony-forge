@@ -1,11 +1,12 @@
-package com.agonyforge.core.controller.interpret;
+package com.agonyforge.core.controller.interpret.delegate;
 
 import com.agonyforge.core.config.LoginConfiguration;
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
+import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
-import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
 import org.junit.Before;
 import org.junit.Test;

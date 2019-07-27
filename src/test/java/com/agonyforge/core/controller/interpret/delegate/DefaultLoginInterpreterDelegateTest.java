@@ -1,16 +1,17 @@
-package com.agonyforge.core.controller.interpret;
+package com.agonyforge.core.controller.interpret.delegate;
 
 import com.agonyforge.core.config.LoginConfiguration;
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
+import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
-import com.agonyforge.core.model.CreatureFactory;
+import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.Gender;
-import com.agonyforge.core.repository.ConnectionRepository;
-import com.agonyforge.core.repository.CreatureDefinitionRepository;
-import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.model.repository.ConnectionRepository;
+import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +35,8 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.agonyforge.core.model.Connection.DEFAULT_SECONDARY_STATE;
-import static com.agonyforge.core.model.DefaultLoginConnectionState.*;
-import static com.agonyforge.core.model.PrimaryConnectionState.*;
+import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.*;
+import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;

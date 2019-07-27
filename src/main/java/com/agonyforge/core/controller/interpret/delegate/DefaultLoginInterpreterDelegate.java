@@ -1,15 +1,15 @@
-package com.agonyforge.core.controller.interpret;
+package com.agonyforge.core.controller.interpret.delegate;
 
 import com.agonyforge.core.config.LoginConfiguration;
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
+import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.CreatureDefinition;
-import com.agonyforge.core.model.CreatureFactory;
-import com.agonyforge.core.model.DefaultLoginConnectionState;
+import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.Gender;
-import com.agonyforge.core.repository.ConnectionRepository;
-import com.agonyforge.core.repository.CreatureDefinitionRepository;
+import com.agonyforge.core.model.repository.ConnectionRepository;
+import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,8 +30,8 @@ import org.springframework.util.StringUtils;
 import javax.transaction.Transactional;
 import java.util.Collections;
 
-import static com.agonyforge.core.model.DefaultLoginConnectionState.*;
-import static com.agonyforge.core.model.PrimaryConnectionState.*;
+import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.*;
+import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.*;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate {

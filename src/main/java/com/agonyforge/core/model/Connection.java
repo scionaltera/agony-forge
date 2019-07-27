@@ -1,5 +1,6 @@
 package com.agonyforge.core.model;
 
+import com.agonyforge.core.controller.interpret.PrimaryConnectionState;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;

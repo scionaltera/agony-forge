@@ -1,7 +1,7 @@
 package com.agonyforge.core.controller;
 
 import com.agonyforge.core.model.Connection;
-import com.agonyforge.core.repository.ConnectionRepository;
+import com.agonyforge.core.model.repository.ConnectionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;

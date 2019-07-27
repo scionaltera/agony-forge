@@ -1,15 +1,15 @@
 package com.agonyforge.core.config;
 
-import com.agonyforge.core.controller.interpret.CharacterCreationInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.DefaultCharacterCreationInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.DefaultInGameInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.DefaultLoginInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.InGameInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.LoginInterpreterDelegate;
-import com.agonyforge.core.model.CreatureFactory;
-import com.agonyforge.core.repository.ConnectionRepository;
-import com.agonyforge.core.repository.CreatureDefinitionRepository;
-import com.agonyforge.core.repository.CreatureRepository;
+import com.agonyforge.core.controller.interpret.delegate.CharacterCreationInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.DefaultCharacterCreationInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.DefaultInGameInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.DefaultLoginInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.InGameInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.LoginInterpreterDelegate;
+import com.agonyforge.core.model.factory.CreatureFactory;
+import com.agonyforge.core.model.repository.ConnectionRepository;
+import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
