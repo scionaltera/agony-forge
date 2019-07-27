@@ -1,11 +1,14 @@
 package com.agonyforge.core.config;
 
+import com.agonyforge.core.controller.interpret.CharacterCreationInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.DefaultCharacterCreationInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.DefaultInGameInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.DefaultLoginInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.InGameInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.LoginInterpreterDelegate;
 import com.agonyforge.core.model.CreatureFactory;
 import com.agonyforge.core.repository.ConnectionRepository;
+import com.agonyforge.core.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,6 +28,7 @@ public class InterpreterAutoConfiguration {
     private SessionRepository sessionRepository;
     private ConnectionRepository connectionRepository;
     private CreatureRepository creatureRepository;
+    private CreatureDefinitionRepository creatureDefinitionRepository;
     private CreatureFactory creatureFactory;
     private CommService commService;
 
@@ -36,6 +40,7 @@ public class InterpreterAutoConfiguration {
         SessionRepository sessionRepository,
         ConnectionRepository connectionRepository,
         CreatureRepository creatureRepository,
+        CreatureDefinitionRepository creatureDefinitionRepository,
         CreatureFactory creatureFactory,
         CommService commService) {
 
@@ -45,6 +50,7 @@ public class InterpreterAutoConfiguration {
         this.sessionRepository = sessionRepository;
         this.connectionRepository = connectionRepository;
         this.creatureRepository = creatureRepository;
+        this.creatureDefinitionRepository = creatureDefinitionRepository;
         this.creatureFactory = creatureFactory;
         this.commService = commService;
     }
@@ -58,9 +64,18 @@ public class InterpreterAutoConfiguration {
             authenticationManager,
             sessionRepository,
             connectionRepository,
-            creatureRepository,
+            creatureDefinitionRepository,
+            creatureFactory
+        );
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(CharacterCreationInterpreterDelegate.class)
+    public CharacterCreationInterpreterDelegate characterCreationInterpreterDelegate() {
+        return new DefaultCharacterCreationInterpreterDelegate(
             creatureFactory,
-            commService
+            creatureRepository,
+            creatureDefinitionRepository
         );
     }
 

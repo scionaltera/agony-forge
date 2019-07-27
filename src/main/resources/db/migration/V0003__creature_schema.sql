@@ -11,10 +11,21 @@ CREATE TABLE connection (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB CHARACTER SET=utf8mb4, COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE creature_definition (
+  id BINARY(16) NOT NULL,
+  player TINYINT(1) NOT NULL DEFAULT 0,
+  name VARCHAR(191) NOT NULL,
+  gender VARCHAR(10) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET=utf8mb4, COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE creature (
   id BINARY(16) NOT NULL,
   name VARCHAR(191) NOT NULL,
+  gender VARCHAR(10) NOT NULL,
+  definition_id BINARY(16) NOT NULL,
   connection_id BINARY(16) NOT NULL,
   PRIMARY KEY (id),
-  CONSTRAINT creature_connection_fk FOREIGN KEY (connection_id) REFERENCES connection (id)
+  CONSTRAINT creature_connection_fk FOREIGN KEY (connection_id) REFERENCES connection (id),
+  CONSTRAINT creature_definition_fk FOREIGN KEY (definition_id) REFERENCES creature_definition (id)
 ) ENGINE=InnoDB CHARACTER SET=utf8mb4, COLLATE=utf8mb4_unicode_ci;

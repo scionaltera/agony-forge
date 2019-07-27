@@ -2,36 +2,28 @@ package com.agonyforge.core.model;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class Creature {
+public class CreatureDefinition {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @ManyToOne
-    private CreatureDefinition definition;
-
+    private boolean player;
     private String name;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    private Connection connection;
 
     public UUID getId() {
         return id;
@@ -41,12 +33,12 @@ public class Creature {
         this.id = id;
     }
 
-    public CreatureDefinition getDefinition() {
-        return definition;
+    public Boolean getPlayer() {
+        return player;
     }
 
-    public void setDefinition(CreatureDefinition definition) {
-        this.definition = definition;
+    public void setPlayer(Boolean player) {
+        this.player = player;
     }
 
     public String getName() {
@@ -65,20 +57,12 @@ public class Creature {
         this.gender = gender;
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Creature)) return false;
-        Creature creature = (Creature) o;
-        return Objects.equals(getId(), creature.getId());
+        if (!(o instanceof CreatureDefinition)) return false;
+        CreatureDefinition that = (CreatureDefinition) o;
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
