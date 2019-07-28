@@ -74,7 +74,6 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         connection.setPrimaryState(IN_GAME);
         connection.setSecondaryState(null);
 
-        creature.setConnection(connection);
         creatureRepository.save(creature);
 
         output.append("[yellow]Welcome, " + connection.getName() + "!");

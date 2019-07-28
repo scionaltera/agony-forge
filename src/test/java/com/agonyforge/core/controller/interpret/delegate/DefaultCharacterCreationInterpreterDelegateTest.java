@@ -20,11 +20,10 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.UUID;
 
-import static com.agonyforge.core.model.Gender.MALE;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.IN_GAME;
 import static com.agonyforge.core.controller.interpret.delegate.DefaultCharacterCreationConnectionState.DEFAULT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static com.agonyforge.core.model.Gender.*;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -46,6 +45,9 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
 
     @Captor
     private ArgumentCaptor<Creature> creatureArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<CreatureDefinition> creatureDefinitionArgumentCaptor;
 
     private DefaultCharacterCreationInterpreterDelegate delegate;
 
@@ -94,16 +96,91 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
 
         Output result = delegate.interpret(primary, input, connection);
 
+        verify(creatureDefinitionRepository, atLeastOnce()).save(creatureDefinitionArgumentCaptor.capture());
         verify(creatureRepository, atLeastOnce()).save(creatureArgumentCaptor.capture());
+
+        assertNotNull(result);
+
+        CreatureDefinition capturedDef = creatureDefinitionArgumentCaptor.getValue();
+
+        assertTrue(capturedDef.getPlayer());
 
         Creature captured = creatureArgumentCaptor.getValue();
 
-        assertNotNull(result);
         assertEquals(connection, captured.getConnection());
         assertEquals(connection.getName(), captured.getName());
+
         assertEquals(MALE, captured.getGender());
         assertEquals(IN_GAME, connection.getPrimaryState());
         assertEquals(DEFAULT.name(), connection.getSecondaryState());
+
+        verify(commService).echoToWorld(any(), eq(primary), eq(captured));
+    }
+
+    @Test
+    public void testFemaleGender() {
+        Input input = new Input();
+        Connection connection = new Connection();
+
+        input.setInput("f");
+        connection.setName("Bethany");
+
+        when(primary.prompt(any())).thenAnswer(i -> delegate.prompt(primary, connection));
+
+        Output result = delegate.interpret(primary, input, connection);
+
+        assertNotNull(result);
+
+        verify(creatureDefinitionRepository, atLeastOnce()).save(creatureDefinitionArgumentCaptor.capture());
+        verify(creatureRepository, atLeastOnce()).save(creatureArgumentCaptor.capture());
+
+        CreatureDefinition capturedDef = creatureDefinitionArgumentCaptor.getValue();
+        Creature captured = creatureArgumentCaptor.getValue();
+
+        assertEquals(FEMALE, capturedDef.getGender());
+        assertEquals(FEMALE, captured.getGender());
+    }
+
+    @Test
+    public void testNeutralGender() {
+        Input input = new Input();
+        Connection connection = new Connection();
+
+        input.setInput("n");
+        connection.setName("Pat");
+
+        when(primary.prompt(any())).thenAnswer(i -> delegate.prompt(primary, connection));
+
+        Output result = delegate.interpret(primary, input, connection);
+
+        assertNotNull(result);
+
+        verify(creatureDefinitionRepository, atLeastOnce()).save(creatureDefinitionArgumentCaptor.capture());
+        verify(creatureRepository, atLeastOnce()).save(creatureArgumentCaptor.capture());
+
+        CreatureDefinition capturedDef = creatureDefinitionArgumentCaptor.getValue();
+        Creature captured = creatureArgumentCaptor.getValue();
+
+        assertEquals(NEUTRAL, capturedDef.getGender());
+        assertEquals(NEUTRAL, captured.getGender());
+    }
+
+    @Test
+    public void testInvalidGender() {
+        Input input = new Input();
+        Connection connection = new Connection();
+
+        input.setInput("t");
+        connection.setName("Invalid");
+
+        when(primary.prompt(any())).thenAnswer(i -> delegate.prompt(primary, connection));
+
+        Output result = delegate.interpret(primary, input, connection);
+
+        assertNotNull(result);
+
+        verify(creatureDefinitionRepository, never()).save(any());
+        verify(creatureRepository, never()).save(any());
     }
 
     @Test
