@@ -8,8 +8,8 @@ import com.agonyforge.core.model.Gender;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -18,8 +18,8 @@ import java.util.stream.Stream;
 
 import static com.agonyforge.core.model.Gender.FEMALE;
 import static com.agonyforge.core.model.Gender.MALE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class CreatureFactoryTest {
@@ -37,7 +37,7 @@ public class CreatureFactoryTest {
 
     private CreatureFactory creatureFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 

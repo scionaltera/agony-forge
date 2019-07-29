@@ -1,6 +1,6 @@
 package com.agonyforge.core.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class GenderTest {
     @Test

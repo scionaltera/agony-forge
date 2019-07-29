@@ -4,8 +4,8 @@ import com.agonyforge.core.controller.greeting.GreetingLoader;
 import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.repository.ConnectionRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -29,7 +29,7 @@ import static com.agonyforge.core.controller.ControllerConstants.AGONY_CONNECTIO
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP_KEY;
 import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.RECONNECT;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.LOGIN;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -56,7 +56,7 @@ public class WebSocketControllerTest {
 
     private WebSocketController controller;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 

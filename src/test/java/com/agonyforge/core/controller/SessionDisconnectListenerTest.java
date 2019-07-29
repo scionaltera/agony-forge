@@ -6,8 +6,8 @@ import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP_KEY;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -49,7 +49,7 @@ public class SessionDisconnectListenerTest {
 
     private SessionDisconnectListener listener;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 

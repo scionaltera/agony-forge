@@ -11,8 +11,8 @@ import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -23,7 +23,7 @@ import java.util.UUID;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.IN_GAME;
 import static com.agonyforge.core.controller.interpret.delegate.DefaultCharacterCreationConnectionState.DEFAULT;
 import static com.agonyforge.core.model.Gender.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -51,7 +51,7 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
 
     private DefaultCharacterCreationInterpreterDelegate delegate;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 

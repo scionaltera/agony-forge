@@ -13,8 +13,8 @@ import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 import static com.agonyforge.core.model.Connection.DEFAULT_SECONDARY_STATE;
 import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.*;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
@@ -78,7 +78,7 @@ public class DefaultLoginInterpreterDelegateTest {
 
     private DefaultLoginInterpreterDelegate interpreter;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 

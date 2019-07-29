@@ -1,7 +1,7 @@
 package com.agonyforge.core.controller;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
@@ -16,8 +16,8 @@ import java.util.Map;
 
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP_KEY;
 import static com.agonyforge.core.controller.RemoteIpHandshakeInterceptor.X_FORWARDED_FOR_HEADER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +36,7 @@ public class RemoteIpHandshakeInterceptorTest {
 
     private RemoteIpHandshakeInterceptor interceptor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
