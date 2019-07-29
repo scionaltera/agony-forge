@@ -4,8 +4,8 @@ import com.agonyforge.core.controller.greeting.GreetingLoader;
 import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.repository.ConnectionRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -29,14 +29,14 @@ import static com.agonyforge.core.controller.ControllerConstants.AGONY_CONNECTIO
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP_KEY;
 import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.RECONNECT;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.LOGIN;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import static org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME;
 
-public class WebSocketControllerTest {
+class WebSocketControllerTest {
     @Mock
     private ConnectionRepository connectionRepository;
 
@@ -56,8 +56,8 @@ public class WebSocketControllerTest {
 
     private WebSocketController controller;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         GreetingLoader loader = new GreetingLoader();
@@ -87,7 +87,7 @@ public class WebSocketControllerTest {
     }
 
     @Test
-    public void testOnSubscribe() {
+    void testOnSubscribe() {
         Message<byte[]> message = buildMockMessage(true, false);
 
         Output o1 = new Output(
@@ -110,7 +110,7 @@ public class WebSocketControllerTest {
     }
 
     @Test
-    public void testOnSubscribeReconnect() {
+    void testOnSubscribeReconnect() {
         Message<byte[]> message = buildMockMessage(true, false);
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
@@ -134,14 +134,14 @@ public class WebSocketControllerTest {
     }
 
     @Test
-    public void testOnSubscribeNoAttributes() {
+    void testOnSubscribeNoAttributes() {
         Message<byte[]> message = buildMockMessage(false, false);
 
         assertEquals(new Output("[red]Something went wrong! The error has been logged."), controller.onSubscribe(principal, message));
     }
 
     @Test
-    public void testOnInput() {
+    void testOnInput() {
         Message<byte[]> message = buildMockMessage(true, true);
         Input input = new Input();
 
@@ -151,7 +151,7 @@ public class WebSocketControllerTest {
     }
 
     @Test
-    public void testOnInputNoConnection() {
+    void testOnInputNoConnection() {
         Message<byte[]> message = buildMockMessage(true, true);
         Input input = new Input();
 
@@ -168,7 +168,7 @@ public class WebSocketControllerTest {
     }
 
     @Test
-    public void testOnInputNoAttributes() {
+    void testOnInputNoAttributes() {
         Message<byte[]> message = buildMockMessage(false, true);
         Input input = new Input();
 

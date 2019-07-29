@@ -1,5 +1,5 @@
 group 'com.agonyforge'
-version '0.2.0'
+version '0.3.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -19,12 +19,16 @@ buildscript {
         jcenter()
     }
 
+    configurations.maybeCreate("pitest")
+
     dependencies {
-        classpath group: 'org.owasp', name: 'dependency-check-gradle', version: '5.0.0-M3.1'
+        classpath group: 'org.owasp', name: 'dependency-check-gradle', version: '5.2.0'
         classpath group: 'org.kordamp.gradle', name: 'stats-gradle-plugin', version: '0.2.2'
         classpath group: 'se.transmode.gradle', name: 'gradle-docker', version: '1.2'
-        classpath group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.1.5.RELEASE'
+        classpath group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.1.6.RELEASE'
         classpath group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: '1.4.0'
+
+        pitest group: 'org.pitest', name: 'pitest-junit5-plugin', version: '0.7'
     }
 }
 
@@ -40,7 +44,7 @@ dependencies {
     compile group: 'javax.inject', name: 'javax.inject', version: '1'
     compile group: 'javax.interceptor', name: 'javax.interceptor-api', version: '1.2.2'
 
-    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.16'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
     compile group: 'org.flywaydb', name: 'flyway-core', version: '5.2.4'
 
     compile group: 'org.springframework.boot', name: 'spring-boot-starter'
@@ -55,7 +59,7 @@ dependencies {
     compile group: 'org.springframework.session', name: 'spring-session-jdbc'
 
     // required for using ActiveMQ as a message broker
-    compile group: 'io.projectreactor.netty', name: 'reactor-netty', version: '0.8.8.RELEASE'
+    compile group: 'io.projectreactor.netty', name: 'reactor-netty', version: '0.8.9.RELEASE'
 
     compile group: 'org.webjars', name: 'webjars-locator-core', version: '0.37'
     compile group: 'org.webjars', name: 'jquery', version: '3.4.1'
@@ -65,8 +69,8 @@ dependencies {
 
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.28.2'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.1'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '3.0.0'
 }
 
 task buildDocker(type: Docker) {
@@ -87,6 +91,7 @@ task buildDocker(type: Docker) {
 build.dependsOn project.tasks.buildDocker
 
 pitest {
+    testPlugin = "junit5"
     excludedClasses = [
         'com.agonyforge.core.AgonyForge',
         'com.agonyforge.core.config.*'

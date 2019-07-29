@@ -6,18 +6,18 @@ import com.agonyforge.core.controller.interpret.delegate.CharacterCreationInterp
 import com.agonyforge.core.controller.interpret.delegate.InGameInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.delegate.LoginInterpreterDelegate;
 import com.agonyforge.core.model.Connection;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class PrimaryInterpreterTest {
+class PrimaryInterpreterTest {
     @Mock
     private LoginInterpreterDelegate loginInterpreterDelegate;
 
@@ -29,8 +29,8 @@ public class PrimaryInterpreterTest {
 
     private PrimaryInterpreter primary;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         primary = new PrimaryInterpreter(
@@ -52,7 +52,7 @@ public class PrimaryInterpreterTest {
     }
 
     @Test
-    public void testInterpretLogin() {
+    void testInterpretLogin() {
         Connection connection = new Connection();
         Input input = new Input();
 
@@ -68,7 +68,7 @@ public class PrimaryInterpreterTest {
     }
 
     @Test
-    public void testInterpretCreate() {
+    void testInterpretCreate() {
         Connection connection = new Connection();
         Input input = new Input();
 
@@ -84,7 +84,7 @@ public class PrimaryInterpreterTest {
     }
 
     @Test
-    public void testInterpretInGame() {
+    void testInterpretInGame() {
         Connection connection = new Connection();
         Input input = new Input();
 
@@ -100,7 +100,7 @@ public class PrimaryInterpreterTest {
     }
 
     @Test
-    public void testInterpretDisconnected() {
+    void testInterpretDisconnected() {
         Connection connection = new Connection();
         Input input = new Input();
 
@@ -115,7 +115,7 @@ public class PrimaryInterpreterTest {
     }
 
     @Test
-    public void testPromptLogin() {
+    void testPromptLogin() {
         Connection connection = new Connection();
 
         connection.setPrimaryState(LOGIN);
@@ -129,7 +129,7 @@ public class PrimaryInterpreterTest {
     }
 
     @Test
-    public void testPromptCreate() {
+    void testPromptCreate() {
         Connection connection = new Connection();
 
         connection.setPrimaryState(CREATION);
@@ -143,7 +143,7 @@ public class PrimaryInterpreterTest {
     }
 
     @Test
-    public void testPromptInGame() {
+    void testPromptInGame() {
         Connection connection = new Connection();
 
         connection.setPrimaryState(IN_GAME);
@@ -157,7 +157,7 @@ public class PrimaryInterpreterTest {
     }
 
     @Test
-    public void testPromptDisconnected() {
+    void testPromptDisconnected() {
         Connection connection = new Connection();
 
         connection.setPrimaryState(DISCONNECTED);

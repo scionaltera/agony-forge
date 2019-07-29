@@ -1,20 +1,20 @@
 package com.agonyforge.core.controller;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PublicControllerTest {
+class PublicControllerTest {
     private PublicController controller;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         controller = new PublicController();
     }
 
     @Test
-    public void testPlayController() {
+    void testPlayController() {
         assertEquals("play", controller.play());
     }
 }

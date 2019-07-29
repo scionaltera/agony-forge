@@ -1,10 +1,10 @@
 package com.agonyforge.core.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class GenderTest {
+class GenderTest {
     @Test
-    public void testConverter() {
+    void testConverter() {
         new Gender.Converter();
     }
 }

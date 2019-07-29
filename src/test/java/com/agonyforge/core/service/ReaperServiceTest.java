@@ -4,8 +4,8 @@ import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -15,11 +15,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-public class ReaperServiceTest {
+class ReaperServiceTest {
     @Mock
     private CreatureRepository creatureRepository;
 
@@ -34,8 +34,8 @@ public class ReaperServiceTest {
 
     private ReaperService reaperService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         Connection dead1c = new Connection();
@@ -65,7 +65,7 @@ public class ReaperServiceTest {
     }
 
     @Test
-    public void testReap() {
+    void testReap() {
         reaperService.reapTheDead();
 
         verify(creatureRepository).deleteInBatch(creatureListCaptor.capture());
@@ -73,6 +73,7 @@ public class ReaperServiceTest {
 
         List<Creature> deletedCreatures = creatureListCaptor.getValue();
         List<Connection> deletedConnections = connectionListCaptor.getValue();
+
 
         assertEquals(2, deletedCreatures.size());
         assertEquals(1, deletedConnections.size());
@@ -82,7 +83,7 @@ public class ReaperServiceTest {
     }
 
     @Test
-    public void testEmptyReap() {
+    void testEmptyReap() {
         when(creatureRepository.findByConnectionDisconnectedIsNotNull())
             .thenReturn(Stream.empty());
         when(connectionRepository.findByDisconnectedIsNotNull())

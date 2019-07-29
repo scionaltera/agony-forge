@@ -1,22 +1,22 @@
 package com.agonyforge.core.controller.greeting;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GreetingLoaderTest {
+class GreetingLoaderTest {
     private GreetingLoader loader;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         loader = new GreetingLoader();
     }
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         List<String> greeting = loader.load();
 
         assertEquals("[yellow]Hello&nbsp;world!", greeting.get(0));

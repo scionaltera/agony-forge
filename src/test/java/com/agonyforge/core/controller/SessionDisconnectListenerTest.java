@@ -6,8 +6,8 @@ import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -25,13 +25,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP_KEY;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME;
 
-public class SessionDisconnectListenerTest {
+class SessionDisconnectListenerTest {
     @Mock
     private ConnectionRepository connectionRepository;
 
@@ -49,8 +49,8 @@ public class SessionDisconnectListenerTest {
 
     private SessionDisconnectListener listener;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         Connection connection = new Connection();
@@ -72,7 +72,7 @@ public class SessionDisconnectListenerTest {
     }
 
     @Test
-    public void testOnApplicationEvent() {
+    void testOnApplicationEvent() {
         Message<byte[]> message = buildMockMessage(true);
         SessionDisconnectEvent event = new SessionDisconnectEvent("source", message, "ffff", CloseStatus.NORMAL);
 
@@ -87,7 +87,7 @@ public class SessionDisconnectListenerTest {
     }
 
     @Test
-    public void testOnApplicationEventNoSessionAttributes() {
+    void testOnApplicationEventNoSessionAttributes() {
         Message<byte[]> message = buildMockMessage(false);
         SessionDisconnectEvent event = new SessionDisconnectEvent("source", message, "ffff", CloseStatus.NORMAL);
 
@@ -98,7 +98,7 @@ public class SessionDisconnectListenerTest {
     }
 
     @Test
-    public void testOnApplicationEventNoConnection() {
+    void testOnApplicationEventNoConnection() {
         Message<byte[]> message = buildMockMessage(true);
         SessionDisconnectEvent event = new SessionDisconnectEvent("source", message, "ffff", CloseStatus.NORMAL);
 
@@ -113,7 +113,7 @@ public class SessionDisconnectListenerTest {
     }
 
     @Test
-    public void testOnApplicationEventNoCreature() {
+    void testOnApplicationEventNoCreature() {
         Message<byte[]> message = buildMockMessage(true);
         SessionDisconnectEvent event = new SessionDisconnectEvent("source", message, "ffff", CloseStatus.NORMAL);
 

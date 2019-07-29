@@ -8,21 +8,21 @@ import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DefaultInGameInterpreterDelegateTest {
+class DefaultInGameInterpreterDelegateTest {
     @Mock
     private CreatureRepository creatureRepository;
 
@@ -35,8 +35,8 @@ public class DefaultInGameInterpreterDelegateTest {
     private DefaultInGameInterpreterDelegate interpreter;
     private Creature me = new Creature();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         LoginConfiguration loginConfiguration = new LoginConfigurationBuilder().build();
@@ -58,7 +58,7 @@ public class DefaultInGameInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpret() {
+    void testInterpret() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -73,7 +73,7 @@ public class DefaultInGameInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretNoCreature() {
+    void testInterpretNoCreature() {
         Input input = new Input();
         Connection connection = new Connection();
 
