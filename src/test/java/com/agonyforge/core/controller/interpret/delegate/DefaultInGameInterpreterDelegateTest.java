@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DefaultInGameInterpreterDelegateTest {
+class DefaultInGameInterpreterDelegateTest {
     @Mock
     private CreatureRepository creatureRepository;
 
@@ -36,7 +36,7 @@ public class DefaultInGameInterpreterDelegateTest {
     private Creature me = new Creature();
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         LoginConfiguration loginConfiguration = new LoginConfigurationBuilder().build();
@@ -58,7 +58,7 @@ public class DefaultInGameInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpret() {
+    void testInterpret() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -73,7 +73,7 @@ public class DefaultInGameInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretNoCreature() {
+    void testInterpretNoCreature() {
         Input input = new Input();
         Connection connection = new Connection();
 

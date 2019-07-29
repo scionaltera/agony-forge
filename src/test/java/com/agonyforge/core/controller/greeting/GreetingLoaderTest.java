@@ -7,16 +7,16 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GreetingLoaderTest {
+class GreetingLoaderTest {
     private GreetingLoader loader;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         loader = new GreetingLoader();
     }
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         List<String> greeting = loader.load();
 
         assertEquals("[yellow]Hello&nbsp;world!", greeting.get(0));

@@ -5,16 +5,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PublicControllerTest {
+class PublicControllerTest {
     private PublicController controller;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         controller = new PublicController();
     }
 
     @Test
-    public void testPlayController() {
+    void testPlayController() {
         assertEquals("play", controller.play());
     }
 }

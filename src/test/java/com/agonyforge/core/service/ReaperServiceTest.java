@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-public class ReaperServiceTest {
+class ReaperServiceTest {
     @Mock
     private CreatureRepository creatureRepository;
 
@@ -35,7 +35,7 @@ public class ReaperServiceTest {
     private ReaperService reaperService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         Connection dead1c = new Connection();
@@ -65,7 +65,7 @@ public class ReaperServiceTest {
     }
 
     @Test
-    public void testReap() {
+    void testReap() {
         reaperService.reapTheDead();
 
         verify(creatureRepository).deleteInBatch(creatureListCaptor.capture());
@@ -83,7 +83,7 @@ public class ReaperServiceTest {
     }
 
     @Test
-    public void testEmptyReap() {
+    void testEmptyReap() {
         when(creatureRepository.findByConnectionDisconnectedIsNotNull())
             .thenReturn(Stream.empty());
         when(connectionRepository.findByDisconnectedIsNotNull())

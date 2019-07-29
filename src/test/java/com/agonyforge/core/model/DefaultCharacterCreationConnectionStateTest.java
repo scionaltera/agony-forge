@@ -6,19 +6,19 @@ import org.junit.jupiter.api.Test;
 import static com.agonyforge.core.controller.interpret.delegate.DefaultCharacterCreationConnectionState.DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DefaultCharacterCreationConnectionStateTest {
+class DefaultCharacterCreationConnectionStateTest {
     @Test
-    public void testIndex() {
+    void testIndex() {
         assertEquals(0, DEFAULT.getIndex());
     }
 
     @Test
-    public void testProperty() {
+    void testProperty() {
         assertEquals("askGender", DEFAULT.toProperty());
     }
 
     @Test
-    public void testConverter() {
+    void testConverter() {
         new DefaultCharacterCreationConnectionState.Converter();
     }
 }

@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import static org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME;
 
-public class WebSocketControllerTest {
+class WebSocketControllerTest {
     @Mock
     private ConnectionRepository connectionRepository;
 
@@ -57,7 +57,7 @@ public class WebSocketControllerTest {
     private WebSocketController controller;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         GreetingLoader loader = new GreetingLoader();
@@ -87,7 +87,7 @@ public class WebSocketControllerTest {
     }
 
     @Test
-    public void testOnSubscribe() {
+    void testOnSubscribe() {
         Message<byte[]> message = buildMockMessage(true, false);
 
         Output o1 = new Output(
@@ -110,7 +110,7 @@ public class WebSocketControllerTest {
     }
 
     @Test
-    public void testOnSubscribeReconnect() {
+    void testOnSubscribeReconnect() {
         Message<byte[]> message = buildMockMessage(true, false);
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
@@ -134,14 +134,14 @@ public class WebSocketControllerTest {
     }
 
     @Test
-    public void testOnSubscribeNoAttributes() {
+    void testOnSubscribeNoAttributes() {
         Message<byte[]> message = buildMockMessage(false, false);
 
         assertEquals(new Output("[red]Something went wrong! The error has been logged."), controller.onSubscribe(principal, message));
     }
 
     @Test
-    public void testOnInput() {
+    void testOnInput() {
         Message<byte[]> message = buildMockMessage(true, true);
         Input input = new Input();
 
@@ -151,7 +151,7 @@ public class WebSocketControllerTest {
     }
 
     @Test
-    public void testOnInputNoConnection() {
+    void testOnInputNoConnection() {
         Message<byte[]> message = buildMockMessage(true, true);
         Input input = new Input();
 
@@ -168,7 +168,7 @@ public class WebSocketControllerTest {
     }
 
     @Test
-    public void testOnInputNoAttributes() {
+    void testOnInputNoAttributes() {
         Message<byte[]> message = buildMockMessage(false, true);
         Input input = new Input();
 

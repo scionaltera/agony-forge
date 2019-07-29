@@ -42,7 +42,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
-public class DefaultLoginInterpreterDelegateTest {
+class DefaultLoginInterpreterDelegateTest {
     @Mock
     private UserDetailsManager userDetailsManager;
 
@@ -79,7 +79,7 @@ public class DefaultLoginInterpreterDelegateTest {
     private DefaultLoginInterpreterDelegate interpreter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         LoginConfiguration loginConfiguration = new LoginConfigurationBuilder().build();
@@ -141,7 +141,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testPromptBadSecondaryState() {
+    void testPromptBadSecondaryState() {
         Connection connection = new Connection();
         connection.setPrimaryState(LOGIN);
         connection.setSecondaryState("INVALID");
@@ -156,7 +156,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretBadSecondaryState() {
+    void testInterpretBadSecondaryState() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -174,7 +174,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testReconnect() {
+    void testReconnect() {
         Connection oldConnection = new Connection();
         oldConnection.setId(UUID.randomUUID());
         oldConnection.setName("Dani");
@@ -232,7 +232,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testReconnectChangeCharacter() {
+    void testReconnectChangeCharacter() {
         Connection connection = new Connection();
         connection.setName("Dani");
         connection.setPrimaryState(LOGIN);
@@ -248,7 +248,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testPromptAskNew() {
+    void testPromptAskNew() {
         Connection connection = new Connection();
         connection.setPrimaryState(LOGIN);
         connection.setSecondaryState(DEFAULT.name());
@@ -260,7 +260,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretAskNewNo() {
+    void testInterpretAskNewNo() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -277,7 +277,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretLoginAskShortName() {
+    void testInterpretLoginAskShortName() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -295,7 +295,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretLoginAskLongName() {
+    void testInterpretLoginAskLongName() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -313,7 +313,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretLoginAskNameWhitespace() {
+    void testInterpretLoginAskNameWhitespace() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -331,7 +331,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretLoginAskNameBadChars() {
+    void testInterpretLoginAskNameBadChars() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -349,7 +349,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretLoginAskNameTooShort() {
+    void testInterpretLoginAskNameTooShort() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -367,7 +367,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretLoginAskNameTooLong() {
+    void testInterpretLoginAskNameTooLong() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -385,7 +385,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretLoginAskNameFirstCaps() {
+    void testInterpretLoginAskNameFirstCaps() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -403,7 +403,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretLoginAskNameOtherCaps() {
+    void testInterpretLoginAskNameOtherCaps() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -422,7 +422,7 @@ public class DefaultLoginInterpreterDelegateTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testInterpretLoginAskPassword() {
+    void testInterpretLoginAskPassword() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -460,7 +460,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretLoginAskPasswordBadCredentials() {
+    void testInterpretLoginAskPasswordBadCredentials() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -483,7 +483,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretAskNewYes() {
+    void testInterpretAskNewYes() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -501,7 +501,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChooseShortName() {
+    void testInterpretCreateChooseShortName() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -519,7 +519,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChooseLongName() {
+    void testInterpretCreateChooseLongName() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -537,7 +537,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChooseNameWhitespace() {
+    void testInterpretCreateChooseNameWhitespace() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -555,7 +555,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChooseNameNumbers() {
+    void testInterpretCreateChooseNameNumbers() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -573,7 +573,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChooseNameTooShort() {
+    void testInterpretCreateChooseNameTooShort() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -591,7 +591,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChooseNameTooLong() {
+    void testInterpretCreateChooseNameTooLong() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -609,7 +609,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChooseNameFirstCaps() {
+    void testInterpretCreateChooseNameFirstCaps() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -627,7 +627,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChooseNameOtherCaps() {
+    void testInterpretCreateChooseNameOtherCaps() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -645,7 +645,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChooseNameUserAlreadyExists() {
+    void testInterpretCreateChooseNameUserAlreadyExists() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -665,7 +665,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateConfirmNameNo() {
+    void testInterpretCreateConfirmNameNo() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -682,7 +682,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateConfirmNameYes() {
+    void testInterpretCreateConfirmNameYes() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -700,7 +700,7 @@ public class DefaultLoginInterpreterDelegateTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testInterpretCreateChoosePassword() {
+    void testInterpretCreateChoosePassword() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -733,7 +733,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChoosePasswordTooShort() {
+    void testInterpretCreateChoosePasswordTooShort() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -757,7 +757,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateChoosePasswordSomethingBad() {
+    void testInterpretCreateChoosePasswordSomethingBad() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -782,7 +782,7 @@ public class DefaultLoginInterpreterDelegateTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testInterpretCreateConfirmPassword() {
+    void testInterpretCreateConfirmPassword() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -814,7 +814,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateConfirmPasswordTooShort() {
+    void testInterpretCreateConfirmPasswordTooShort() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -838,7 +838,7 @@ public class DefaultLoginInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpretCreateConfirmPasswordSomethingBad() {
+    void testInterpretCreateConfirmPasswordSomethingBad() {
         Input input = new Input();
         Connection connection = new Connection();
 

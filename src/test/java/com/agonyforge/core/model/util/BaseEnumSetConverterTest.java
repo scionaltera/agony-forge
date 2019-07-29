@@ -6,11 +6,11 @@ import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BaseEnumSetConverterTest {
+class BaseEnumSetConverterTest {
     private Converter converter = new Converter();
 
     @Test
-    public void testPersist() {
+    void testPersist() {
         EnumSet<TestPersistentEnum> testEnumSet = EnumSet.of(
             TestPersistentEnum.ABLE,
             TestPersistentEnum.EASY);
@@ -21,7 +21,7 @@ public class BaseEnumSetConverterTest {
     }
 
     @Test
-    public void testRestore() {
+    void testRestore() {
         EnumSet<TestPersistentEnum> result = converter.convertToEntityAttribute((long)0b10001);
 
         assertTrue(result.contains(TestPersistentEnum.ABLE));

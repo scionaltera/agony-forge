@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-public class CreatureFactoryTest {
+class CreatureFactoryTest {
     @Mock
     private CommService commService;
 
@@ -38,7 +38,7 @@ public class CreatureFactoryTest {
     private CreatureFactory creatureFactory;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         when(creatureRepository.save(any())).thenAnswer(invocation -> {
@@ -55,7 +55,7 @@ public class CreatureFactoryTest {
     }
 
     @Test
-    public void testBuildNewPlayer() {
+    void testBuildNewPlayer() {
         Connection connection = new Connection();
         CreatureDefinition definition = new CreatureDefinition();
 
@@ -76,7 +76,7 @@ public class CreatureFactoryTest {
     }
 
     @Test
-    public void testBuildExistingPlayer() {
+    void testBuildExistingPlayer() {
         Connection connection = new Connection();
         CreatureDefinition definition = new CreatureDefinition();
         Creature creature = new Creature();

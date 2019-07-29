@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class InputTest {
+class InputTest {
     @Test
-    public void testSetInput() {
+    void testSetInput() {
         Input input = new Input();
         input.setInput("Testing");
 
@@ -15,7 +15,7 @@ public class InputTest {
     }
 
     @Test
-    public void testEquality() {
+    void testEquality() {
         Input input = new Input();
         Input match = new Input();
 

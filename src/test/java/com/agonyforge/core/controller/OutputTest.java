@@ -9,9 +9,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OutputTest {
+class OutputTest {
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         Output empty = new Output();
 
         assertEquals(Collections.emptyList(), empty.toList());
@@ -19,7 +19,7 @@ public class OutputTest {
     }
 
     @Test
-    public void testPreloadConstructorVararg() {
+    void testPreloadConstructorVararg() {
         Output full = new Output("one", "two", "three");
         List<String> expected = Arrays.asList("one", "two", "three");
 
@@ -28,7 +28,7 @@ public class OutputTest {
     }
 
     @Test
-    public void testPreloadConstructorCollection() {
+    void testPreloadConstructorCollection() {
         Output full = new Output(Arrays.asList("one", "two", "three"));
         List<String> expected = Arrays.asList("one", "two", "three");
 
@@ -37,7 +37,7 @@ public class OutputTest {
     }
 
     @Test
-    public void testAppendOutputsConstructor() {
+    void testAppendOutputsConstructor() {
         Output output = new Output("One");
         Output append1 = new Output("Two");
         Output append2 = new Output("Three");
@@ -48,7 +48,7 @@ public class OutputTest {
     }
 
     @Test
-    public void testAppendChaining() {
+    void testAppendChaining() {
         Output output = new Output();
 
         assertEquals("", output.toString());
@@ -62,7 +62,7 @@ public class OutputTest {
     }
 
     @Test
-    public void testAppendVararg() {
+    void testAppendVararg() {
         Output output = new Output();
 
         assertEquals("", output.toString());
@@ -74,7 +74,7 @@ public class OutputTest {
     }
 
     @Test
-    public void testAppendCollection() {
+    void testAppendCollection() {
         Output output = new Output();
 
         assertEquals("", output.toString());
@@ -88,14 +88,14 @@ public class OutputTest {
     }
 
     @Test
-    public void testSecret() {
+    void testSecret() {
         Output output = new Output().setSecret(true);
 
         assertTrue(output.getSecret());
     }
 
     @Test
-    public void testAppendSecret() {
+    void testAppendSecret() {
         Output output = new Output();
         Output secret = new Output().setSecret(true);
 
@@ -105,7 +105,7 @@ public class OutputTest {
     }
 
     @Test
-    public void testEquality() {
+    void testEquality() {
         Output one = new Output("Testing");
         Output two = new Output("Testing");
 

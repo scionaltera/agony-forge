@@ -6,14 +6,14 @@ import org.junit.jupiter.api.Test;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.LOGIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PrimaryConnectionStateTest {
+class PrimaryConnectionStateTest {
     @Test
-    public void testIndex() {
+    void testIndex() {
         assertEquals(0, LOGIN.getIndex());
     }
 
     @Test
-    public void testConverter() {
+    void testConverter() {
         new PrimaryConnectionState.Converter();
     }
 }

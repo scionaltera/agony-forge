@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class DefaultCharacterCreationInterpreterDelegateTest {
+class DefaultCharacterCreationInterpreterDelegateTest {
     @Mock
     private CommService commService;
 
@@ -52,7 +52,7 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
     private DefaultCharacterCreationInterpreterDelegate delegate;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         CreatureFactory creatureFactory = new CreatureFactory(commService, creatureRepository, connectionRepository);
@@ -85,7 +85,7 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
     }
 
     @Test
-    public void testInterpret() {
+    void testInterpret() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -118,7 +118,7 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
     }
 
     @Test
-    public void testFemaleGender() {
+    void testFemaleGender() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -142,7 +142,7 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
     }
 
     @Test
-    public void testNeutralGender() {
+    void testNeutralGender() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -166,7 +166,7 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
     }
 
     @Test
-    public void testInvalidGender() {
+    void testInvalidGender() {
         Input input = new Input();
         Connection connection = new Connection();
 
@@ -184,7 +184,7 @@ public class DefaultCharacterCreationInterpreterDelegateTest {
     }
 
     @Test
-    public void testPrompt() {
+    void testPrompt() {
         Connection connection = new Connection();
 
         connection.setName("Scion");

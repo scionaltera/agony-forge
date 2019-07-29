@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-public class RemoteIpHandshakeInterceptorTest {
+class RemoteIpHandshakeInterceptorTest {
     @Mock
     private ServerHttpRequest request;
 
@@ -37,14 +37,14 @@ public class RemoteIpHandshakeInterceptorTest {
     private RemoteIpHandshakeInterceptor interceptor;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         interceptor = new RemoteIpHandshakeInterceptor();
     }
 
     @Test
-    public void testBeforeHandshakeNoForwarding() {
+    void testBeforeHandshakeNoForwarding() {
         Map<String, Object> attributes = new HashMap<>();
 
         when(request.getHeaders()).thenReturn(httpHeaders);
@@ -56,7 +56,7 @@ public class RemoteIpHandshakeInterceptorTest {
     }
 
     @Test
-    public void testBeforeHandshakeForwarded() {
+    void testBeforeHandshakeForwarded() {
         Map<String, Object> attributes = new HashMap<>();
 
         when(request.getHeaders()).thenReturn(httpHeaders);
@@ -69,7 +69,7 @@ public class RemoteIpHandshakeInterceptorTest {
     }
 
     @Test
-    public void testBeforeHandshakeForwardedBogusAddress() {
+    void testBeforeHandshakeForwardedBogusAddress() {
         Map<String, Object> attributes = new HashMap<>();
 
         when(request.getHeaders()).thenReturn(httpHeaders);
@@ -82,7 +82,7 @@ public class RemoteIpHandshakeInterceptorTest {
     }
 
     @Test
-    public void testAfterHandshake() {
+    void testAfterHandshake() {
         interceptor.afterHandshake(request, response, wsHandler, null);
 
         verifyZeroInteractions(request, response, wsHandler);

@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.when;
 
-public class CustomErrorControllerTest {
+class CustomErrorControllerTest {
     @Mock
     private ErrorAttributes errorAttributes;
 
@@ -28,7 +28,7 @@ public class CustomErrorControllerTest {
     private CustomErrorController controller;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         when(errorAttributes.getErrorAttributes(any(), anyBoolean())).thenReturn(Collections.emptyMap());
@@ -37,14 +37,14 @@ public class CustomErrorControllerTest {
     }
 
     @Test
-    public void testError() {
+    void testError() {
         String view = controller.error(model, request);
 
         assertEquals("error", view);
     }
 
     @Test
-    public void testErrorPath() {
+    void testErrorPath() {
         assertEquals("/error", controller.getErrorPath());
     }
 }

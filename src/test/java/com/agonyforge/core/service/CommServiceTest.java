@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class CommServiceTest {
+class CommServiceTest {
     @Mock
     private CreatureRepository creatureRepository;
 
@@ -32,7 +32,7 @@ public class CommServiceTest {
     private CommService commService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         when(interpreter.prompt(any())).thenReturn(new Output("[default]> "));
@@ -41,7 +41,7 @@ public class CommServiceTest {
     }
 
     @Test
-    public void testEcho() {
+    void testEcho() {
         Creature creature = new Creature();
         Connection connection = new Connection();
         Output output = new Output("Hello");
@@ -58,7 +58,7 @@ public class CommServiceTest {
     }
 
     @Test
-    public void testEchoNoConnection() {
+    void testEchoNoConnection() {
         Creature creature = new Creature();
         Output output = new Output("Hello");
 
@@ -68,7 +68,7 @@ public class CommServiceTest {
     }
 
     @Test
-    public void testEchoNoSessionUsername() {
+    void testEchoNoSessionUsername() {
         Creature creature = new Creature();
         Connection connection = new Connection();
         Output output = new Output("Hello");
@@ -81,7 +81,7 @@ public class CommServiceTest {
     }
 
     @Test
-    public void testEchoToWorld() {
+    void testEchoToWorld() {
         Creature included = new Creature();
         Connection includedConnection = new Connection();
         Creature excluded = new Creature();

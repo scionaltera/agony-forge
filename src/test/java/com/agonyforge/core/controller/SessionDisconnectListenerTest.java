@@ -31,7 +31,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME;
 
-public class SessionDisconnectListenerTest {
+class SessionDisconnectListenerTest {
     @Mock
     private ConnectionRepository connectionRepository;
 
@@ -50,7 +50,7 @@ public class SessionDisconnectListenerTest {
     private SessionDisconnectListener listener;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
 
         Connection connection = new Connection();
@@ -72,7 +72,7 @@ public class SessionDisconnectListenerTest {
     }
 
     @Test
-    public void testOnApplicationEvent() {
+    void testOnApplicationEvent() {
         Message<byte[]> message = buildMockMessage(true);
         SessionDisconnectEvent event = new SessionDisconnectEvent("source", message, "ffff", CloseStatus.NORMAL);
 
@@ -87,7 +87,7 @@ public class SessionDisconnectListenerTest {
     }
 
     @Test
-    public void testOnApplicationEventNoSessionAttributes() {
+    void testOnApplicationEventNoSessionAttributes() {
         Message<byte[]> message = buildMockMessage(false);
         SessionDisconnectEvent event = new SessionDisconnectEvent("source", message, "ffff", CloseStatus.NORMAL);
 
@@ -98,7 +98,7 @@ public class SessionDisconnectListenerTest {
     }
 
     @Test
-    public void testOnApplicationEventNoConnection() {
+    void testOnApplicationEventNoConnection() {
         Message<byte[]> message = buildMockMessage(true);
         SessionDisconnectEvent event = new SessionDisconnectEvent("source", message, "ffff", CloseStatus.NORMAL);
 
@@ -113,7 +113,7 @@ public class SessionDisconnectListenerTest {
     }
 
     @Test
-    public void testOnApplicationEventNoCreature() {
+    void testOnApplicationEventNoCreature() {
         Message<byte[]> message = buildMockMessage(true);
         SessionDisconnectEvent event = new SessionDisconnectEvent("source", message, "ffff", CloseStatus.NORMAL);
 
