@@ -69,8 +69,12 @@ dependencies {
 
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.1'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.5.1'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '3.0.0'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 task buildDocker(type: Docker) {
