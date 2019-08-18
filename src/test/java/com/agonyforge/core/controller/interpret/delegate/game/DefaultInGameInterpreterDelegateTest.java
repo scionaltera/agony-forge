@@ -9,11 +9,13 @@ import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
+import com.agonyforge.core.service.InvokerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,6 +31,9 @@ class DefaultInGameInterpreterDelegateTest {
 
     @Mock
     private Interpreter primary;
+
+    @Mock
+    private InvokerService invokerService;
 
     @Mock
     private CommService commService;
@@ -54,6 +59,7 @@ class DefaultInGameInterpreterDelegateTest {
         interpreter = new DefaultInGameInterpreterDelegate(
             creatureRepository,
             loginConfiguration,
+            invokerService,
             commService
         );
     }
@@ -64,13 +70,13 @@ class DefaultInGameInterpreterDelegateTest {
         Connection connection = new Connection();
 
         input.setInput("Hello!");
+        connection.setName("Scion");
 
         Output output = interpreter.interpret(primary, input, connection);
 
-        assertTrue(output.toString().contains("You gossip"));
-        assertTrue(output.toString().contains(input.toString()));
+        assertTrue(output.toString().contains(connection.getName()));
 
-        verify(commService).echoToWorld(any(), eq(primary), eq(me));
+        verify(invokerService).invoke(eq(me), eq(output), eq(Collections.singletonList("HELLO")));
     }
 
     @Test
