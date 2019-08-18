@@ -1,4 +1,4 @@
-version: "2"
+version: "3.7"
 
 services:
   agony-forge:
@@ -7,11 +7,10 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005"
-    links:
-      - mysql
-      - activemq
     env_file:
       - agonyforge.env
+    networks:
+      agonyforge:
   mysql:
     image: mysql:5.6
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -22,6 +21,8 @@ services:
       MYSQL_USER: agonyforge
       MYSQL_PASSWORD: agonyforge
       MYSQL_DATABASE: agonyforge
+    networks:
+      agonyforge:
   activemq:
     image: webcenter/activemq:5.14.3
     ports:
@@ -39,3 +40,8 @@ services:
       # user with access to broker
       ACTIVEMQ_OWNER_LOGIN: agonyforge
       ACTIVEMQ_OWNER_PASSWORD: agonyforge
+    networks:
+      agonyforge:
+
+networks:
+  agonyforge:

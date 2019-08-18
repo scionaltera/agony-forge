@@ -1,9 +1,9 @@
 package com.agonyforge.core.model;
 
-import com.agonyforge.core.controller.interpret.delegate.DefaultCharacterCreationConnectionState;
+import com.agonyforge.core.controller.interpret.delegate.creation.DefaultCharacterCreationConnectionState;
 import org.junit.jupiter.api.Test;
 
-import static com.agonyforge.core.controller.interpret.delegate.DefaultCharacterCreationConnectionState.DEFAULT;
+import static com.agonyforge.core.controller.interpret.delegate.creation.DefaultCharacterCreationConnectionState.DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultCharacterCreationConnectionStateTest {

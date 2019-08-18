@@ -1,4 +1,4 @@
-package com.agonyforge.core.controller.interpret.delegate;
+package com.agonyforge.core.controller.interpret.delegate.creation;
 
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
@@ -21,7 +21,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.UUID;
 
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.IN_GAME;
-import static com.agonyforge.core.controller.interpret.delegate.DefaultCharacterCreationConnectionState.DEFAULT;
+import static com.agonyforge.core.controller.interpret.delegate.creation.DefaultCharacterCreationConnectionState.DEFAULT;
 import static com.agonyforge.core.model.Gender.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

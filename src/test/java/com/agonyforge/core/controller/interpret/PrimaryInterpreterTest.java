@@ -2,9 +2,9 @@ package com.agonyforge.core.controller.interpret;
 
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
-import com.agonyforge.core.controller.interpret.delegate.CharacterCreationInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.delegate.InGameInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.delegate.LoginInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.creation.CharacterCreationInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.game.InGameInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.login.LoginInterpreterDelegate;
 import com.agonyforge.core.model.Connection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

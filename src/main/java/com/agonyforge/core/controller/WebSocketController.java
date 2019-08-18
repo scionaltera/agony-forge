@@ -27,7 +27,7 @@ import java.util.UUID;
 
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_CONNECTION_ID_KEY;
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP_KEY;
-import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.RECONNECT;
+import static com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginConnectionState.RECONNECT;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import static org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME;
 

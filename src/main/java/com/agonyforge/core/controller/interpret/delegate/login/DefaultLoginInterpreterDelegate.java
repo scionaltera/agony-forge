@@ -1,4 +1,4 @@
-package com.agonyforge.core.controller.interpret.delegate;
+package com.agonyforge.core.controller.interpret.delegate.login;
 
 import com.agonyforge.core.config.LoginConfiguration;
 import com.agonyforge.core.controller.Input;
@@ -32,7 +32,7 @@ import org.springframework.util.StringUtils;
 import javax.transaction.Transactional;
 import java.util.Collections;
 
-import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.*;
+import static com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginConnectionState.*;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.*;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 

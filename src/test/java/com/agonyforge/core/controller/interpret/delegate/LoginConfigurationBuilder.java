@@ -5,8 +5,8 @@ import com.agonyforge.core.config.LoginConfiguration;
 import java.util.HashMap;
 import java.util.Map;
 
-class LoginConfigurationBuilder {
-    LoginConfiguration build() {
+public class LoginConfigurationBuilder {
+    public LoginConfiguration build() {
         LoginConfiguration loginConfiguration = new LoginConfiguration();
         Map<String, String> prompts = new HashMap<>();
 

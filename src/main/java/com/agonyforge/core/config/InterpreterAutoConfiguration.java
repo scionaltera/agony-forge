@@ -1,11 +1,11 @@
 package com.agonyforge.core.config;
 
-import com.agonyforge.core.controller.interpret.delegate.CharacterCreationInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.delegate.DefaultCharacterCreationInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.delegate.DefaultInGameInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.delegate.DefaultLoginInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.delegate.InGameInterpreterDelegate;
-import com.agonyforge.core.controller.interpret.delegate.LoginInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.creation.CharacterCreationInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.creation.DefaultCharacterCreationInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.game.DefaultInGameInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.game.InGameInterpreterDelegate;
+import com.agonyforge.core.controller.interpret.delegate.login.LoginInterpreterDelegate;
 import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
