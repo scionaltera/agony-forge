@@ -1,9 +1,10 @@
-package com.agonyforge.core.controller.interpret.delegate;
+package com.agonyforge.core.controller.interpret.delegate.login;
 
 import com.agonyforge.core.config.LoginConfiguration;
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
+import com.agonyforge.core.controller.interpret.delegate.LoginConfigurationBuilder;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
@@ -35,7 +36,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.agonyforge.core.model.Connection.DEFAULT_SECONDARY_STATE;
-import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.*;
+import static com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginConnectionState.*;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;

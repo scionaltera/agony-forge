@@ -1,4 +1,4 @@
-package com.agonyforge.core.controller.interpret.delegate;
+package com.agonyforge.core.controller.interpret.delegate.login;
 
 import com.agonyforge.core.model.util.BaseEnumSetConverter;
 import com.agonyforge.core.model.util.PersistentEnum;

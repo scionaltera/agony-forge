@@ -1,4 +1,4 @@
-package com.agonyforge.core.controller.interpret.delegate;
+package com.agonyforge.core.controller.interpret.delegate.game;
 
 import java.util.ArrayList;
 import java.util.List;

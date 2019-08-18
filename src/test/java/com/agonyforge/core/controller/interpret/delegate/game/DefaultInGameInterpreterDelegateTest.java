@@ -1,9 +1,10 @@
-package com.agonyforge.core.controller.interpret.delegate;
+package com.agonyforge.core.controller.interpret.delegate.game;
 
 import com.agonyforge.core.config.LoginConfiguration;
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
+import com.agonyforge.core.controller.interpret.delegate.LoginConfigurationBuilder;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.repository.CreatureRepository;

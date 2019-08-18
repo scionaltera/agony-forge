@@ -1,9 +1,9 @@
 package com.agonyforge.core.model;
 
-import com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState;
+import com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginConnectionState;
 import org.junit.jupiter.api.Test;
 
-import static com.agonyforge.core.controller.interpret.delegate.DefaultLoginConnectionState.DEFAULT;
+import static com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginConnectionState.DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultLoginConnectionStateTest {
