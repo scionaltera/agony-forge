@@ -62,12 +62,6 @@ public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelega
 
         invokerService.invoke(creature, output, tokens);
 
-//        output
-//            .append("[green]You gossip '" + input.toString() + "[green]'")
-//            .append(primary.prompt(connection));
-//
-//        commService.echoToWorld(new Output("[green]" + connection.getName() + " gossips '" + input.toString() + "[green]'"), primary, creature);
-
         output.append(primary.prompt(connection));
 
         return output;
