@@ -20,7 +20,7 @@ public class WhoCommand {
     }
 
     @Transactional
-    @Description("Displays the list of online players")
+    @CommandDescription("Displays the list of online players")
     public void invoke(Creature actor, Output output) {
         List<Creature> players = creatureRepository.findByConnectionIsNotNull()
             .sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
@@ -34,6 +34,6 @@ public class WhoCommand {
 
         output
             .append("")
-            .append(String.format("[default]%d player%s online.", players.size(), players.size() == 0 ? "" : "s"));
+            .append(String.format("[default]%d player%s online.", players.size(), players.size() == 1 ? "" : "s"));
     }
 }

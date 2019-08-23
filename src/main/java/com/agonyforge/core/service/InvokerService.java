@@ -1,10 +1,12 @@
 package com.agonyforge.core.service;
 
 import com.agonyforge.core.controller.Output;
-import com.agonyforge.core.controller.interpret.delegate.game.command.Description;
+import com.agonyforge.core.controller.interpret.delegate.game.command.CommandDescription;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.Verb;
 import com.agonyforge.core.model.repository.VerbRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.domain.Sort;
@@ -13,7 +15,6 @@ import org.springframework.util.ReflectionUtils;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
 
 @Component
 public class InvokerService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InvokerService.class);
     private static final int REQUIRED_ARG_COUNT = 2; // every invoke() method requires at least this many arguments
 
     private ApplicationContext applicationContext;
@@ -37,6 +39,7 @@ public class InvokerService {
     @Transactional
     public void invoke(Creature invoker, Output output, List<String> tokens) {
         if (tokens.isEmpty()) {
+            LOGGER.error("Invoked with empty token list");
             return;
         }
 
@@ -61,7 +64,7 @@ public class InvokerService {
 
         if (candidates.isEmpty()) {
             output.append("[red]No method matches those arguments.");
-            output.append("[default]Usage for the " + verbOptional.get().getName() + " command:");
+            output.append("[default]Usage for the '" + verbOptional.get().getName() + "' command:");
 
             Arrays.stream(ReflectionUtils.getUniqueDeclaredMethods(bean.getClass()))
                 .filter(method -> "invoke".equals(method.getName()))
@@ -81,7 +84,7 @@ public class InvokerService {
                         }
                     }
 
-                    Description descriptionAnnotation = AnnotationUtils.findAnnotation(method, Description.class);
+                    CommandDescription descriptionAnnotation = AnnotationUtils.findAnnotation(method, CommandDescription.class);
 
                     if (descriptionAnnotation != null) {
                         buf.append(" - ");
