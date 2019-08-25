@@ -11,6 +11,7 @@ import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
+import com.agonyforge.core.service.InvokerService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ public class InterpreterAutoConfiguration {
     private CreatureRepository creatureRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
     private CreatureFactory creatureFactory;
+    private InvokerService invokerService;
     private CommService commService;
 
     @Inject
@@ -42,6 +44,7 @@ public class InterpreterAutoConfiguration {
         CreatureRepository creatureRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
         CreatureFactory creatureFactory,
+        InvokerService invokerService,
         CommService commService) {
 
         this.loginConfiguration = loginConfiguration;
@@ -52,6 +55,7 @@ public class InterpreterAutoConfiguration {
         this.creatureRepository = creatureRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
         this.creatureFactory = creatureFactory;
+        this.invokerService = invokerService;
         this.commService = commService;
     }
 
@@ -87,6 +91,7 @@ public class InterpreterAutoConfiguration {
         return new DefaultInGameInterpreterDelegate(
             creatureRepository,
             loginConfiguration,
+            invokerService,
             commService);
     }
 }

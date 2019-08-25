@@ -8,6 +8,7 @@ import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
+import com.agonyforge.core.service.InvokerService;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.Arrays;
@@ -17,15 +18,18 @@ import java.util.stream.Collectors;
 public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelegate {
     private CreatureRepository creatureRepository;
     private LoginConfiguration loginConfiguration; // TODO need to break this configuration apart
+    private InvokerService invokerService;
     private CommService commService;
 
     public DefaultInGameInterpreterDelegate(
         CreatureRepository creatureRepository,
         LoginConfiguration loginConfiguration,
+        InvokerService invokerService,
         CommService commService) {
 
         this.creatureRepository = creatureRepository;
         this.loginConfiguration = loginConfiguration;
+        this.invokerService = invokerService;
         this.commService = commService;
     }
 
@@ -52,15 +56,13 @@ public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelega
             .collect(Collectors.toList());
 
         output
-            .append("[default]Tokens: " + tokens.toString()
+            .append("[black]Tokens: " + tokens.toString()
                 .replace("[", "&#91;")
                 .replace("]", "&#93;"));
 
-        output
-            .append("[green]You gossip '" + input.toString() + "[green]'")
-            .append(primary.prompt(connection));
+        invokerService.invoke(creature, output, tokens);
 
-        commService.echoToWorld(new Output("[green]" + connection.getName() + " gossips '" + input.toString() + "[green]'"), primary, creature);
+        output.append(primary.prompt(connection));
 
         return output;
     }
