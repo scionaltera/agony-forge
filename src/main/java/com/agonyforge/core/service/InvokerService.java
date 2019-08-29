@@ -3,7 +3,6 @@ package com.agonyforge.core.service;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.delegate.game.binding.ArgumentBinding;
 import com.agonyforge.core.controller.interpret.delegate.game.binding.BindingDescription;
-import com.agonyforge.core.controller.interpret.delegate.game.command.CommandDescription;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.Verb;
 import com.agonyforge.core.model.repository.VerbRepository;
@@ -28,8 +27,9 @@ import java.util.stream.Stream;
 
 @Component
 public class InvokerService {
+    public static final int REQUIRED_ARG_COUNT = 2; // every invoke() method requires at least this many arguments
+
     private static final Logger LOGGER = LoggerFactory.getLogger(InvokerService.class);
-    private static final int REQUIRED_ARG_COUNT = 2; // every invoke() method requires at least this many arguments
 
     private ApplicationContext applicationContext;
     private VerbRepository verbRepository;
@@ -83,7 +83,7 @@ public class InvokerService {
         // We found no methods that matched our criteria. Print an error message and exit.
         if (candidates.isEmpty()) {
             output.append("[red]No candidate methods matched the number of tokens provided.");
-            showVerbSyntax(verbOptional.get(), command, output);
+            Verb.showVerbSyntax(verbOptional.get(), command, output);
             return;
         }
 
@@ -103,9 +103,8 @@ public class InvokerService {
                 } else {
                     isBindingSuccessful = false;
                     BindingDescription description = AnnotationUtils.findAnnotation(binding.getClass(), BindingDescription.class);
-                    output.append(String.format("No \"%s\" found for token: %s",
-                        description == null ? "object binding" : description.value(),
-                        binding.getToken()));
+                    output.append(String.format("No \"%s\" found.",
+                        description == null ? "object binding" : description.value()));
                 }
             }
 
@@ -128,7 +127,7 @@ public class InvokerService {
                 buf.append(" ");
 
                 for (int i = REQUIRED_ARG_COUNT; i < method.getParameterCount(); i++) {
-                    BindingDescription description = AnnotationUtils.findAnnotation(method.getParameters()[i].getClass(), BindingDescription.class);
+                    BindingDescription description = AnnotationUtils.findAnnotation(method.getParameterTypes()[i], BindingDescription.class);
 
                     buf.append("&lt;");
                     buf.append(description == null ? "argument" : description.value());
@@ -142,41 +141,6 @@ public class InvokerService {
 
         // We failed to invoke any of the methods! Show the usage and help the player out.
         output.append("[red]Could not successfully bind all arguments to any of the available methods.");
-        showVerbSyntax(verbOptional.get(), command, output);
-    }
-
-    private void showVerbSyntax(Verb verb, Object command, Output output) {
-        output.append("[default]Usages for the '" + verb.getName() + "' command:");
-
-        Arrays.stream(ReflectionUtils.getUniqueDeclaredMethods(command.getClass()))
-            .filter(method -> "invoke".equals(method.getName()))
-            .forEach(method -> {
-                StringBuilder buf = new StringBuilder();
-
-                buf.append(verb.getName());
-                buf.append(" ");
-
-                if (method.getParameterCount() == REQUIRED_ARG_COUNT) {
-                    buf.append("(no arguments)");
-                } else {
-                    for (int i = REQUIRED_ARG_COUNT; i < method.getParameterCount(); i++) {
-                        Class bindingClass = method.getParameterTypes()[i];
-                        BindingDescription description = AnnotationUtils.findAnnotation(bindingClass, BindingDescription.class);
-
-                        buf.append("&lt;");
-                        buf.append(description == null ? "argument" : description.value());
-                        buf.append("&gt;");
-                    }
-                }
-
-                CommandDescription commandDescription = AnnotationUtils.findAnnotation(method, CommandDescription.class);
-
-                if (commandDescription != null) {
-                    buf.append(" - ");
-                    buf.append(commandDescription.value());
-                }
-
-                output.append(buf.toString());
-            });
+        Verb.showVerbSyntax(verbOptional.get(), command, output);
     }
 }

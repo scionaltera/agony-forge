@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(scopeName = "prototype")
-@BindingDescription("some text")
+@BindingDescription("text")
 public class QuotedString implements ArgumentBinding {
     private String text;
 
@@ -16,7 +16,6 @@ public class QuotedString implements ArgumentBinding {
         return true;
     }
 
-    @Override
     public String getToken() {
         return text;
     }
