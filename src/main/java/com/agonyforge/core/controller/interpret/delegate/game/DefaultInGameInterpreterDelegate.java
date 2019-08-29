@@ -60,7 +60,7 @@ public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelega
                 .replace("[", "&#91;")
                 .replace("]", "&#93;"));
 
-        invokerService.invoke(creature, output, tokens);
+        invokerService.invoke(creature, output, input.getInput(), tokens);
 
         output.append(primary.prompt(connection));
 
