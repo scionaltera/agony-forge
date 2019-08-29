@@ -55,34 +55,34 @@ class InvokerServiceTest {
 
     @Test
     void testEmptyTokens() {
-        invokerService.invoke(ch, output, Collections.emptyList());
+        invokerService.invoke(ch, output, null, Collections.emptyList());
 
         verifyZeroInteractions(applicationContext, verbRepository);
     }
 
     @Test
     void testUnknownVerb() {
-        invokerService.invoke(ch, output, Collections.singletonList("WHAT"));
+        invokerService.invoke(ch, output, "what", Collections.singletonList("WHAT"));
 
         verify(verbRepository).findFirstByNameIgnoreCaseStartingWith(any(), eq("WHAT"));
 
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("No such verb: WHAT")));
+        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Unknown verb: WHAT")));
     }
 
     @Test
     void testNoMatchingArguments() {
-        invokerService.invoke(ch, output, Arrays.asList("WHO", "AM", "I"));
+        invokerService.invoke(ch, output, "who am I", Arrays.asList("WHO", "AM", "I"));
 
         verify(verbRepository).findFirstByNameIgnoreCaseStartingWith(any(), eq("WHO"));
         verify(whoCommand, never()).invoke(any(), any());
 
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("No method matches those arguments")));
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Usage for the 'who' command")));
+        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("No candidate methods matched the number of tokens provided")));
+        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Usages for the 'who' command")));
     }
 
     @Test
     void testMatchingArguments() {
-        invokerService.invoke(ch, output, Collections.singletonList("WHO"));
+        invokerService.invoke(ch, output, "who", Collections.singletonList("WHO"));
 
         verify(verbRepository).findFirstByNameIgnoreCaseStartingWith(any(), eq("WHO"));
         verify(whoCommand).invoke(eq(ch), eq(output));

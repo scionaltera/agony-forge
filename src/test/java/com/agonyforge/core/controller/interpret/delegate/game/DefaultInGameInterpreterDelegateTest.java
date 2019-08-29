@@ -76,7 +76,7 @@ class DefaultInGameInterpreterDelegateTest {
 
         assertTrue(output.toString().contains(connection.getName()));
 
-        verify(invokerService).invoke(eq(me), eq(output), eq(Collections.singletonList("HELLO")));
+        verify(invokerService).invoke(eq(me), eq(output), eq("Hello!"), eq(Collections.singletonList("HELLO")));
     }
 
     @Test

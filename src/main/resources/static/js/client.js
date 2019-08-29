@@ -119,7 +119,7 @@ function sendInput() {
             commandHistory.pop();
         }
 
-        $("#output-list").find("li:last-child").append("<span class='yellow'> " + htmlEscape(inputBox.val()) + "</span>");
+        $("#output-list").find("li:last-child").append("<span class='yellow'> " + htmlEscape(inputBox.val()).replace(/\s/g, '&nbsp;') + "</span>");
     } else {
         $("#output-list").find("li:last-child").append("<span class='yellow'> ********</span>");
     }
