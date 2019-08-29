@@ -1,8 +1,17 @@
 package com.agonyforge.core.model;
 
+import com.agonyforge.core.controller.Output;
+import com.agonyforge.core.controller.interpret.delegate.game.binding.BindingDescription;
+import com.agonyforge.core.controller.interpret.delegate.game.command.CommandDescription;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ReflectionUtils;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Arrays;
 import java.util.Objects;
+
+import static com.agonyforge.core.service.InvokerService.REQUIRED_ARG_COUNT;
 
 @Entity
 public class Verb {
@@ -42,6 +51,41 @@ public class Verb {
 
     public void setQuoting(boolean quoting) {
         this.quoting = quoting;
+    }
+
+    public static void showVerbSyntax(Verb verb, Object command, Output output) {
+        output.append("[default]Usages for the '" + verb.getName() + "' command:");
+
+        Arrays.stream(ReflectionUtils.getUniqueDeclaredMethods(command.getClass()))
+            .filter(method -> "invoke".equals(method.getName()))
+            .forEach(method -> {
+                StringBuilder buf = new StringBuilder();
+
+                buf.append(verb.getName());
+                buf.append(" ");
+
+                if (method.getParameterCount() == REQUIRED_ARG_COUNT) {
+                    buf.append("(no arguments)");
+                } else {
+                    for (int i = REQUIRED_ARG_COUNT; i < method.getParameterCount(); i++) {
+                        Class bindingClass = method.getParameterTypes()[i];
+                        BindingDescription description = AnnotationUtils.findAnnotation(bindingClass, BindingDescription.class);
+
+                        buf.append("&lt;");
+                        buf.append(description == null ? "argument" : description.value());
+                        buf.append("&gt;");
+                    }
+                }
+
+                CommandDescription commandDescription = AnnotationUtils.findAnnotation(method, CommandDescription.class);
+
+                if (commandDescription != null) {
+                    buf.append(" - ");
+                    buf.append(commandDescription.value());
+                }
+
+                output.append(buf.toString());
+            });
     }
 
     @Override

@@ -4,5 +4,4 @@ import com.agonyforge.core.model.Creature;
 
 public interface ArgumentBinding {
     boolean bind(Creature actor, String token);
-    String getToken();
 }
