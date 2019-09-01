@@ -7,12 +7,16 @@ import com.agonyforge.core.model.CreatureDefinition;
 import com.agonyforge.core.model.Gender;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
+import com.agonyforge.core.model.repository.RoleRepository;
 import com.agonyforge.core.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.UserDetailsManager;
 
+import java.util.Collections;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -35,6 +39,12 @@ class CreatureFactoryTest {
     @Mock
     private ConnectionRepository connectionRepository;
 
+    @Mock
+    private RoleRepository roleRepository;
+
+    @Mock
+    private UserDetailsManager userDetailsManager;
+
     private CreatureFactory creatureFactory;
 
     @BeforeEach
@@ -51,7 +61,17 @@ class CreatureFactoryTest {
             return creature;
         });
 
-        creatureFactory = new CreatureFactory(commService, creatureRepository, connectionRepository);
+        UserDetails user = mock(UserDetails.class);
+
+        when(user.getAuthorities()).thenReturn(Collections.emptyList());
+        when(userDetailsManager.loadUserByUsername(anyString())).thenReturn(user);
+
+        creatureFactory = new CreatureFactory(
+            commService,
+            creatureRepository,
+            connectionRepository,
+            roleRepository,
+            userDetailsManager);
     }
 
     @Test

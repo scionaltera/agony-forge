@@ -6,10 +6,14 @@ import com.agonyforge.core.controller.interpret.delegate.game.command.CommandDes
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.agonyforge.core.service.InvokerService.REQUIRED_ARG_COUNT;
 
@@ -20,6 +24,9 @@ public class Verb {
     private String bean;
     private int priority;
     private boolean quoting = false;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<Role> roles = new HashSet<>();
 
     public String getName() {
         return name;
@@ -51,6 +58,14 @@ public class Verb {
 
     public void setQuoting(boolean quoting) {
         this.quoting = quoting;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public static void showVerbSyntax(Verb verb, Object command, Output output) {

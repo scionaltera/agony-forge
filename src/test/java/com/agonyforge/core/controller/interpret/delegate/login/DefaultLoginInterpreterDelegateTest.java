@@ -13,6 +13,7 @@ import com.agonyforge.core.model.Gender;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
+import com.agonyforge.core.model.repository.RoleRepository;
 import com.agonyforge.core.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,11 +26,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,6 +66,9 @@ class DefaultLoginInterpreterDelegateTest {
     private CreatureDefinitionRepository creatureDefinitionRepository;
 
     @Mock
+    private RoleRepository roleRepository;
+
+    @Mock
     private CommService commService;
 
     @Mock
@@ -84,7 +90,12 @@ class DefaultLoginInterpreterDelegateTest {
         MockitoAnnotations.initMocks(this);
 
         LoginConfiguration loginConfiguration = new LoginConfigurationBuilder().build();
-        CreatureFactory creatureFactory = new CreatureFactory(commService, creatureRepository, connectionRepository);
+        CreatureFactory creatureFactory = new CreatureFactory(
+            commService,
+            creatureRepository,
+            connectionRepository,
+            roleRepository,
+            userDetailsManager);
 
         when(primary.prompt(any(Connection.class))).thenAnswer(invocation -> {
             Connection connection = invocation.getArgument(0);
@@ -129,6 +140,11 @@ class DefaultLoginInterpreterDelegateTest {
 
             return definition;
         });
+
+        UserDetails user = mock(UserDetails.class);
+
+        when(user.getAuthorities()).thenReturn(Collections.emptyList());
+        when(userDetailsManager.loadUserByUsername(anyString())).thenReturn(user);
 
         interpreter = new DefaultLoginInterpreterDelegate(
             loginConfiguration,
