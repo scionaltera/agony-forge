@@ -3,6 +3,7 @@ package com.agonyforge.core.controller.interpret.delegate.game.command;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.delegate.game.binding.VerbBinding;
 import com.agonyforge.core.model.Creature;
+import com.agonyforge.core.model.Role;
 import com.agonyforge.core.model.Verb;
 import com.agonyforge.core.model.repository.VerbRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +45,8 @@ class HelpCommandTest {
         output = new Output();
         verb = new Verb();
 
+        creature.getRoles().add(new Role("PLAYER"));
+
         verb.setName("help");
         verb.setBean("helpCommand");
 
@@ -78,11 +81,13 @@ class HelpCommandTest {
 
     private List<Verb> generateVerbs() {
         List<Verb> verbs = new ArrayList<>();
+        Role playerRole = new Role("PLAYER");
 
         for (int i = 0; i < 5; i++) {
             Verb verb = new Verb();
 
             verb.setName("verb" + i);
+            verb.getRoles().add(playerRole);
             verbs.add(verb);
         }
 
