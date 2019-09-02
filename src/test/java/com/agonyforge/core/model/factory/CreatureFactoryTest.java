@@ -5,21 +5,27 @@ import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
 import com.agonyforge.core.model.Gender;
+import com.agonyforge.core.model.Role;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
+import com.agonyforge.core.model.repository.RoleRepository;
 import com.agonyforge.core.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.UserDetailsManager;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.agonyforge.core.model.Gender.FEMALE;
 import static com.agonyforge.core.model.Gender.MALE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CreatureFactoryTest {
@@ -34,6 +40,12 @@ class CreatureFactoryTest {
 
     @Mock
     private ConnectionRepository connectionRepository;
+
+    @Mock
+    private RoleRepository roleRepository;
+
+    @Mock
+    private UserDetailsManager userDetailsManager;
 
     private CreatureFactory creatureFactory;
 
@@ -51,7 +63,19 @@ class CreatureFactoryTest {
             return creature;
         });
 
-        creatureFactory = new CreatureFactory(commService, creatureRepository, connectionRepository);
+        UserDetails user = mock(UserDetails.class);
+        Role playerRole = new Role("PLAYER");
+
+        when(user.getAuthorities()).thenAnswer(i -> Collections.singletonList(new SimpleGrantedAuthority("PLAYER")));
+        when(roleRepository.findById(eq("PLAYER"))).thenReturn(Optional.of(playerRole));
+        when(userDetailsManager.loadUserByUsername(anyString())).thenReturn(user);
+
+        creatureFactory = new CreatureFactory(
+            commService,
+            creatureRepository,
+            connectionRepository,
+            roleRepository,
+            userDetailsManager);
     }
 
     @Test
@@ -71,6 +95,7 @@ class CreatureFactoryTest {
         assertEquals(definition, result.getDefinition());
         assertEquals("Result", result.getName());
         assertEquals(FEMALE, result.getGender());
+        assertTrue(result.getRoles().stream().anyMatch(role -> "PLAYER".equals(role.getName())));
 
         verify(creatureRepository).save(any());
     }
@@ -89,6 +114,8 @@ class CreatureFactoryTest {
         creature.setConnection(connection);
         creature.setName(definition.getName());
         creature.setGender(definition.getGender());
+        creature.getRoles().add(new Role("PLAYER"));
+        creature.getRoles().add(new Role("BUILDER"));
 
         when(creatureRepository.findByDefinition(eq(definition))).thenReturn(Stream.of(creature));
 
@@ -98,6 +125,8 @@ class CreatureFactoryTest {
         assertEquals(definition, result.getDefinition());
         assertEquals("Bob", result.getName());
         assertEquals(MALE, result.getGender());
+        assertTrue(result.getRoles().stream().anyMatch(role -> "PLAYER".equals(role.getName())));
+        assertTrue(result.getRoles().stream().anyMatch(role -> "BUILDER".equals(role.getName())));
 
         verify(creatureRepository).save(any());
     }

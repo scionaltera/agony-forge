@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.agonyforge.core.model.Role.SUPER_ROLE;
+
 @Component
 public class InvokerService {
     public static final int REQUIRED_ARG_COUNT = 2; // every invoke() method requires at least this many arguments
@@ -60,6 +62,14 @@ public class InvokerService {
             return;
         } else {
             output.append("[black]Found verb: " + verbOptional.get().getName() + (verbOptional.get().isQuoting() ? " (quoting)" : ""));
+        }
+
+        if (ch.getRoles().stream().noneMatch(role -> SUPER_ROLE.equals(role.getName())) && verbOptional.get().getRoles().stream().noneMatch(role -> ch.getRoles().contains(role))) {
+            LOGGER.warn("{} has no role to permit use of verb: {}", ch.getName(), verbOptional.get().getName());
+            output.append(String.format("[red]%s has no role to permit use of verb: %s", ch.getName(), verbOptional.get().getName()));
+            return;
+        } else {
+            output.append("[black]Authorization granted for verb: " + verbOptional.get().getName());
         }
 
         if (verbOptional.get().isQuoting()) { // "quoting" verbs automatically enquote everything after the verb into a single token

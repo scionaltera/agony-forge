@@ -10,6 +10,7 @@ import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
+import com.agonyforge.core.model.repository.RoleRepository;
 import com.agonyforge.core.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.UserDetailsManager;
 
+import java.util.Collections;
 import java.util.UUID;
 
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.IN_GAME;
@@ -41,6 +46,12 @@ class DefaultCharacterCreationInterpreterDelegateTest {
     private ConnectionRepository connectionRepository;
 
     @Mock
+    private RoleRepository roleRepository;
+
+    @Mock
+    private UserDetailsManager userDetailsManager;
+
+    @Mock
     private Interpreter primary;
 
     @Captor
@@ -55,7 +66,12 @@ class DefaultCharacterCreationInterpreterDelegateTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        CreatureFactory creatureFactory = new CreatureFactory(commService, creatureRepository, connectionRepository);
+        CreatureFactory creatureFactory = new CreatureFactory(
+            commService,
+            creatureRepository,
+            connectionRepository,
+            roleRepository,
+            userDetailsManager);
 
         when(creatureRepository.save(any())).thenAnswer(invocation -> {
             Creature creature = invocation.getArgument(0);
@@ -76,6 +92,11 @@ class DefaultCharacterCreationInterpreterDelegateTest {
 
             return definition;
         });
+
+        UserDetails user = mock(UserDetails.class);
+
+        when(user.getAuthorities()).thenReturn(Collections.emptyList());
+        when(userDetailsManager.loadUserByUsername(anyString())).thenReturn(user);
 
         delegate = new DefaultCharacterCreationInterpreterDelegate(
             creatureFactory,

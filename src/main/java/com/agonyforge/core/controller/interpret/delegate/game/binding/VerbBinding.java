@@ -34,6 +34,12 @@ public class VerbBinding implements ArgumentBinding {
             return false;
         }
 
+        if (actor.getRoles().stream().noneMatch(role -> "SUPER".equals(role.getName()))
+            && actor.getRoles().stream().noneMatch(actorRole -> verbOptional.get().getRoles().contains(actorRole))) {
+
+            return false;
+        }
+
         this.verb = verbOptional.get();
         return true;
     }
