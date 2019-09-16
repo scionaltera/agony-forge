@@ -58,18 +58,14 @@ public class InvokerService {
             verbToken);
 
         if (!verbOptional.isPresent()) {
-            output.append("[red]Unknown verb: " + verbToken);
+            output.append("[default]Huh?");
             return;
-        } else {
-            output.append("[black]Found verb: " + verbOptional.get().getName() + (verbOptional.get().isQuoting() ? " (quoting)" : ""));
         }
 
         if (ch.getRoles().stream().noneMatch(role -> SUPER_ROLE.equals(role.getName())) && verbOptional.get().getRoles().stream().noneMatch(role -> ch.getRoles().contains(role))) {
             LOGGER.warn("{} has no role to permit use of verb: {}", ch.getName(), verbOptional.get().getName());
-            output.append(String.format("[red]%s has no role to permit use of verb: %s", ch.getName(), verbOptional.get().getName()));
+            output.append("[default]Huh?");
             return;
-        } else {
-            output.append("[black]Authorization granted for verb: " + verbOptional.get().getName());
         }
 
         if (verbOptional.get().isQuoting()) { // "quoting" verbs automatically enquote everything after the verb into a single token
@@ -79,8 +75,6 @@ public class InvokerService {
         }
 
         Object command = applicationContext.getBean(verbOptional.get().getBean());
-
-        output.append("[black]Found command: " + command.getClass().getName());
 
         // The command object should have one or more invoke() methods on it, with at least REQUIRED_ARG_COUNT
         // arguments. Additional arguments must be implementations of ArgumentBinding. The following uses
@@ -92,13 +86,9 @@ public class InvokerService {
 
         // We found no methods that matched our criteria. Print an error message and exit.
         if (candidates.isEmpty()) {
-            output.append("[red]No candidate methods matched the number of tokens provided.");
             Verb.showVerbSyntax(verbOptional.get(), command, output);
             return;
         }
-
-        // Debug output to show all the possible matches we found
-        candidates.forEach(candidate -> output.append("[black]Found method candidate: " + Arrays.toString(candidate.getParameters())));
 
         // For each method candidate, see if we can successfully call bind() on all the ArgumentBindings
         for (Method method : candidates) {
@@ -113,8 +103,6 @@ public class InvokerService {
                 } else {
                     isBindingSuccessful = false;
                     BindingDescription description = AnnotationUtils.findAnnotation(binding.getClass(), BindingDescription.class);
-                    output.append(String.format("No \"%s\" found.",
-                        description == null ? "object binding" : description.value()));
                 }
             }
 
@@ -129,28 +117,9 @@ public class InvokerService {
 
                 // We're done!
                 return;
-            } else {
-                // We failed to bind one or more tokens, so print some debug info and continue.
-                StringBuilder buf = new StringBuilder();
-
-                buf.append(verbOptional.get().getName());
-                buf.append(" ");
-
-                for (int i = REQUIRED_ARG_COUNT; i < method.getParameterCount(); i++) {
-                    BindingDescription description = AnnotationUtils.findAnnotation(method.getParameterTypes()[i], BindingDescription.class);
-
-                    buf.append("&lt;");
-                    buf.append(description == null ? "argument" : description.value());
-                    buf.append("&gt;");
-                }
-
-                output.append("Could not resolve all arguments for grammar:");
-                output.append(buf.toString());
             }
         }
 
-        // We failed to invoke any of the methods! Show the usage and help the player out.
-        output.append("[red]Could not successfully bind all arguments to any of the available methods.");
         Verb.showVerbSyntax(verbOptional.get(), command, output);
     }
 }

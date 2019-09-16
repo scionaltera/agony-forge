@@ -7,7 +7,6 @@ import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.repository.CreatureRepository;
-import com.agonyforge.core.service.CommService;
 import com.agonyforge.core.service.InvokerService;
 import org.springframework.web.util.HtmlUtils;
 
@@ -19,18 +18,15 @@ public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelega
     private CreatureRepository creatureRepository;
     private LoginConfiguration loginConfiguration; // TODO need to break this configuration apart
     private InvokerService invokerService;
-    private CommService commService;
 
     public DefaultInGameInterpreterDelegate(
         CreatureRepository creatureRepository,
         LoginConfiguration loginConfiguration,
-        InvokerService invokerService,
-        CommService commService) {
+        InvokerService invokerService) {
 
         this.creatureRepository = creatureRepository;
         this.loginConfiguration = loginConfiguration;
         this.invokerService = invokerService;
-        this.commService = commService;
     }
 
     @Override
@@ -54,11 +50,6 @@ public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelega
             })
             .filter(token -> !"".equals(token))
             .collect(Collectors.toList());
-
-        output
-            .append("[black]Tokens: " + tokens.toString()
-                .replace("[", "&#91;")
-                .replace("]", "&#93;"));
 
         invokerService.invoke(creature, output, input.getInput(), tokens);
 

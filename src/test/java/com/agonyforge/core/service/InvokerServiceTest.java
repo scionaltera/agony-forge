@@ -82,7 +82,7 @@ class InvokerServiceTest {
 
         verify(verbRepository).findFirstByNameIgnoreCaseStartingWith(any(), eq("WHAT"));
 
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Unknown verb: WHAT")));
+        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Huh?")));
     }
 
     @Test
@@ -92,7 +92,6 @@ class InvokerServiceTest {
         verify(verbRepository).findFirstByNameIgnoreCaseStartingWith(any(), eq("WHO"));
         verify(whoCommand, never()).invoke(any(), any());
 
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("No candidate methods matched the number of tokens provided")));
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Usages for the 'who' command")));
     }
 
