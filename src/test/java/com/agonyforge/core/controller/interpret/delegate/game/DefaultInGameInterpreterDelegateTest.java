@@ -8,7 +8,6 @@ import com.agonyforge.core.controller.interpret.delegate.LoginConfigurationBuild
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.repository.CreatureRepository;
-import com.agonyforge.core.service.CommService;
 import com.agonyforge.core.service.InvokerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,9 +34,6 @@ class DefaultInGameInterpreterDelegateTest {
     @Mock
     private InvokerService invokerService;
 
-    @Mock
-    private CommService commService;
-
     private DefaultInGameInterpreterDelegate interpreter;
     private Creature me = new Creature();
 
@@ -59,8 +55,7 @@ class DefaultInGameInterpreterDelegateTest {
         interpreter = new DefaultInGameInterpreterDelegate(
             creatureRepository,
             loginConfiguration,
-            invokerService,
-            commService
+            invokerService
         );
     }
 

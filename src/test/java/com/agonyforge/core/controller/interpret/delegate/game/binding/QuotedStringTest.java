@@ -5,8 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class QuotedStringTest {
     private Creature creature;
@@ -26,5 +25,10 @@ class QuotedStringTest {
     void testBind() {
         assertTrue(binding.bind(creature, "TOKEN"));
         assertEquals("TOKEN", binding.getToken());
+    }
+
+    @Test
+    void testBindEmptyToken() {
+        assertFalse(binding.bind(creature, ""));
     }
 }

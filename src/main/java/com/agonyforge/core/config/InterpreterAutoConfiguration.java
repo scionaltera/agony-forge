@@ -91,7 +91,6 @@ public class InterpreterAutoConfiguration {
         return new DefaultInGameInterpreterDelegate(
             creatureRepository,
             loginConfiguration,
-            invokerService,
-            commService);
+            invokerService);
     }
 }
