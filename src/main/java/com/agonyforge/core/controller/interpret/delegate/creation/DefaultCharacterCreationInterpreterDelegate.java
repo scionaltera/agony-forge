@@ -16,6 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import static com.agonyforge.core.model.Gender.*;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.IN_GAME;
 
@@ -43,31 +47,24 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
     @Override
     public Output interpret(Interpreter primary, Input input, Connection connection) {
         Output output = new Output();
-        DefaultCharacterCreationConnectionState secondaryState = DefaultCharacterCreationConnectionState.valueOf(connection.getSecondaryState());
-        Gender gender;
+        String selection = input.getInput().substring(0, 1).toLowerCase();
+        Optional<Gender> genderOptional = Arrays.stream(values())
+            .filter(g -> !"object".equals(g.getName()))
+            .filter(g -> g.getName().startsWith(selection))
+            .findFirst();
 
-        switch (input.getInput().toLowerCase()) {
-            case "m":
-                gender = MALE;
-                break;
-            case "f":
-                gender = FEMALE;
-                break;
-            case "n":
-                gender = NEUTRAL;
-                break;
-            default:
-                output.append("[default]Sorry, I didn't get that.");
-                output.append(primary.prompt(connection));
+        if (!genderOptional.isPresent()) {
+            output.append("[default]Sorry, I didn't get that.");
+            output.append(primary.prompt(connection));
 
-                return output;
+            return output;
         }
 
         CreatureDefinition definition = new CreatureDefinition();
 
         definition.setPlayer(true);
         definition.setName(connection.getName());
-        definition.setGender(gender);
+        definition.setGender(genderOptional.get());
 
         Creature creature = creatureFactory.build(creatureDefinitionRepository.save(definition), primary, connection);
 
@@ -88,15 +85,20 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
 
     @Override
     public Output prompt(Interpreter primary, Connection connection) {
-        Output output = new Output();
-        DefaultCharacterCreationConnectionState secondaryState = DefaultCharacterCreationConnectionState.valueOf(connection.getSecondaryState());
+        Output output = new Output("[default]Which pronouns should the game use to refer to your character?");
 
-        output
-            .append("[default]Genders in this game have no bearing on anything about your character except for which pronouns the game uses to refer to you.")
-            .append("If you choose 'male' you will be 'he/him'.")
-            .append("If you choose 'female' you will be 'she/her'.")
-            .append("If you choose 'neutral' you will be 'they/them'.")
-            .append("[default]Are you male, female or neutral? [M/F/N]: ");
+        Arrays.stream(values())
+            .filter(gender -> !"object".equals(gender.getName()))
+            .forEach(gender -> output.append(String.format("Choose '%s' for '%s/%s'.",
+                gender.getName(),
+                gender.getSubject(),
+                gender.getObject())));
+
+        output.append(String.format("[default]Please select one. [%s]: ",
+            Arrays.stream(values())
+                .filter(gender -> !"object".equals(gender.getName()))
+                .map(gender -> gender.getName().substring(0, 1).toUpperCase())
+                .collect(Collectors.joining("/"))));
 
         return output;
     }
