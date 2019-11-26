@@ -1,5 +1,5 @@
 group 'com.agonyforge'
-version '0.4.0'
+version '0.5.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -22,10 +22,10 @@ buildscript {
     configurations.maybeCreate("pitest")
 
     dependencies {
-        classpath group: 'org.owasp', name: 'dependency-check-gradle', version: '5.2.0'
+        classpath group: 'org.owasp', name: 'dependency-check-gradle', version: '5.2.4'
         classpath group: 'org.kordamp.gradle', name: 'stats-gradle-plugin', version: '0.2.2'
         classpath group: 'se.transmode.gradle', name: 'gradle-docker', version: '1.2'
-        classpath group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.1.6.RELEASE'
+        classpath group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.2.1.RELEASE'
         classpath group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: '1.4.0'
 
         pitest group: 'org.pitest', name: 'pitest-junit5-plugin', version: '0.7'
@@ -61,7 +61,7 @@ dependencies {
     // required for using ActiveMQ as a message broker
     compile group: 'io.projectreactor.netty', name: 'reactor-netty', version: '0.8.9.RELEASE'
 
-    compile group: 'org.webjars', name: 'webjars-locator-core', version: '0.37'
+    compile group: 'org.webjars', name: 'webjars-locator-core', version: '0.43'
     compile group: 'org.webjars', name: 'jquery', version: '3.4.1'
     compile group: 'org.webjars', name: 'popper.js', version: '1.15.0'
     compile group: 'org.webjars', name: 'bootstrap', version: '4.3.1'
