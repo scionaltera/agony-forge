@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <#assign styles = [ "/css/index.css" ]>
-<#include "inc/header.inc.ftl">
+<#include "inc/header.inc.ftlh">
 <body>
 <div class="container-fluid">
     <#assign nobuffer = true>
-    <#include "inc/title.inc.ftl">
+    <#include "inc/title.inc.ftlh">
 
     <div class="row">
         <div class="col-10 offset-1">
@@ -14,9 +14,9 @@
         </div>
     </div>
 
-    <#include "inc/links.inc.ftl">
+    <#include "inc/links.inc.ftlh">
 </div>
 
-<#include "inc/scripts.inc.ftl">
+<#include "inc/scripts.inc.ftlh">
 </body>
 </html>
