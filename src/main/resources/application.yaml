@@ -20,6 +20,8 @@ spring:
             non_contextual_creation: true # Hides a warning on startup.
     open-in-view: false # Hides a warning on startup.
     show-sql: false # Very spammy, but enabling this can be handy for debugging.
+  flyway:
+    connect-retries: 60 # Try connecting once per second for this many seconds in case the database is slow to start up.
 
 logging:
   level:
