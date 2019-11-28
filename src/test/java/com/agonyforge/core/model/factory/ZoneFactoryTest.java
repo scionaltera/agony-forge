@@ -1,14 +1,19 @@
 package com.agonyforge.core.model.factory;
 
+import com.agonyforge.core.model.Room;
 import com.agonyforge.core.model.Zone;
+import com.agonyforge.core.model.repository.RoomRepository;
 import com.agonyforge.core.model.repository.ZoneRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import static com.agonyforge.core.model.factory.ZoneFactory.ZONE_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,6 +23,9 @@ import static org.mockito.Mockito.*;
 class ZoneFactoryTest {
     @Mock
     private ZoneRepository zoneRepository;
+
+    @Mock
+    private RoomRepository roomRepository;
 
     private long nextZoneId = 1;
 
@@ -32,12 +40,24 @@ class ZoneFactoryTest {
         when(zoneRepository.save(any())).thenAnswer(invocation -> {
             Zone zone = invocation.getArgument(0);
 
-            zone.setId(nextZoneId++);
+            if (zone.getId() == null) {
+                zone.setId(nextZoneId++);
+            }
 
             return zone;
         });
 
-        zoneFactory = new ZoneFactory(zoneRepository);
+        when(roomRepository.saveAll(anyList())).thenAnswer(invocation -> {
+            List<Room> rooms = invocation.getArgument(0);
+
+            rooms.stream()
+                .filter(room -> room.getId() == null)
+                .forEach(room -> room.setId(UUID.randomUUID()));
+
+            return rooms;
+        });
+
+        zoneFactory = new ZoneFactory(zoneRepository, roomRepository);
     }
 
     @Test
@@ -50,7 +70,7 @@ class ZoneFactoryTest {
         assertEquals(1L, result.getId());
 
         verify(zoneRepository).findById(1L);
-        verify(zoneRepository).save(any(Zone.class));
+        verify(zoneRepository, atLeastOnce()).save(any(Zone.class));
     }
 
     @Test
@@ -73,8 +93,9 @@ class ZoneFactoryTest {
     void testBuild() {
         Zone zone = zoneFactory.build();
 
-        assertNotNull(zone);
+        assertEquals(ZONE_SIZE, zone.getRooms().size());
 
-        verify(zoneRepository).save(eq(zone));
+        verify(zoneRepository, atLeastOnce()).save(eq(zone));
+        verify(roomRepository).saveAll(anyList());
     }
 }

@@ -14,9 +14,10 @@ import java.util.List;
 
 @Component
 public class ZoneFactory {
+    static final int ZONE_SIZE = 100;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ZoneFactory.class);
     private static final Long START_ZONE = 1L;
-    private static final int ZONE_SIZE = 100;
 
     private ZoneRepository zoneRepository;
     private RoomRepository roomRepository;
