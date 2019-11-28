@@ -7,10 +7,10 @@ import com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginInter
 import com.agonyforge.core.controller.interpret.delegate.game.InGameInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.delegate.login.LoginInterpreterDelegate;
 import com.agonyforge.core.model.factory.CreatureFactory;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
-import com.agonyforge.core.model.repository.ZoneRepository;
 import com.agonyforge.core.service.CommService;
 import com.agonyforge.core.service.InvokerService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,7 +31,7 @@ public class InterpreterAutoConfiguration {
     private ConnectionRepository connectionRepository;
     private CreatureRepository creatureRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
-    private ZoneRepository zoneRepository;
+    private ZoneFactory zoneFactory;
     private CreatureFactory creatureFactory;
     private InvokerService invokerService;
     private CommService commService;
@@ -45,7 +45,7 @@ public class InterpreterAutoConfiguration {
         ConnectionRepository connectionRepository,
         CreatureRepository creatureRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
-        ZoneRepository zoneRepository,
+        ZoneFactory zoneFactory,
         CreatureFactory creatureFactory,
         InvokerService invokerService,
         CommService commService) {
@@ -57,7 +57,7 @@ public class InterpreterAutoConfiguration {
         this.connectionRepository = connectionRepository;
         this.creatureRepository = creatureRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
-        this.zoneRepository = zoneRepository;
+        this.zoneFactory = zoneFactory;
         this.creatureFactory = creatureFactory;
         this.invokerService = invokerService;
         this.commService = commService;
@@ -73,6 +73,7 @@ public class InterpreterAutoConfiguration {
             sessionRepository,
             connectionRepository,
             creatureDefinitionRepository,
+            zoneFactory,
             creatureFactory,
             commService
         );
@@ -85,7 +86,7 @@ public class InterpreterAutoConfiguration {
             creatureFactory,
             creatureRepository,
             creatureDefinitionRepository,
-            zoneRepository,
+            zoneFactory,
             commService
         );
     }

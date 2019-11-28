@@ -6,12 +6,13 @@ import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
+import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.CreatureFactory;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.model.repository.RoleRepository;
-import com.agonyforge.core.model.repository.ZoneRepository;
 import com.agonyforge.core.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
     private RoleRepository roleRepository;
 
     @Mock
-    private ZoneRepository zoneRepository;
+    private ZoneFactory zoneFactory;
 
     @Mock
     private UserDetailsManager userDetailsManager;
@@ -96,6 +97,14 @@ class DefaultCharacterCreationInterpreterDelegateTest {
             return definition;
         });
 
+        when(zoneFactory.getStartZone()).thenAnswer(invocation -> {
+            Zone zone = new Zone();
+
+            zone.setId(1L);
+
+            return zone;
+        });
+
         UserDetails user = mock(UserDetails.class);
 
         when(user.getAuthorities()).thenReturn(Collections.emptyList());
@@ -105,7 +114,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
             creatureFactory,
             creatureRepository,
             creatureDefinitionRepository,
-            zoneRepository,
+            zoneFactory,
             commService);
     }
 

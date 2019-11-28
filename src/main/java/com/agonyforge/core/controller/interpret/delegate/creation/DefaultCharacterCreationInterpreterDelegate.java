@@ -6,11 +6,12 @@ import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
+import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.Gender;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
-import com.agonyforge.core.model.repository.ZoneRepository;
 import com.agonyforge.core.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
     private CreatureFactory creatureFactory;
     private CreatureRepository creatureRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
-    private ZoneRepository zoneRepository;
+    private ZoneFactory zoneFactory;
     private CommService commService;
 
     @Inject
@@ -38,13 +39,13 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         CreatureFactory creatureFactory,
         CreatureRepository creatureRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
-        ZoneRepository zoneRepository,
+        ZoneFactory zoneFactory,
         CommService commService) {
 
         this.creatureFactory = creatureFactory;
         this.creatureRepository = creatureRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
-        this.zoneRepository = zoneRepository;
+        this.zoneFactory = zoneFactory;
         this.commService = commService;
     }
 
@@ -80,9 +81,9 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         output.append("[yellow]Welcome, " + connection.getName() + "!");
         output.append(primary.prompt(connection));
 
-        if (zoneRepository.count() == 0) {
-            LOGGER.info("No Zones exist!");
-        }
+        Zone zone = zoneFactory.getStartZone();
+
+        LOGGER.info("Placed {} in Zone {}", creature.getName(), zone.getId());
 
         commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game for the first time."), primary, creature);
 

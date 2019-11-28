@@ -8,8 +8,10 @@ import com.agonyforge.core.controller.interpret.delegate.LoginConfigurationBuild
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
+import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.Gender;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
@@ -67,6 +69,9 @@ class DefaultLoginInterpreterDelegateTest {
 
     @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private ZoneFactory zoneFactory;
 
     @Mock
     private CommService commService;
@@ -141,6 +146,14 @@ class DefaultLoginInterpreterDelegateTest {
             return definition;
         });
 
+        when(zoneFactory.getStartZone()).thenAnswer(invocation -> {
+            Zone zone = new Zone();
+
+            zone.setId(1L);
+
+            return zone;
+        });
+
         UserDetails user = mock(UserDetails.class);
 
         when(user.getAuthorities()).thenReturn(Collections.emptyList());
@@ -153,6 +166,7 @@ class DefaultLoginInterpreterDelegateTest {
             sessionRepository,
             connectionRepository,
             creatureDefinitionRepository,
+            zoneFactory,
             creatureFactory,
             commService);
     }

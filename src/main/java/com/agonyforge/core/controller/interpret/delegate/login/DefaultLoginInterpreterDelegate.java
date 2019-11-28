@@ -7,8 +7,10 @@ import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
+import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.Gender;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.service.CommService;
@@ -46,6 +48,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
     private SessionRepository sessionRepository;
     private ConnectionRepository connectionRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
+    private ZoneFactory zoneFactory;
     private CreatureFactory creatureFactory;
     private CommService commService;
 
@@ -56,6 +59,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         SessionRepository sessionRepository,
         ConnectionRepository connectionRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
+        ZoneFactory zoneFactory,
         CreatureFactory creatureFactory,
         CommService commService) {
 
@@ -66,6 +70,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         this.sessionRepository = sessionRepository;
         this.connectionRepository = connectionRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
+        this.zoneFactory = zoneFactory;
         this.creatureFactory = creatureFactory;
         this.commService = commService;
     }
@@ -111,6 +116,11 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                     creature = findOrBuildPlayer(connection.getName(), primary, connection);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
+
+                    Zone zone = zoneFactory.getStartZone();
+
+                    LOGGER.info("Placed {} in Zone {}", creature.getName(), zone.getId());
+
                     commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game."), primary, creature);
 
                     LOGGER.info("Successful login {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
