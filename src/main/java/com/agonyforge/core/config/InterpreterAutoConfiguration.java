@@ -10,6 +10,7 @@ import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
+import com.agonyforge.core.model.repository.ZoneRepository;
 import com.agonyforge.core.service.CommService;
 import com.agonyforge.core.service.InvokerService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,6 +31,7 @@ public class InterpreterAutoConfiguration {
     private ConnectionRepository connectionRepository;
     private CreatureRepository creatureRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
+    private ZoneRepository zoneRepository;
     private CreatureFactory creatureFactory;
     private InvokerService invokerService;
     private CommService commService;
@@ -43,6 +45,7 @@ public class InterpreterAutoConfiguration {
         ConnectionRepository connectionRepository,
         CreatureRepository creatureRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
+        ZoneRepository zoneRepository,
         CreatureFactory creatureFactory,
         InvokerService invokerService,
         CommService commService) {
@@ -54,6 +57,7 @@ public class InterpreterAutoConfiguration {
         this.connectionRepository = connectionRepository;
         this.creatureRepository = creatureRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
+        this.zoneRepository = zoneRepository;
         this.creatureFactory = creatureFactory;
         this.invokerService = invokerService;
         this.commService = commService;
@@ -81,6 +85,7 @@ public class InterpreterAutoConfiguration {
             creatureFactory,
             creatureRepository,
             creatureDefinitionRepository,
+            zoneRepository,
             commService
         );
     }

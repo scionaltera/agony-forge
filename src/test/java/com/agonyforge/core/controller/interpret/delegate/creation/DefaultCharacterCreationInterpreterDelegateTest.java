@@ -11,6 +11,7 @@ import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.model.repository.RoleRepository;
+import com.agonyforge.core.model.repository.ZoneRepository;
 import com.agonyforge.core.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 
@@ -47,6 +47,9 @@ class DefaultCharacterCreationInterpreterDelegateTest {
 
     @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private ZoneRepository zoneRepository;
 
     @Mock
     private UserDetailsManager userDetailsManager;
@@ -102,6 +105,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
             creatureFactory,
             creatureRepository,
             creatureDefinitionRepository,
+            zoneRepository,
             commService);
     }
 
