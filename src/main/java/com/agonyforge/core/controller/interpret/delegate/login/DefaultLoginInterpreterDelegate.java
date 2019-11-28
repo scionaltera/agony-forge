@@ -119,7 +119,16 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
 
                     Zone zone = zoneFactory.getStartZone();
 
-                    LOGGER.info("Placed {} in Zone {}", creature.getName(), zone.getId());
+                    zone.getRooms()
+                        .stream()
+                        .filter(room -> room.getSequence() == 0)
+                        .findAny()
+                        .ifPresent(room -> {
+                            LOGGER.info("Placed {} in start room: {}#{}",
+                                creature.getName(),
+                                zone.getId(),
+                                room.getSequence());
+                        });
 
                     commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game."), primary, creature);
 

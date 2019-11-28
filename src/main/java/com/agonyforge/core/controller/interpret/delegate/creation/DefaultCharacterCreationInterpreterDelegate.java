@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -49,6 +50,7 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         this.commService = commService;
     }
 
+    @Transactional
     @Override
     public Output interpret(Interpreter primary, Input input, Connection connection) {
         Output output = new Output();
@@ -83,7 +85,16 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
 
         Zone zone = zoneFactory.getStartZone();
 
-        LOGGER.info("Placed {} in Zone {}", creature.getName(), zone.getId());
+        zone.getRooms()
+            .stream()
+            .filter(room -> room.getSequence() == 0)
+            .findAny()
+            .ifPresent(room -> {
+                LOGGER.info("Placed {} in start room: {}#{}",
+                    creature.getName(),
+                    zone.getId(),
+                    room.getSequence());
+            });
 
         commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game for the first time."), primary, creature);
 
@@ -92,6 +103,7 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         return output;
     }
 
+    @Transactional
     @Override
     public Output prompt(Interpreter primary, Connection connection) {
         Output output = new Output("[default]Which pronouns should the game use to refer to your character?");
