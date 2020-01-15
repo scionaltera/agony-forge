@@ -13,6 +13,7 @@ import com.agonyforge.core.model.Gender;
 import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
     private PasswordEncoder passwordEncoder;
     private SessionRepository sessionRepository;
     private ConnectionRepository connectionRepository;
+    private CreatureRepository creatureRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
     private ZoneFactory zoneFactory;
     private CreatureFactory creatureFactory;
@@ -58,6 +60,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         AuthenticationManager authenticationManager,
         SessionRepository sessionRepository,
         ConnectionRepository connectionRepository,
+        CreatureRepository creatureRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
         ZoneFactory zoneFactory,
         CreatureFactory creatureFactory,
@@ -69,6 +72,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         this.passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         this.sessionRepository = sessionRepository;
         this.connectionRepository = connectionRepository;
+        this.creatureRepository = creatureRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
         this.zoneFactory = zoneFactory;
         this.creatureFactory = creatureFactory;
@@ -124,6 +128,9 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                         .filter(room -> room.getSequence() == 0)
                         .findAny()
                         .ifPresent(room -> {
+                            creature.setRoom(room);
+                            creatureRepository.save(creature);
+
                             LOGGER.info("Placed {} in start room: {}#{}",
                                 creature.getName(),
                                 zone.getId(),

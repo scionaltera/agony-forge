@@ -78,8 +78,6 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         connection.setPrimaryState(IN_GAME);
         connection.setSecondaryState(null);
 
-        creatureRepository.save(creature);
-
         output.append("[yellow]Welcome, " + connection.getName() + "!");
         output.append(primary.prompt(connection));
 
@@ -90,11 +88,15 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
             .filter(room -> room.getSequence() == 0)
             .findAny()
             .ifPresent(room -> {
+                creature.setRoom(room);
+
                 LOGGER.info("Placed {} in start room: {}#{}",
                     creature.getName(),
                     zone.getId(),
                     room.getSequence());
             });
+
+        creatureRepository.save(creature);
 
         commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game for the first time."), primary, creature);
 

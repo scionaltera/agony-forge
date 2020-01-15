@@ -8,6 +8,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -23,6 +26,9 @@ public class Room {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Zone zone;
+
+    @OneToMany(mappedBy = "room")
+    private List<Creature> creatures = new ArrayList<>();
 
     public UUID getId() {
         return id;
@@ -46,6 +52,14 @@ public class Room {
 
     public void setZone(Zone zone) {
         this.zone = zone;
+    }
+
+    public List<Creature> getCreatures() {
+        return creatures;
+    }
+
+    public void setCreatures(List<Creature> creatures) {
+        this.creatures = creatures;
     }
 
     @Override

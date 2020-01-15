@@ -72,6 +72,7 @@ public class InterpreterAutoConfiguration {
             authenticationManager,
             sessionRepository,
             connectionRepository,
+            creatureRepository,
             creatureDefinitionRepository,
             zoneFactory,
             creatureFactory,

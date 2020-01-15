@@ -6,6 +6,7 @@ import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
+import com.agonyforge.core.model.Room;
 import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.factory.ZoneFactory;
@@ -102,6 +103,15 @@ class DefaultCharacterCreationInterpreterDelegateTest {
 
             zone.setId(1L);
 
+            for (int i = 0; i < 10; i++) {
+                Room room = new Room();
+
+                room.setId(UUID.randomUUID());
+                room.setSequence(i);
+
+                zone.getRooms().add(room);
+            }
+
             return zone;
         });
 
@@ -131,7 +141,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
         Output result = delegate.interpret(primary, input, connection);
 
         verify(creatureDefinitionRepository, atLeastOnce()).save(creatureDefinitionArgumentCaptor.capture());
-        verify(creatureRepository, atLeastOnce()).save(creatureArgumentCaptor.capture());
+        verify(creatureRepository, times(2)).save(creatureArgumentCaptor.capture());
 
         assertNotNull(result);
 
@@ -143,6 +153,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
 
         assertEquals(connection, captured.getConnection());
         assertEquals(connection.getName(), captured.getName());
+        assertNotNull(captured.getRoom());
 
         assertEquals(MALE, captured.getGender());
         assertEquals(IN_GAME, connection.getPrimaryState());
