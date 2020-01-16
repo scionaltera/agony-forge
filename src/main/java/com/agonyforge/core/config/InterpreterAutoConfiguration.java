@@ -7,6 +7,7 @@ import com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginInter
 import com.agonyforge.core.controller.interpret.delegate.game.InGameInterpreterDelegate;
 import com.agonyforge.core.controller.interpret.delegate.login.LoginInterpreterDelegate;
 import com.agonyforge.core.model.factory.CreatureFactory;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
@@ -30,6 +31,7 @@ public class InterpreterAutoConfiguration {
     private ConnectionRepository connectionRepository;
     private CreatureRepository creatureRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
+    private ZoneFactory zoneFactory;
     private CreatureFactory creatureFactory;
     private InvokerService invokerService;
     private CommService commService;
@@ -43,6 +45,7 @@ public class InterpreterAutoConfiguration {
         ConnectionRepository connectionRepository,
         CreatureRepository creatureRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
+        ZoneFactory zoneFactory,
         CreatureFactory creatureFactory,
         InvokerService invokerService,
         CommService commService) {
@@ -54,6 +57,7 @@ public class InterpreterAutoConfiguration {
         this.connectionRepository = connectionRepository;
         this.creatureRepository = creatureRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
+        this.zoneFactory = zoneFactory;
         this.creatureFactory = creatureFactory;
         this.invokerService = invokerService;
         this.commService = commService;
@@ -68,7 +72,9 @@ public class InterpreterAutoConfiguration {
             authenticationManager,
             sessionRepository,
             connectionRepository,
+            creatureRepository,
             creatureDefinitionRepository,
+            zoneFactory,
             creatureFactory,
             commService
         );
@@ -81,6 +87,7 @@ public class InterpreterAutoConfiguration {
             creatureFactory,
             creatureRepository,
             creatureDefinitionRepository,
+            zoneFactory,
             commService
         );
     }

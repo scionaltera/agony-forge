@@ -6,8 +6,10 @@ import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
+import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.Gender;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -29,6 +32,7 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
     private CreatureFactory creatureFactory;
     private CreatureRepository creatureRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
+    private ZoneFactory zoneFactory;
     private CommService commService;
 
     @Inject
@@ -36,14 +40,17 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         CreatureFactory creatureFactory,
         CreatureRepository creatureRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
+        ZoneFactory zoneFactory,
         CommService commService) {
 
         this.creatureFactory = creatureFactory;
         this.creatureRepository = creatureRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
+        this.zoneFactory = zoneFactory;
         this.commService = commService;
     }
 
+    @Transactional
     @Override
     public Output interpret(Interpreter primary, Input input, Connection connection) {
         Output output = new Output();
@@ -71,10 +78,25 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         connection.setPrimaryState(IN_GAME);
         connection.setSecondaryState(null);
 
-        creatureRepository.save(creature);
-
         output.append("[yellow]Welcome, " + connection.getName() + "!");
         output.append(primary.prompt(connection));
+
+        Zone zone = zoneFactory.getStartZone();
+
+        zone.getRooms()
+            .stream()
+            .filter(room -> room.getSequence() == 0)
+            .findAny()
+            .ifPresent(room -> {
+                creature.setRoom(room);
+
+                LOGGER.info("Placed {} in start room: {}#{}",
+                    creature.getName(),
+                    zone.getId(),
+                    room.getSequence());
+            });
+
+        creatureRepository.save(creature);
 
         commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game for the first time."), primary, creature);
 
@@ -83,6 +105,7 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         return output;
     }
 
+    @Transactional
     @Override
     public Output prompt(Interpreter primary, Connection connection) {
         Output output = new Output("[default]Which pronouns should the game use to refer to your character?");

@@ -8,8 +8,11 @@ import com.agonyforge.core.controller.interpret.delegate.LoginConfigurationBuild
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
+import com.agonyforge.core.model.Room;
+import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.Gender;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
@@ -67,6 +70,9 @@ class DefaultLoginInterpreterDelegateTest {
 
     @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private ZoneFactory zoneFactory;
 
     @Mock
     private CommService commService;
@@ -141,6 +147,23 @@ class DefaultLoginInterpreterDelegateTest {
             return definition;
         });
 
+        when(zoneFactory.getStartZone()).thenAnswer(invocation -> {
+            Zone zone = new Zone();
+
+            zone.setId(1L);
+
+            for (int i = 0; i < 10; i++) {
+                Room room = new Room();
+
+                room.setId(UUID.randomUUID());
+                room.setSequence(i);
+
+                zone.getRooms().add(room);
+            }
+
+            return zone;
+        });
+
         UserDetails user = mock(UserDetails.class);
 
         when(user.getAuthorities()).thenReturn(Collections.emptyList());
@@ -152,7 +175,9 @@ class DefaultLoginInterpreterDelegateTest {
             authenticationManager,
             sessionRepository,
             connectionRepository,
+            creatureRepository,
             creatureDefinitionRepository,
+            zoneFactory,
             creatureFactory,
             commService);
     }
@@ -457,7 +482,7 @@ class DefaultLoginInterpreterDelegateTest {
         verify(sessionRepository).findById(anyString());
         verify(session).setAttribute(eq(SPRING_SECURITY_CONTEXT_KEY), securityContextCaptor.capture());
         verify(sessionRepository).save(session);
-        verify(creatureRepository).save(creatureCaptor.capture());
+        verify(creatureRepository, times(2)).save(creatureCaptor.capture());
         verify(commService).echoToWorld(any(), eq(primary), any());
 
         assertEquals("[yellow]Welcome back, Dani!\n\n[default]Dani> ", result.toString());
@@ -474,6 +499,7 @@ class DefaultLoginInterpreterDelegateTest {
 
         assertEquals("Dani", creature.getName());
         assertEquals(connection, creature.getConnection());
+        assertNotNull(creature.getRoom());
     }
 
     @Test

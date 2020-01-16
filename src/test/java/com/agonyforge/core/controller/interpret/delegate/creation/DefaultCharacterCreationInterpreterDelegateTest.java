@@ -6,7 +6,10 @@ import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
+import com.agonyforge.core.model.Room;
+import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.CreatureFactory;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
@@ -18,7 +21,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 
@@ -47,6 +49,9 @@ class DefaultCharacterCreationInterpreterDelegateTest {
 
     @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private ZoneFactory zoneFactory;
 
     @Mock
     private UserDetailsManager userDetailsManager;
@@ -93,6 +98,23 @@ class DefaultCharacterCreationInterpreterDelegateTest {
             return definition;
         });
 
+        when(zoneFactory.getStartZone()).thenAnswer(invocation -> {
+            Zone zone = new Zone();
+
+            zone.setId(1L);
+
+            for (int i = 0; i < 10; i++) {
+                Room room = new Room();
+
+                room.setId(UUID.randomUUID());
+                room.setSequence(i);
+
+                zone.getRooms().add(room);
+            }
+
+            return zone;
+        });
+
         UserDetails user = mock(UserDetails.class);
 
         when(user.getAuthorities()).thenReturn(Collections.emptyList());
@@ -102,6 +124,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
             creatureFactory,
             creatureRepository,
             creatureDefinitionRepository,
+            zoneFactory,
             commService);
     }
 
@@ -118,7 +141,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
         Output result = delegate.interpret(primary, input, connection);
 
         verify(creatureDefinitionRepository, atLeastOnce()).save(creatureDefinitionArgumentCaptor.capture());
-        verify(creatureRepository, atLeastOnce()).save(creatureArgumentCaptor.capture());
+        verify(creatureRepository, times(2)).save(creatureArgumentCaptor.capture());
 
         assertNotNull(result);
 
@@ -130,6 +153,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
 
         assertEquals(connection, captured.getConnection());
         assertEquals(connection.getName(), captured.getName());
+        assertNotNull(captured.getRoom());
 
         assertEquals(MALE, captured.getGender());
         assertEquals(IN_GAME, connection.getPrimaryState());

@@ -7,10 +7,13 @@ import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.CreatureDefinition;
+import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.CreatureFactory;
 import com.agonyforge.core.model.Gender;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
+import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.service.CommService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +48,9 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
     private PasswordEncoder passwordEncoder;
     private SessionRepository sessionRepository;
     private ConnectionRepository connectionRepository;
+    private CreatureRepository creatureRepository;
     private CreatureDefinitionRepository creatureDefinitionRepository;
+    private ZoneFactory zoneFactory;
     private CreatureFactory creatureFactory;
     private CommService commService;
 
@@ -55,7 +60,9 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         AuthenticationManager authenticationManager,
         SessionRepository sessionRepository,
         ConnectionRepository connectionRepository,
+        CreatureRepository creatureRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
+        ZoneFactory zoneFactory,
         CreatureFactory creatureFactory,
         CommService commService) {
 
@@ -65,7 +72,9 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         this.passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         this.sessionRepository = sessionRepository;
         this.connectionRepository = connectionRepository;
+        this.creatureRepository = creatureRepository;
         this.creatureDefinitionRepository = creatureDefinitionRepository;
+        this.zoneFactory = zoneFactory;
         this.creatureFactory = creatureFactory;
         this.commService = commService;
     }
@@ -111,6 +120,23 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                     creature = findOrBuildPlayer(connection.getName(), primary, connection);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
+
+                    Zone zone = zoneFactory.getStartZone();
+
+                    zone.getRooms()
+                        .stream()
+                        .filter(room -> room.getSequence() == 0)
+                        .findAny()
+                        .ifPresent(room -> {
+                            creature.setRoom(room);
+                            creatureRepository.save(creature);
+
+                            LOGGER.info("Placed {} in start room: {}#{}",
+                                creature.getName(),
+                                zone.getId(),
+                                room.getSequence());
+                        });
+
                     commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game."), primary, creature);
 
                     LOGGER.info("Successful login {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
