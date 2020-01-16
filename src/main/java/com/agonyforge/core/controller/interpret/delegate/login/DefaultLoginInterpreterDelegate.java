@@ -92,6 +92,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                     connection.setSecondaryState(DEFAULT.name());
                 } else {
                     creature = findOrBuildPlayer(connection.getName(), primary, connection);
+                    placePlayerInWorld(creature);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
                     commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has reconnected."), primary, creature);
@@ -118,24 +119,9 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                 try {
                     logUserIn(connection.getName(), input.toString(), connection);
                     creature = findOrBuildPlayer(connection.getName(), primary, connection);
+                    placePlayerInWorld(creature);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
-
-                    Zone zone = zoneFactory.getStartZone();
-
-                    zone.getRooms()
-                        .stream()
-                        .filter(room -> room.getSequence() == 0)
-                        .findAny()
-                        .ifPresent(room -> {
-                            creature.setRoom(room);
-                            creatureRepository.save(creature);
-
-                            LOGGER.info("Placed {} in start room: {}#{}",
-                                creature.getName(),
-                                zone.getId(),
-                                room.getSequence());
-                        });
 
                     commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game."), primary, creature);
 
@@ -304,5 +290,27 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         connection.setSecondaryState(null);
 
         return creature;
+    }
+
+    private void placePlayerInWorld(Creature creature) {
+        if (creature.getRoom() != null) {
+            return;
+        }
+
+        Zone zone = zoneFactory.getStartZone();
+
+        zone.getRooms()
+            .stream()
+            .filter(room -> room.getSequence() == 0)
+            .findAny()
+            .ifPresent(room -> {
+                creature.setRoom(room);
+                creatureRepository.save(creature);
+
+                LOGGER.info("Placed {} in start room: {}#{}",
+                    creature.getName(),
+                    zone.getId(),
+                    room.getSequence());
+            });
     }
 }

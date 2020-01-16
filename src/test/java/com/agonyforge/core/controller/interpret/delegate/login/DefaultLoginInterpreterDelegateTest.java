@@ -266,11 +266,12 @@ class DefaultLoginInterpreterDelegateTest {
         assertEquals("[yellow]Welcome back, Dani!\n\n[default]Dani> ", result.toString());
         assertEquals(DISCONNECTED, oldConnection.getPrimaryState());
         assertEquals(DEFAULT_SECONDARY_STATE, oldConnection.getSecondaryState());
+        assertNotNull(creature.getRoom());
 
         verify(commService).echo(eq(creature), eq(primary), any());
         verify(commService).echoToWorld(any(), eq(primary), eq(creature));
         verify(connectionRepository).save(eq(oldConnection));
-        verify(creatureRepository).save(eq(creature));
+        verify(creatureRepository, atLeastOnce()).save(eq(creature));
     }
 
     @Test
