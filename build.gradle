@@ -28,7 +28,7 @@ buildscript {
         classpath group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '2.2.1.RELEASE'
         classpath group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: '1.4.0'
 
-        pitest group: 'org.pitest', name: 'pitest-junit5-plugin', version: '0.7'
+        pitest group: 'org.pitest', name: 'pitest-junit5-plugin', version: '0.11'
     }
 }
 
