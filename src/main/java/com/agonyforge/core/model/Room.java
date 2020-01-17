@@ -3,14 +3,20 @@ package com.agonyforge.core.model;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyEnumerated;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -26,6 +32,12 @@ public class Room {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Zone zone;
+
+    @SuppressWarnings("JpaAttributeTypeInspection")
+    @ElementCollection
+    @MapKeyColumn(name = "exit_type")
+    @MapKeyEnumerated(EnumType.STRING)
+    private Map<Direction, Portal> exits = new HashMap<>();
 
     @OneToMany(mappedBy = "room")
     private List<Creature> creatures = new ArrayList<>();
@@ -52,6 +64,14 @@ public class Room {
 
     public void setZone(Zone zone) {
         this.zone = zone;
+    }
+
+    public Map<Direction, Portal> getExits() {
+        return exits;
+    }
+
+    public void setExits(Map<Direction, Portal> exits) {
+        this.exits = exits;
     }
 
     public List<Creature> getCreatures() {

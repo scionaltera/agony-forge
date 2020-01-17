@@ -1,7 +1,9 @@
 package com.agonyforge.core.model.factory;
 
+import com.agonyforge.core.model.Portal;
 import com.agonyforge.core.model.Room;
 import com.agonyforge.core.model.Zone;
+import com.agonyforge.core.model.repository.PortalRepository;
 import com.agonyforge.core.model.repository.RoomRepository;
 import com.agonyforge.core.model.repository.ZoneRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +28,9 @@ class ZoneFactoryTest {
 
     @Mock
     private RoomRepository roomRepository;
+
+    @Mock
+    private PortalRepository portalRepository;
 
     private long nextZoneId = 1;
 
@@ -57,7 +62,20 @@ class ZoneFactoryTest {
             return rooms;
         });
 
-        zoneFactory = new ZoneFactory(zoneRepository, roomRepository);
+        when(portalRepository.save(any())).thenAnswer(invocation -> {
+            Portal portal = invocation.getArgument(0);
+
+            if (portal.getId() == null) {
+                portal.setId(UUID.randomUUID());
+            }
+
+            return portal;
+        });
+
+        zoneFactory = new ZoneFactory(
+            zoneRepository,
+            roomRepository,
+            portalRepository);
     }
 
     @Test
