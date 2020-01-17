@@ -59,7 +59,7 @@ dependencies {
     compile group: 'org.springframework.session', name: 'spring-session-jdbc'
 
     // required for using ActiveMQ as a message broker
-    compile group: 'io.projectreactor.netty', name: 'reactor-netty', version: '0.8.9.RELEASE'
+    compile group: 'io.projectreactor.netty', name: 'reactor-netty', version: '0.9.3.RELEASE'
 
     compile group: 'org.webjars', name: 'webjars-locator-core', version: '0.43'
     compile group: 'org.webjars', name: 'jquery', version: '3.4.1'
