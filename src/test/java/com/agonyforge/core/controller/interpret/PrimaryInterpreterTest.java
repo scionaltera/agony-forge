@@ -42,9 +42,9 @@ class PrimaryInterpreterTest {
         // Have to do the expectations after instantiating the class under test
         // in this case because we need a matcher for the class under test.
 
-        when(loginInterpreterDelegate.interpret(eq(primary), any(), any())).thenReturn(new Output("Login!"));
-        when(characterCreationInterpreterDelegate.interpret(eq(primary), any(), any())).thenReturn(new Output("Create!"));
-        when(inGameInterpreterDelegate.interpret(eq(primary), any(), any())).thenReturn(new Output("In Game!"));
+        when(loginInterpreterDelegate.interpret(eq(primary), any(), any(), anyBoolean())).thenReturn(new Output("Login!"));
+        when(characterCreationInterpreterDelegate.interpret(eq(primary), any(), any(), anyBoolean())).thenReturn(new Output("Create!"));
+        when(inGameInterpreterDelegate.interpret(eq(primary), any(), any(), anyBoolean())).thenReturn(new Output("In Game!"));
 
         when(loginInterpreterDelegate.prompt(eq(primary), any())).thenReturn(new Output("Login Prompt!"));
         when(characterCreationInterpreterDelegate.prompt(eq(primary), any())).thenReturn(new Output("Create Prompt!"));
@@ -61,8 +61,8 @@ class PrimaryInterpreterTest {
 
         Output output = primary.interpret(input, connection);
 
-        verify(loginInterpreterDelegate).interpret(eq(primary), eq(input), eq(connection));
-        verifyZeroInteractions(characterCreationInterpreterDelegate, inGameInterpreterDelegate);
+        verify(loginInterpreterDelegate).interpret(eq(primary), eq(input), eq(connection), eq(true));
+        verifyNoInteractions(characterCreationInterpreterDelegate, inGameInterpreterDelegate);
 
         assertEquals("Login!", output.toString());
     }
@@ -77,8 +77,8 @@ class PrimaryInterpreterTest {
 
         Output output = primary.interpret(input, connection);
 
-        verify(characterCreationInterpreterDelegate).interpret(eq(primary), eq(input), eq(connection));
-        verifyZeroInteractions(loginInterpreterDelegate, inGameInterpreterDelegate);
+        verify(characterCreationInterpreterDelegate).interpret(eq(primary), eq(input), eq(connection), eq(true));
+        verifyNoInteractions(loginInterpreterDelegate, inGameInterpreterDelegate);
 
         assertEquals("Create!", output.toString());
     }
@@ -93,8 +93,8 @@ class PrimaryInterpreterTest {
 
         Output output = primary.interpret(input, connection);
 
-        verify(inGameInterpreterDelegate).interpret(eq(primary), eq(input), eq(connection));
-        verifyZeroInteractions(loginInterpreterDelegate, characterCreationInterpreterDelegate);
+        verify(inGameInterpreterDelegate).interpret(eq(primary), eq(input), eq(connection), eq(true));
+        verifyNoInteractions(loginInterpreterDelegate, characterCreationInterpreterDelegate);
 
         assertEquals("In Game!", output.toString());
     }
@@ -109,7 +109,7 @@ class PrimaryInterpreterTest {
 
         Output output = primary.interpret(input, connection);
 
-        verifyZeroInteractions(loginInterpreterDelegate, characterCreationInterpreterDelegate, inGameInterpreterDelegate);
+        verifyNoInteractions(loginInterpreterDelegate, characterCreationInterpreterDelegate, inGameInterpreterDelegate);
 
         assertEquals("", output.toString());
     }
@@ -123,7 +123,7 @@ class PrimaryInterpreterTest {
         Output output = primary.prompt(connection);
 
         verify(loginInterpreterDelegate).prompt(eq(primary), eq(connection));
-        verifyZeroInteractions(characterCreationInterpreterDelegate, inGameInterpreterDelegate);
+        verifyNoInteractions(characterCreationInterpreterDelegate, inGameInterpreterDelegate);
 
         assertEquals("Login Prompt!", output.toString());
     }
@@ -137,7 +137,7 @@ class PrimaryInterpreterTest {
         Output output = primary.prompt(connection);
 
         verify(characterCreationInterpreterDelegate).prompt(eq(primary), eq(connection));
-        verifyZeroInteractions(loginInterpreterDelegate, inGameInterpreterDelegate);
+        verifyNoInteractions(loginInterpreterDelegate, inGameInterpreterDelegate);
 
         assertEquals("Create Prompt!", output.toString());
     }
@@ -151,7 +151,7 @@ class PrimaryInterpreterTest {
         Output output = primary.prompt(connection);
 
         verify(inGameInterpreterDelegate).prompt(eq(primary), eq(connection));
-        verifyZeroInteractions(loginInterpreterDelegate, characterCreationInterpreterDelegate);
+        verifyNoInteractions(loginInterpreterDelegate, characterCreationInterpreterDelegate);
 
         assertEquals("In Game Prompt!", output.toString());
     }
@@ -164,7 +164,7 @@ class PrimaryInterpreterTest {
 
         Output output = primary.prompt(connection);
 
-        verifyZeroInteractions(loginInterpreterDelegate, characterCreationInterpreterDelegate, inGameInterpreterDelegate);
+        verifyNoInteractions(loginInterpreterDelegate, characterCreationInterpreterDelegate, inGameInterpreterDelegate);
 
         assertEquals("", output.toString());
     }

@@ -259,11 +259,13 @@ class DefaultLoginInterpreterDelegateTest {
             return c;
         }).when(connectionRepository).delete(any());
 
+        when(primary.interpret(any(), any(), anyBoolean())).thenReturn(new Output("LOOK"));
+
         Output result = interpreter.interpret(primary, input, connection);
 
         assertEquals(connection, creature.getConnection());
         assertNotEquals(oldConnection, creature.getConnection());
-        assertEquals("[yellow]Welcome back, Dani!\n\n[default]Dani> ", result.toString());
+        assertEquals("[yellow]Welcome back, Dani!\nLOOK\n\n[default]Dani> ", result.toString());
         assertEquals(DISCONNECTED, oldConnection.getPrimaryState());
         assertEquals(DEFAULT_SECONDARY_STATE, oldConnection.getSecondaryState());
         assertNotNull(creature.getRoom());
@@ -475,6 +477,7 @@ class DefaultLoginInterpreterDelegateTest {
         connection.setSecondaryState(LOGIN_ASK_PASSWORD.name());
         connection.setHttpSessionId(UUID.randomUUID().toString());
 
+        when(primary.interpret(any(), any(), anyBoolean())).thenReturn(new Output("LOOK"));
         when(authenticationManager.authenticate(any(Authentication.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(sessionRepository.findById(anyString())).thenReturn(session);
 
@@ -486,7 +489,7 @@ class DefaultLoginInterpreterDelegateTest {
         verify(creatureRepository, times(2)).save(creatureCaptor.capture());
         verify(commService).echoToWorld(any(), eq(primary), any());
 
-        assertEquals("[yellow]Welcome back, Dani!\n\n[default]Dani> ", result.toString());
+        assertEquals("[yellow]Welcome back, Dani!\nLOOK\n\n[default]Dani> ", result.toString());
         assertFalse(result.getSecret());
         assertEquals(IN_GAME, connection.getPrimaryState());
 
