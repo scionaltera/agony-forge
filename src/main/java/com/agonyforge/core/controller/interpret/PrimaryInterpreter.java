@@ -33,12 +33,17 @@ public class PrimaryInterpreter extends BaseInterpreter {
 
     @Override
     public Output interpret(Input input, Connection connection) {
+        return interpret(input, connection, true);
+    }
+
+    @Override
+    public Output interpret(Input input, Connection connection, boolean showPrompt) {
         PrimaryConnectionState primaryState = connection.getPrimaryState();
 
         switch (primaryState) {
-            case LOGIN: return loginInterpreter.interpret(this, input, connection);
-            case CREATION: return characterCreationInterpreterDelegate.interpret(this, input, connection);
-            case IN_GAME: return inGameInterpreter.interpret(this, input, connection);
+            case LOGIN: return loginInterpreter.interpret(this, input, connection, showPrompt);
+            case CREATION: return characterCreationInterpreterDelegate.interpret(this, input, connection, showPrompt);
+            case IN_GAME: return inGameInterpreter.interpret(this, input, connection, showPrompt);
             case DISCONNECTED: return new Output("");
             default:
                 LOGGER.error("Reached default state in interpret()!");

@@ -9,5 +9,8 @@ public abstract class BaseInterpreter implements Interpreter {
     public abstract Output interpret(Input input, Connection connection);
 
     @Override
+    public abstract Output interpret(Input input, Connection connection, boolean showPrompt);
+
+    @Override
     public abstract Output prompt(Connection connection);
 }
