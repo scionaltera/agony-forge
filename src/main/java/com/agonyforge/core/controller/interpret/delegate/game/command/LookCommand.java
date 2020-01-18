@@ -31,5 +31,21 @@ public class LookCommand {
         output
             .append(String.format("[yellow]&lsqb;%s#%s&rsqb; A Room", room.getZone().getId(), room.getSequence()))
             .append("[dwhite]Room description.");
+
+        StringBuilder buf = new StringBuilder("[cyan]Exits: ");
+
+        if (!room.getExits().isEmpty()) {
+            room.getExits().keySet()
+                .stream()
+                .sorted()
+                .forEach(direction -> {
+                    buf.append(direction.getName());
+                    buf.append(" ");
+                });
+        } else {
+            buf.append("none");
+        }
+
+        output.append(buf.toString().trim());
     }
 }

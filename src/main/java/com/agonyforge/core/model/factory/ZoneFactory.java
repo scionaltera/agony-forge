@@ -1,7 +1,10 @@
 package com.agonyforge.core.model.factory;
 
+import com.agonyforge.core.model.Direction;
+import com.agonyforge.core.model.Portal;
 import com.agonyforge.core.model.Room;
 import com.agonyforge.core.model.Zone;
+import com.agonyforge.core.model.repository.PortalRepository;
 import com.agonyforge.core.model.repository.RoomRepository;
 import com.agonyforge.core.model.repository.ZoneRepository;
 import org.slf4j.Logger;
@@ -21,11 +24,17 @@ public class ZoneFactory {
 
     private ZoneRepository zoneRepository;
     private RoomRepository roomRepository;
+    private PortalRepository portalRepository;
 
     @Inject
-    public ZoneFactory(ZoneRepository zoneRepository, RoomRepository roomRepository) {
+    public ZoneFactory(
+        ZoneRepository zoneRepository,
+        RoomRepository roomRepository,
+        PortalRepository portalRepository) {
+
         this.zoneRepository = zoneRepository;
         this.roomRepository = roomRepository;
+        this.portalRepository = portalRepository;
     }
 
     public Zone getStartZone() {
@@ -43,10 +52,16 @@ public class ZoneFactory {
         List<Room> rooms = new ArrayList<>();
 
         for (int i = 0; i < ZONE_SIZE; i++) {
-            Room room = new Room();
+            Room room = roomRepository.save(new Room(zone, i));
 
-            room.setZone(zone);
-            room.setSequence(i);
+            if (i > 0) {
+                Room last = rooms.get(i - 1);
+                Portal forwardExit = portalRepository.save(new Portal(last));
+                Portal reciprocalExit = portalRepository.save(new Portal(room));
+
+                last.getExits().put(Direction.EAST, reciprocalExit);
+                room.getExits().put(Direction.WEST, forwardExit);
+            }
 
             rooms.add(room);
         }
