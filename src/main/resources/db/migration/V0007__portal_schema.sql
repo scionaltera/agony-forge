@@ -1,6 +1,8 @@
 CREATE TABLE portal (
     id BINARY(16) NOT NULL,
-    PRIMARY KEY (id)
+    room_id BINARY(16) NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT portal_room_fk FOREIGN KEY (room_id) REFERENCES room (id)
 ) ENGINE=InnoDB CHARACTER SET=utf8mb4, COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE room_exits (

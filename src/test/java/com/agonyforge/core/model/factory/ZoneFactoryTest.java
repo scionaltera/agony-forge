@@ -52,6 +52,16 @@ class ZoneFactoryTest {
             return zone;
         });
 
+        when(roomRepository.save(any())).thenAnswer(invocation -> {
+            Room room = invocation.getArgument(0);
+
+            if (room.getId() == null) {
+                room.setId(UUID.randomUUID());
+            }
+
+            return room;
+        });
+
         when(roomRepository.saveAll(anyList())).thenAnswer(invocation -> {
             List<Room> rooms = invocation.getArgument(0);
 

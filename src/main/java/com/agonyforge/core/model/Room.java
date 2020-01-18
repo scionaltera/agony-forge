@@ -34,13 +34,22 @@ public class Room {
     private Zone zone;
 
     @SuppressWarnings("JpaAttributeTypeInspection")
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @MapKeyColumn(name = "exit_type")
     @MapKeyEnumerated(EnumType.STRING)
     private Map<Direction, Portal> exits = new HashMap<>();
 
     @OneToMany(mappedBy = "room")
     private List<Creature> creatures = new ArrayList<>();
+
+    public Room() {
+        // this method intentionally left blank
+    }
+
+    public Room(Zone zone, int sequence) {
+        setZone(zone);
+        setSequence(sequence);
+    }
 
     public UUID getId() {
         return id;

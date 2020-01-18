@@ -40,7 +40,7 @@ public class Creature {
     @OneToOne(cascade = CascadeType.ALL)
     private Connection connection;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Room room;
 
     public UUID getId() {

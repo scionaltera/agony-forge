@@ -4,8 +4,10 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
 import java.util.UUID;
@@ -19,12 +21,31 @@ public class Portal {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Room room;
+
+    public Portal() {
+        // this method intentionally left blank
+    }
+
+    public Portal(Room room) {
+        setRoom(room);
+    }
+
     public UUID getId() {
         return id;
     }
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     @Override

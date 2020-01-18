@@ -52,12 +52,16 @@ public class ZoneFactory {
         List<Room> rooms = new ArrayList<>();
 
         for (int i = 0; i < ZONE_SIZE; i++) {
-            Room room = new Room();
-            Portal exit = portalRepository.save(new Portal());
+            Room room = roomRepository.save(new Room(zone, i));
 
-            room.setZone(zone);
-            room.setSequence(i);
-            room.getExits().put(Direction.EAST, exit);
+            if (i > 0) {
+                Room last = rooms.get(i - 1);
+                Portal forwardExit = portalRepository.save(new Portal(last));
+                Portal reciprocalExit = portalRepository.save(new Portal(room));
+
+                last.getExits().put(Direction.EAST, reciprocalExit);
+                room.getExits().put(Direction.WEST, forwardExit);
+            }
 
             rooms.add(room);
         }
