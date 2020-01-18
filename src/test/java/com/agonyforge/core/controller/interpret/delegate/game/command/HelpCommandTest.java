@@ -61,7 +61,7 @@ class HelpCommandTest {
     void testInvokeGeneral() {
         command.invoke(creature, output);
 
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("All Commands")));
+        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("Available Commands")));
 
         for (int i = 0; i < 5; i++) {
             String verbName = "verb" + i;
