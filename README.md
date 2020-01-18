@@ -3,6 +3,7 @@
 **A modern, web based MUD.**
 
 ![Build Status](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoieVlBaTI5bFducnovY2YrQ3RSVEV4Q3ZwRG02VXhnbGlscEI1dTNIaDdmQk9weFlxZTN0MWJ6b21tMXVmZDNYVjQ2WkRpMTBZV3ZQckFoeDVuVm1DU1NVPSIsIml2UGFyYW1ldGVyU3BlYyI6Ijd1RnpYaGNsRjZhL0xMWXoiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=scionaltera/agony-forge)](https://dependabot.com)
 [![Uptime Status](https://img.shields.io/uptimerobot/ratio/7/m780157574-3e51f055cd847dfba406172d.svg)](https://uptime.agonyforge.com)  
 [![Website Link](https://img.shields.io/badge/url-site-informational)](https://agonyforge.com)
 [![Game Link](https://img.shields.io/badge/url-game-informational)](https://play.agonyforge.com)
