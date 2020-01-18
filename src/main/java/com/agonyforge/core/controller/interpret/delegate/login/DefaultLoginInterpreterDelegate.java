@@ -82,6 +82,12 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
     @Transactional
     @Override
     public Output interpret(Interpreter primary, Input input, Connection connection) {
+        return interpret(primary, input, connection, true);
+    }
+
+    @Transactional
+    @Override
+    public Output interpret(Interpreter primary, Input input, Connection connection, boolean showPrompt) {
         Creature creature;
         Output output = new Output();
         DefaultLoginConnectionState secondaryState = DefaultLoginConnectionState.valueOf(connection.getSecondaryState());
@@ -95,6 +101,8 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                     placePlayerInWorld(creature);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
+                    output.append(primary.interpret(new Input("look"), creature.getConnection(), false));
+
                     commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has reconnected."), primary, creature);
 
                     LOGGER.info("Reconnected {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
@@ -122,6 +130,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                     placePlayerInWorld(creature);
 
                     output.append("[yellow]Welcome back, " + connection.getName() + "!");
+                    output.append(primary.interpret(new Input("look"), creature.getConnection(), false));
 
                     commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game."), primary, creature);
 

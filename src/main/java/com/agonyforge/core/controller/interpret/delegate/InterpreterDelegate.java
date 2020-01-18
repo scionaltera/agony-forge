@@ -7,5 +7,6 @@ import com.agonyforge.core.model.Connection;
 
 public interface InterpreterDelegate {
     Output interpret(Interpreter primary, Input input, Connection connection);
+    Output interpret(Interpreter primary, Input input, Connection connection, boolean showPrompt);
     Output prompt(Interpreter primary, Connection connection);
 }

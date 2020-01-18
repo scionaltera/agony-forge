@@ -7,6 +7,14 @@ import java.util.Objects;
 public class Input {
     private String input;
 
+    public Input() {
+        // this method intentionally left blank
+    }
+
+    public Input(String input) {
+        setInput(input);
+    }
+
     public void setInput(String input) {
         this.input = HtmlUtils.htmlEscape(input);
     }

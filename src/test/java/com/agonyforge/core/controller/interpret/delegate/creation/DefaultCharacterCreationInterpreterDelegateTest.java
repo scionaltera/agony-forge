@@ -136,6 +136,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
         input.setInput("m");
         connection.setName("Scion");
 
+        when(primary.interpret(any(), any(), anyBoolean())).thenReturn(new Output("LOOK"));
         when(primary.prompt(any())).thenAnswer(i -> delegate.prompt(primary, connection));
 
         Output result = delegate.interpret(primary, input, connection);
@@ -170,6 +171,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
         input.setInput("f");
         connection.setName("Bethany");
 
+        when(primary.interpret(any(), any(), anyBoolean())).thenReturn(new Output("LOOK"));
         when(primary.prompt(any())).thenAnswer(i -> delegate.prompt(primary, connection));
 
         Output result = delegate.interpret(primary, input, connection);
@@ -194,6 +196,7 @@ class DefaultCharacterCreationInterpreterDelegateTest {
         input.setInput("n");
         connection.setName("Pat");
 
+        when(primary.interpret(any(), any(), anyBoolean())).thenReturn(new Output("LOOK"));
         when(primary.prompt(any())).thenAnswer(i -> delegate.prompt(primary, connection));
 
         Output result = delegate.interpret(primary, input, connection);

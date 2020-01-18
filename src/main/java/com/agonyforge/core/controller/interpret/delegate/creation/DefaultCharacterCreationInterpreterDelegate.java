@@ -53,6 +53,12 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
     @Transactional
     @Override
     public Output interpret(Interpreter primary, Input input, Connection connection) {
+        return interpret(primary, input, connection, true);
+    }
+
+    @Transactional
+    @Override
+    public Output interpret(Interpreter primary, Input input, Connection connection, boolean showPrompt) {
         Output output = new Output();
         String selection = input.getInput().substring(0, 1).toLowerCase();
         Optional<Gender> genderOptional = Arrays.stream(values())
@@ -79,7 +85,6 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
         connection.setSecondaryState(null);
 
         output.append("[yellow]Welcome, " + connection.getName() + "!");
-        output.append(primary.prompt(connection));
 
         Zone zone = zoneFactory.getStartZone();
 
@@ -97,6 +102,9 @@ public class DefaultCharacterCreationInterpreterDelegate implements CharacterCre
             });
 
         creatureRepository.save(creature);
+
+        output.append(primary.interpret(new Input("look"), creature.getConnection(), false));
+        output.append(primary.prompt(connection));
 
         commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has entered the game for the first time."), primary, creature);
 

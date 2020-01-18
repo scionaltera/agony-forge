@@ -31,6 +31,11 @@ public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelega
 
     @Override
     public Output interpret(Interpreter primary, Input input, Connection connection) {
+        return interpret(primary, input, connection, true);
+    }
+
+    @Override
+    public Output interpret(Interpreter primary, Input input, Connection connection, boolean showPrompt) {
         Output output = new Output();
         Creature creature = creatureRepository
             .findByConnection(connection)
@@ -53,7 +58,9 @@ public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelega
 
         invokerService.invoke(creature, output, input.getInput(), tokens);
 
-        output.append(primary.prompt(connection));
+        if (showPrompt) {
+            output.append(primary.prompt(connection));
+        }
 
         return output;
     }

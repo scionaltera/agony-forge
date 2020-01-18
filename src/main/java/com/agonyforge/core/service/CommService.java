@@ -3,6 +3,7 @@ package com.agonyforge.core.service;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Creature;
+import com.agonyforge.core.model.Room;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,18 @@ public class CommService {
             target.getConnection().getSessionUsername(),
             "/queue/output",
             message);
+    }
+
+    public void echoToRoom(Room room, Interpreter interpreter, Output message, Creature ... exclude) {
+        List<Creature> excludeList = Arrays.asList(exclude);
+
+        room.getCreatures()
+            .stream()
+            .filter(target -> !excludeList.contains(target))
+            .forEach(target -> simpMessagingTemplate.convertAndSendToUser(
+                target.getConnection().getSessionUsername(),
+                "/queue/output",
+                new Output(message, interpreter.prompt(target.getConnection()))));
     }
 
     public void echoToWorld(Output message, Interpreter interpreter, Creature ... exclude) {
