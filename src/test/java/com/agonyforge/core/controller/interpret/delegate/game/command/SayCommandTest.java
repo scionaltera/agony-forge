@@ -4,6 +4,7 @@ import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedString;
 import com.agonyforge.core.model.Creature;
+import com.agonyforge.core.model.Room;
 import com.agonyforge.core.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
-class GossipCommandTest {
+class SayCommandTest {
     @Mock
     private CommService commService;
 
@@ -29,8 +31,9 @@ class GossipCommandTest {
 
     private Output output;
     private Creature creature;
+    private Room room;
 
-    private GossipCommand command;
+    private SayCommand command;
 
     @BeforeEach
     void setUp() {
@@ -38,28 +41,46 @@ class GossipCommandTest {
 
         output = new Output();
         creature = new Creature();
+        room = new Room();
 
         creature.setName("Staniel");
 
-        command = new GossipCommand(commService, interpreter);
+        command = new SayCommand(commService, interpreter);
+    }
+
+    @Test
+    void testInvokeVoid() {
+        QuotedString quote = new QuotedString();
+
+        quote.bind(creature, "Halp!");
+
+        command.invoke(creature, output, quote);
+
+        verifyNoInteractions(commService);
+        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("[black]")));
     }
 
     @Test
     void testInvoke() {
         QuotedString quote = new QuotedString();
 
+        creature.setRoom(room);
         quote.bind(creature, "Hello friends!");
 
         command.invoke(creature, output, quote);
 
-        verify(commService).echoToWorld(outputCaptor.capture(), eq(interpreter), eq(creature));
+        verify(commService).echoToRoom(
+            eq(room),
+            eq(interpreter),
+            outputCaptor.capture(),
+            eq(creature));
 
-        Output worldMessage = outputCaptor.getValue();
+        Output message = outputCaptor.getValue();
 
-        assertEquals(1, worldMessage.getOutput().size());
-        assertTrue(worldMessage.getOutput().stream().anyMatch(line -> line.equals("[green]Staniel gossips 'Hello&nbsp;friends![green]'")));
+        assertEquals(1, message.getOutput().size());
+        assertTrue(message.getOutput().stream().anyMatch(line -> line.equals("[cyan]Staniel says 'Hello&nbsp;friends![cyan]'")));
 
         assertEquals(1, output.getOutput().size());
-        assertTrue(output.getOutput().stream().anyMatch(line -> line.equals("[green]You gossip 'Hello&nbsp;friends![green]'")));
+        assertTrue(output.getOutput().stream().anyMatch(line -> line.equals("[cyan]You say 'Hello&nbsp;friends![cyan]'")));
     }
 }
