@@ -71,7 +71,7 @@ public class ZoneFactory {
             if (room == null) {
                 LOGGER.debug("Placing room {} at {}", sequence, current);
 
-                room = new Room(zone, sequence++);
+                room = roomRepository.save(new Room(zone, sequence++));
                 space.put(current, room);
             }
 
@@ -100,7 +100,7 @@ public class ZoneFactory {
 
                     room.getExits().put(direction, exit);
 
-                    LOGGER.info("Adding exit: {} -{}> {}",
+                    LOGGER.debug("Adding exit: {} -{}> {}",
                         room.getSequence(),
                         direction.getName(),
                         neighbor.getSequence());
