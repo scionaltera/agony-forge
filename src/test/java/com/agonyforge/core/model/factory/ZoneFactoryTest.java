@@ -11,7 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -62,14 +63,14 @@ class ZoneFactoryTest {
             return room;
         });
 
-        when(roomRepository.saveAll(anyList())).thenAnswer(invocation -> {
-            List<Room> rooms = invocation.getArgument(0);
+        when(roomRepository.saveAll(anyCollection())).thenAnswer(invocation -> {
+            Collection<Room> rooms = invocation.getArgument(0);
 
             rooms.stream()
                 .filter(room -> room.getId() == null)
                 .forEach(room -> room.setId(UUID.randomUUID()));
 
-            return rooms;
+            return new ArrayList<>(rooms);
         });
 
         when(portalRepository.save(any())).thenAnswer(invocation -> {
@@ -124,6 +125,6 @@ class ZoneFactoryTest {
         assertEquals(ZONE_SIZE, zone.getRooms().size());
 
         verify(zoneRepository, atLeastOnce()).save(eq(zone));
-        verify(roomRepository).saveAll(anyList());
+        verify(roomRepository).saveAll(anyCollection());
     }
 }
