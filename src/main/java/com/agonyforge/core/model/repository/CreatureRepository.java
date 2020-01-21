@@ -14,4 +14,5 @@ public interface CreatureRepository extends JpaRepository<Creature, UUID> {
     Stream<Creature> findByConnectionDisconnectedIsNotNull();
     Optional<Creature> findByConnection(Connection connection);
     Stream<Creature> findByDefinition(CreatureDefinition definition);
+    Optional<Creature> findByNameAndConnectionIsNotNull(String name);
 }

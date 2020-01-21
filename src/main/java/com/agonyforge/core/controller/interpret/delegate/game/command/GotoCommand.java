@@ -3,7 +3,9 @@ package com.agonyforge.core.controller.interpret.delegate.game.command;
 import com.agonyforge.core.controller.Input;
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
-import com.agonyforge.core.controller.interpret.delegate.game.binding.RoomBinding;
+import com.agonyforge.core.controller.interpret.delegate.game.binding.PlayerBinding;
+import com.agonyforge.core.controller.interpret.delegate.game.binding.RoomInWorldBinding;
+import com.agonyforge.core.controller.interpret.delegate.game.binding.RoomInZoneBinding;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.Room;
 import com.agonyforge.core.model.repository.CreatureRepository;
@@ -30,17 +32,38 @@ public class GotoCommand {
         this.creatureRepository = creatureRepository;
     }
 
-//    @Transactional
-//    @CommandDescription("Teleports you to a player of your choosing")
-//    public void invoke(Creature actor, Output output, CreatureBinding creatureBinding) {
-//
-//    }
+    @Transactional
+    @CommandDescription("Teleports you to a player of your choosing")
+    public void invoke(Creature actor, Output output, PlayerBinding playerBinding) {
+        Room origin = actor.getRoom();
+        Room destination = playerBinding.getPlayer().getRoom();
+
+        movePlayer(origin, destination, actor, output);
+    }
 
     @Transactional
-    @CommandDescription("Teleports you to a room of your choosing")
-    public void invoke(Creature actor, Output output, RoomBinding roomBinding) {
+    @CommandDescription("Teleports you to a room of your choosing in your zone")
+    public void invoke(Creature actor, Output output, RoomInZoneBinding roomBinding) {
         Room origin = actor.getRoom();
         Room destination = roomBinding.getRoom();
+
+        movePlayer(origin, destination, actor, output);
+    }
+
+    @Transactional
+    @CommandDescription("Teleports you to a room of your choosing anywhere in the world")
+    public void invoke(Creature actor, Output output, RoomInWorldBinding roomBinding) {
+        Room origin = actor.getRoom();
+        Room destination = roomBinding.getRoom();
+
+        movePlayer(origin, destination, actor, output);
+    }
+
+    private void movePlayer(Room origin, Room destination, Creature actor, Output output) {
+        if (origin.equals(destination)) {
+            output.append("[default]You're already there.");
+            return;
+        }
 
         commService.echoToRoom(
             origin,
