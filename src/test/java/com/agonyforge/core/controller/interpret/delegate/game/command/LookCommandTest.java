@@ -19,6 +19,7 @@ public class LookCommandTest {
     private RoomRepository roomRepository;
 
     private Creature creature;
+    private Creature friend;
     private Output output;
 
     private LookCommand command;
@@ -27,6 +28,7 @@ public class LookCommandTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
+        friend = new Creature();
         creature = new Creature();
         output = new Output();
 
@@ -49,11 +51,22 @@ public class LookCommandTest {
         Zone zone = new Zone();
         zone.setId(1L);
 
-        room.setZone(zone);
+        creature.setId(UUID.randomUUID());
+        creature.setName("George");
         creature.setRoom(room);
+
+        friend.setId(UUID.randomUUID());
+        friend.setName("Darkblade");
+        friend.setRoom(room);
+
+        room.setZone(zone);
+        room.getCreatures().add(creature);
+        room.getCreatures().add(friend);
 
         command.invoke(creature, output);
 
         assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("1#0")));
+        assertTrue(output.getOutput().stream().anyMatch(line -> line.contains("[green]Darkblade is here.")));
+        assertTrue(output.getOutput().stream().noneMatch(line -> line.contains("[green]George is here.")));
     }
 }
