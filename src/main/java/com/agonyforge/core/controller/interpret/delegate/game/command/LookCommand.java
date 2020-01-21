@@ -32,6 +32,15 @@ public class LookCommand {
             .append(String.format("[yellow]&lsqb;%s#%s&rsqb; A Room", room.getZone().getId(), room.getSequence()))
             .append("[dwhite]Room description.");
 
+        output.append(buildExits(room));
+
+        room.getCreatures()
+            .stream()
+            .filter(creature -> !creature.equals(actor))
+            .forEach(creature -> output.append(String.format("[green]%s is here.", creature.getName())));
+    }
+
+    private String buildExits(Room room) {
         StringBuilder buf = new StringBuilder("[cyan]Exits: ");
 
         if (!room.getExits().isEmpty()) {
@@ -46,6 +55,6 @@ public class LookCommand {
             buf.append("none");
         }
 
-        output.append(buf.toString().trim());
+        return buf.toString().trim();
     }
 }
