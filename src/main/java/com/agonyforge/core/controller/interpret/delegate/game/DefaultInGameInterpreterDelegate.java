@@ -51,7 +51,7 @@ public class DefaultInGameInterpreterDelegate implements InGameInterpreterDelega
 
                 return token
                     .toUpperCase()
-                    .replaceAll("[^A-Z0-9]", "");
+                    .replaceAll("[^A-Z0-9#]", "");
             })
             .filter(token -> !"".equals(token))
             .collect(Collectors.toList());
