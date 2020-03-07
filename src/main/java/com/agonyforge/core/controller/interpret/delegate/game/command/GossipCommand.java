@@ -2,7 +2,7 @@ package com.agonyforge.core.controller.interpret.delegate.game.command;
 
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
-import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedString;
+import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedStringBinding;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.service.CommService;
 import org.springframework.stereotype.Component;
@@ -23,8 +23,8 @@ public class GossipCommand {
 
     @Transactional
     @CommandDescription("Send a message to all other players")
-    public void invoke(Creature actor, Output output, QuotedString quotedString) {
-        String nonBreakingQuote = quotedString.getToken().replaceAll("\\s", "&nbsp;");
+    public void invoke(Creature actor, Output output, QuotedStringBinding quotedStringBinding) {
+        String nonBreakingQuote = quotedStringBinding.getToken().replaceAll("\\s", "&nbsp;");
 
         commService.echoToWorld(
             new Output(

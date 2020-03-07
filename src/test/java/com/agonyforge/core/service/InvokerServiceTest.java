@@ -1,7 +1,7 @@
 package com.agonyforge.core.service;
 
 import com.agonyforge.core.controller.Output;
-import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedString;
+import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedStringBinding;
 import com.agonyforge.core.controller.interpret.delegate.game.binding.VerbBinding;
 import com.agonyforge.core.controller.interpret.delegate.game.command.GossipCommand;
 import com.agonyforge.core.controller.interpret.delegate.game.command.HelpCommand;
@@ -41,7 +41,7 @@ class InvokerServiceTest {
     private WhoCommand whoCommand;
 
     @Captor
-    private ArgumentCaptor<QuotedString> quotedStringCaptor;
+    private ArgumentCaptor<QuotedStringBinding> quotedStringCaptor;
 
     private Creature ch;
     private Output output;
@@ -119,7 +119,7 @@ class InvokerServiceTest {
         GossipCommand gossipCommand = mock(GossipCommand.class);
 
         when(applicationContext.getBean(eq("gossipCommand"))).thenReturn(gossipCommand);
-        when(applicationContext.getBean(eq(QuotedString.class))).thenAnswer(i -> new QuotedString());
+        when(applicationContext.getBean(eq(QuotedStringBinding.class))).thenAnswer(i -> new QuotedStringBinding());
 
         verb.setQuoting(true);
         verb.setBean("gossipCommand");
@@ -131,9 +131,9 @@ class InvokerServiceTest {
         verify(verbRepository).findFirstByNameIgnoreCaseStartingWith(any(), eq("WHO"));
         verify(gossipCommand).invoke(eq(ch), eq(output), quotedStringCaptor.capture());
 
-        QuotedString quotedString = quotedStringCaptor.getValue();
+        QuotedStringBinding quotedStringBinding = quotedStringCaptor.getValue();
 
-        assertEquals("do you think you are?", quotedString.getToken());
+        assertEquals("do you think you are?", quotedStringBinding.getToken());
     }
 
     @Test

@@ -7,10 +7,10 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class QuotedStringTest {
+class QuotedStringBindingTest {
     private Creature creature;
 
-    private QuotedString binding;
+    private QuotedStringBinding binding;
 
     @BeforeEach
     void setUp() {
@@ -18,7 +18,7 @@ class QuotedStringTest {
 
         creature = new Creature();
 
-        binding = new QuotedString();
+        binding = new QuotedStringBinding();
     }
 
     @Test

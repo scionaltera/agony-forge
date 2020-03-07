@@ -2,7 +2,7 @@ package com.agonyforge.core.controller.interpret.delegate.game.command;
 
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
-import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedString;
+import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedStringBinding;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.Room;
 import com.agonyforge.core.service.CommService;
@@ -50,7 +50,7 @@ class SayCommandTest {
 
     @Test
     void testInvokeVoid() {
-        QuotedString quote = new QuotedString();
+        QuotedStringBinding quote = new QuotedStringBinding();
 
         quote.bind(creature, "Halp!");
 
@@ -62,7 +62,7 @@ class SayCommandTest {
 
     @Test
     void testInvoke() {
-        QuotedString quote = new QuotedString();
+        QuotedStringBinding quote = new QuotedStringBinding();
 
         creature.setRoom(room);
         quote.bind(creature, "Hello friends!");
