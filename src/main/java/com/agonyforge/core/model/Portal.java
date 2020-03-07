@@ -3,12 +3,14 @@ package com.agonyforge.core.model;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,12 +26,20 @@ public class Portal {
     @ManyToOne(fetch = FetchType.LAZY)
     private Room room;
 
+    @Convert(converter = PortalFlag.Converter.class)
+    private EnumSet<PortalFlag> flags = EnumSet.noneOf(PortalFlag.class);
+
     public Portal() {
         // this method intentionally left blank
     }
 
     public Portal(Room room) {
         setRoom(room);
+    }
+
+    public Portal(Room room, EnumSet<PortalFlag> flags) {
+        setRoom(room);
+        setFlags(flags);
     }
 
     public UUID getId() {
@@ -46,6 +56,14 @@ public class Portal {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public EnumSet<PortalFlag> getFlags() {
+        return flags;
+    }
+
+    public void setFlags(EnumSet<PortalFlag> portalFlags) {
+        this.flags = portalFlags;
     }
 
     @Override

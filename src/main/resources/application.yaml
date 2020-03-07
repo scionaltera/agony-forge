@@ -27,6 +27,12 @@ spring:
 
 logging:
   level:
+    com:
+      agonyforge:
+        core:
+          model:
+            factory:
+              ZoneFactory: DEBUG
     org:
       springframework:
         session:

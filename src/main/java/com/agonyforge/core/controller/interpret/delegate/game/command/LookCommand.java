@@ -2,7 +2,9 @@ package com.agonyforge.core.controller.interpret.delegate.game.command;
 
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Creature;
+import com.agonyforge.core.model.PortalFlag;
 import com.agonyforge.core.model.Room;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.RoomRepository;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +14,12 @@ import javax.transaction.Transactional;
 @Component
 public class LookCommand {
     private RoomRepository roomRepository;
+    private ZoneFactory zoneFactory;
 
     @Inject
-    public LookCommand(RoomRepository roomRepository) {
+    public LookCommand(RoomRepository roomRepository, ZoneFactory zoneFactory) {
         this.roomRepository = roomRepository;
+        this.zoneFactory = zoneFactory;
     }
 
     @Transactional
@@ -48,6 +52,10 @@ public class LookCommand {
                 .stream()
                 .sorted()
                 .forEach(direction -> {
+                    if (room.getExits().get(direction).getFlags().contains(PortalFlag.ZONE_PORTAL)) {
+                        zoneFactory.convertZonePortal(room, direction);
+                    }
+
                     buf.append(direction.getName());
                     buf.append(" ");
                 });

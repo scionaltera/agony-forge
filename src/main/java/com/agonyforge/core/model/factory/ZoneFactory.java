@@ -3,6 +3,7 @@ package com.agonyforge.core.model.factory;
 import com.agonyforge.core.model.Coordinate;
 import com.agonyforge.core.model.Direction;
 import com.agonyforge.core.model.Portal;
+import com.agonyforge.core.model.PortalFlag;
 import com.agonyforge.core.model.Room;
 import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.repository.PortalRepository;
@@ -13,7 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +27,7 @@ import java.util.stream.Collectors;
 @Component
 public class ZoneFactory {
     static final int ZONE_SIZE = 100;
+    static final int ZONE_PORTALS = 3;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZoneFactory.class);
     private static final Long START_ZONE = 1L;
@@ -63,11 +68,36 @@ public class ZoneFactory {
 
         placeRooms(zone, space, directions);
         linkNeighbors(space, directions);
+        placeZonePortals(space, directions);
 
         List<Room> savedRooms = roomRepository.saveAll(space.values());
         zone.setRooms(savedRooms);
 
         return zoneRepository.save(zone);
+    }
+
+    public void convertZonePortal(Room room, Direction direction) {
+        Portal zonePortal = room.getExits().get(direction);
+        Zone generated = build();
+        Direction reciprocal = Direction.valueOf(direction.getOpposite().toUpperCase());
+        List<Room> generatedRooms = generated.getRooms().stream()
+            .filter(r -> r.getExits().size() == 1)
+            .filter(r -> !r.getExits().containsKey(reciprocal))
+            .collect(Collectors.toList());
+
+        Collections.shuffle(generatedRooms);
+        Room destination = generatedRooms.get(0);
+
+        // add reciprocal portal to destination room
+        Portal reciprocalPortal = portalRepository.save(new Portal(room));
+
+        destination.getExits().put(reciprocal, reciprocalPortal);
+        roomRepository.save(destination);
+
+        // convert zone portal into normal portal
+        zonePortal.setRoom(destination);
+        zonePortal.getFlags().remove(PortalFlag.ZONE_PORTAL);
+        portalRepository.save(zonePortal);
     }
 
     private void placeRooms(Zone zone, Map<Coordinate, Room> space, List<Direction> directions) {
@@ -121,6 +151,38 @@ public class ZoneFactory {
             }
         }
 
-        LOGGER.info("Neighbors linked.");
+        LOGGER.info("Neighbors linked");
+    }
+
+    private void placeZonePortals(Map<Coordinate, Room> space, List<Direction> directions) {
+        LOGGER.debug("Placing zone portals...");
+
+        int placed = 0;
+        List<Room> deadEnds = space.values().stream()
+            .filter(room -> room.getExits().size() == 1)
+            .collect(Collectors.toList());
+
+        Collections.shuffle(deadEnds);
+
+        for (int i = 0; i < ZONE_PORTALS && i < deadEnds.size(); i++) {
+            Room room = deadEnds.get(i);
+            Portal zonePortal = portalRepository.save(new Portal(room, EnumSet.of(PortalFlag.ZONE_PORTAL)));
+            List<Direction> valid = new ArrayList<>(directions);
+
+            valid.removeAll(room.getExits().keySet());
+
+            Collections.shuffle(valid);
+            Direction direction = valid.get(0);
+
+            room.getExits().put(direction, zonePortal);
+
+            LOGGER.debug("Adding zone portal: {} -{}-> [zone TBD]",
+                room.getSequence(),
+                direction.getName());
+
+            placed++;
+        }
+
+        LOGGER.info("Placed {} zone portals", placed);
     }
 }
