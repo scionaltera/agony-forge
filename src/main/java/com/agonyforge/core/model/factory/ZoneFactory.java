@@ -60,10 +60,21 @@ public class ZoneFactory {
             .stream(Direction.values())
             .filter(dir -> !dir.equals(Direction.UP) && !dir.equals(Direction.DOWN))
             .collect(Collectors.toList());
+
+        placeRooms(zone, space, directions);
+        linkNeighbors(space, directions);
+
+        List<Room> savedRooms = roomRepository.saveAll(space.values());
+        zone.setRooms(savedRooms);
+
+        return zoneRepository.save(zone);
+    }
+
+    private void placeRooms(Zone zone, Map<Coordinate, Room> space, List<Direction> directions) {
         Coordinate current = new Coordinate(0, 0, 0);
         int sequence = 0;
 
-        LOGGER.info("Placing {} rooms...", ZONE_SIZE);
+        LOGGER.debug("Placing {} rooms...", ZONE_SIZE);
 
         do {
             Room room = space.get(current);
@@ -82,8 +93,10 @@ public class ZoneFactory {
                 current.getZ() + direction.getZ());
         } while (space.size() < ZONE_SIZE);
 
-        LOGGER.debug("Placed {} rooms", space.size());
+        LOGGER.info("Placed {} rooms", space.size());
+    }
 
+    private void linkNeighbors(Map<Coordinate, Room> space, List<Direction> directions) {
         LOGGER.debug("Linking neighbors...");
 
         for (Coordinate coordinate : space.keySet()) {
@@ -108,11 +121,6 @@ public class ZoneFactory {
             }
         }
 
-        LOGGER.debug("Neighbors linked.");
-
-        List<Room> savedRooms = roomRepository.saveAll(space.values());
-        zone.setRooms(savedRooms);
-
-        return zoneRepository.save(zone);
+        LOGGER.info("Neighbors linked.");
     }
 }
