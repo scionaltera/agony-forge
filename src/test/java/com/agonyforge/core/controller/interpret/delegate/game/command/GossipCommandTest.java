@@ -2,7 +2,7 @@ package com.agonyforge.core.controller.interpret.delegate.game.command;
 
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
-import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedString;
+import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedStringBinding;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.service.CommService;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +46,7 @@ class GossipCommandTest {
 
     @Test
     void testInvoke() {
-        QuotedString quote = new QuotedString();
+        QuotedStringBinding quote = new QuotedStringBinding();
 
         quote.bind(creature, "Hello friends!");
 

@@ -2,7 +2,7 @@ package com.agonyforge.core.controller.interpret.delegate.game.command;
 
 import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.controller.interpret.Interpreter;
-import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedString;
+import com.agonyforge.core.controller.interpret.delegate.game.binding.QuotedStringBinding;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.Room;
 import com.agonyforge.core.service.CommService;
@@ -24,8 +24,8 @@ public class SayCommand {
 
     @Transactional
     @CommandDescription("Send a message to other players in the same room")
-    public void invoke(Creature actor, Output output, QuotedString quotedString) {
-        String nonBreakingQuote = quotedString.getToken().replaceAll("\\s", "&nbsp;");
+    public void invoke(Creature actor, Output output, QuotedStringBinding quotedStringBinding) {
+        String nonBreakingQuote = quotedStringBinding.getToken().replaceAll("\\s", "&nbsp;");
         Room room = actor.getRoom();
 
         if (room == null) {

@@ -8,7 +8,7 @@ import org.springframework.util.StringUtils;
 @Component
 @Scope(scopeName = "prototype")
 @BindingDescription("text")
-public class QuotedString implements ArgumentBinding {
+public class QuotedStringBinding implements ArgumentBinding {
     private String text;
 
     @Override
