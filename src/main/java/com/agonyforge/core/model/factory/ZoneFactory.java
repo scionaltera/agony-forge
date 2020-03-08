@@ -76,14 +76,18 @@ public class ZoneFactory {
         return zoneRepository.save(zone);
     }
 
-    public void convertZonePortal(Room room, Direction direction) {
+    public void convertZonePortal(Zone generated, Room room, Direction direction) {
         Portal zonePortal = room.getExits().get(direction);
-        Zone generated = build();
         Direction reciprocal = Direction.valueOf(direction.getOpposite().toUpperCase());
         List<Room> generatedRooms = generated.getRooms().stream()
             .filter(r -> r.getExits().size() == 1)
             .filter(r -> !r.getExits().containsKey(reciprocal))
             .collect(Collectors.toList());
+
+        // TODO may need to edit and "fix" a room or relax the criteria because this seems to happen a lot
+        if (generatedRooms.isEmpty()) {
+            throw new IllegalArgumentException("Destination Zone has no rooms to link into!");
+        }
 
         Collections.shuffle(generatedRooms);
         Room destination = generatedRooms.get(0);

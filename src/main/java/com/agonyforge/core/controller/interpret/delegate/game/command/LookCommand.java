@@ -4,8 +4,10 @@ import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.PortalFlag;
 import com.agonyforge.core.model.Room;
+import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.ZoneFactory;
-import com.agonyforge.core.model.repository.RoomRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -13,12 +15,12 @@ import javax.transaction.Transactional;
 
 @Component
 public class LookCommand {
-    private RoomRepository roomRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(LookCommand.class);
+
     private ZoneFactory zoneFactory;
 
     @Inject
-    public LookCommand(RoomRepository roomRepository, ZoneFactory zoneFactory) {
-        this.roomRepository = roomRepository;
+    public LookCommand(ZoneFactory zoneFactory) {
         this.zoneFactory = zoneFactory;
     }
 
@@ -53,7 +55,19 @@ public class LookCommand {
                 .sorted()
                 .forEach(direction -> {
                     if (room.getExits().get(direction).getFlags().contains(PortalFlag.ZONE_PORTAL)) {
-                        zoneFactory.convertZonePortal(room, direction);
+                        boolean done = false;
+
+                        do {
+                            try {
+                                Zone zone = zoneFactory.build(); // TODO doing this twice will create two zones
+                                zoneFactory.convertZonePortal(zone, room, direction);
+                                done = true;
+                            } catch (IllegalArgumentException e) {
+                                // if we generate a zone that can't be linked into
+                                // we need to do it again until it works
+                                LOGGER.warn(e.getMessage());
+                            }
+                        } while (!done);
                     }
 
                     buf.append(direction.getName());

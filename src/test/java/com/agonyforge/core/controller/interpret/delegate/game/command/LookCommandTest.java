@@ -4,7 +4,7 @@ import com.agonyforge.core.controller.Output;
 import com.agonyforge.core.model.Creature;
 import com.agonyforge.core.model.Room;
 import com.agonyforge.core.model.Zone;
-import com.agonyforge.core.model.repository.RoomRepository;
+import com.agonyforge.core.model.factory.ZoneFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LookCommandTest {
     @Mock
-    private RoomRepository roomRepository;
+    private ZoneFactory zoneFactory;
 
     private Creature creature;
     private Creature friend;
@@ -32,7 +32,7 @@ public class LookCommandTest {
         creature = new Creature();
         output = new Output();
 
-        command = new LookCommand(roomRepository);
+        command = new LookCommand(zoneFactory);
     }
 
     @Test
