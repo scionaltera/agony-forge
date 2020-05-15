@@ -58,6 +58,7 @@ public class ZoneFactory {
         });
     }
 
+    // TODO split up generating and saving
     public Zone build() {
         final Zone zone = zoneRepository.save(new Zone());
         final Map<Coordinate, Room> space = new HashMap<>();
@@ -84,7 +85,7 @@ public class ZoneFactory {
             .filter(r -> !r.getExits().containsKey(reciprocal))
             .collect(Collectors.toList());
 
-        // TODO may need to edit and "fix" a room or relax the criteria because this seems to happen a lot
+        // TODO generate (in memory) until we get a valid zone, then save
         if (generatedRooms.isEmpty()) {
             throw new IllegalArgumentException("Destination Zone has no rooms to link into!");
         }
