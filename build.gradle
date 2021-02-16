@@ -60,7 +60,7 @@ dependencies {
 
     implementation 'org.springframework.session:spring-session-jdbc'
 
-    implementation 'io.projectreactor.netty:reactor-netty:0.9.7.RELEASE'
+    implementation 'io.projectreactor.netty:reactor-netty:1.0.4'
 
     implementation 'org.webjars:webjars-locator-core:0.45'
     implementation 'org.webjars:jquery:3.5.1'
