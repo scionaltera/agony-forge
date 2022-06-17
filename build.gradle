@@ -20,7 +20,7 @@ repositories {
 configurations.maybeCreate("pitest")
 
 dependencies {
-    pitest group: 'org.pitest', name: 'pitest-junit5-plugin', version: '0.15'
+    pitest group: 'org.pitest', name: 'pitest-junit5-plugin', version: '0.16'
 
     implementation 'javax.inject:javax.inject:1'
     implementation 'javax.interceptor:javax.interceptor-api:1.2.2'
