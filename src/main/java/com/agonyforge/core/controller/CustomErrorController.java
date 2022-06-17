@@ -1,5 +1,6 @@
 package com.agonyforge.core.controller;
 
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,7 @@ import java.util.Map;
 public class CustomErrorController implements ErrorController {
     private static final String PATH = "/error";
 
-    private ErrorAttributes errorAttributes;
+    private final ErrorAttributes errorAttributes;
 
     @Inject
     public CustomErrorController(ErrorAttributes errorAttributes) {
@@ -25,7 +26,9 @@ public class CustomErrorController implements ErrorController {
     @RequestMapping(PATH)
     public String error(Model model, HttpServletRequest request) {
         ServletWebRequest servletWebRequest = new ServletWebRequest(request);
-        Map<String, Object> attributes = errorAttributes.getErrorAttributes(servletWebRequest, true);
+        Map<String, Object> attributes = errorAttributes.getErrorAttributes(
+            servletWebRequest,
+            ErrorAttributeOptions.defaults());
 
         model.addAttribute("errorAttributes", attributes);
 

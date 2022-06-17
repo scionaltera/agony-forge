@@ -15,6 +15,7 @@ INSERT IGNORE INTO verb (name, priority, bean, quoting) VALUES ('say', 10, 'sayC
 INSERT IGNORE INTO verb (name, priority, bean) VALUES ('who', 10, 'whoCommand');
 INSERT IGNORE INTO verb (name, priority, bean) VALUES ('goto', 1000, 'gotoCommand');
 INSERT IGNORE INTO verb (name, priority, bean) VALUES ('super', 1000, 'superCommand');
+INSERT IGNORE INTO verb (name, priority, bean) VALUES ('crash', 1000, 'crashCommand');
 
 -- Create the default roles. SUPER is a special role that will let a player run any command.
 INSERT IGNORE INTO role (name) VALUES ('PLAYER');
@@ -34,3 +35,4 @@ INSERT IGNORE INTO verb_roles (verb_name, roles_name) VALUES ('say', 'PLAYER');
 INSERT IGNORE INTO verb_roles (verb_name, roles_name) VALUES ('who', 'PLAYER');
 INSERT IGNORE INTO verb_roles (verb_name, roles_name) VALUES ('goto', 'PLAYER');
 INSERT IGNORE INTO verb_roles (verb_name, roles_name) VALUES ('super', 'PLAYER');
+INSERT IGNORE INTO verb_roles (verb_name, roles_name) VALUES ('crash', 'SUPER');
