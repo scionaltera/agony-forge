@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.ui.Model;
 
@@ -31,7 +32,7 @@ class CustomErrorControllerTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        when(errorAttributes.getErrorAttributes(any(), anyBoolean())).thenReturn(Collections.emptyMap());
+        when(errorAttributes.getErrorAttributes(any(), any(ErrorAttributeOptions.class))).thenReturn(Collections.emptyMap());
 
         controller = new CustomErrorController(errorAttributes);
     }
@@ -41,10 +42,5 @@ class CustomErrorControllerTest {
         String view = controller.error(model, request);
 
         assertEquals("error", view);
-    }
-
-    @Test
-    void testErrorPath() {
-        assertEquals("/error", controller.getErrorPath());
     }
 }
