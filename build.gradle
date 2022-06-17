@@ -1,28 +1,11 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-
-    dependencies {
-        classpath group: 'org.owasp', name: 'dependency-check-gradle', version: '7.0.3'
-        classpath group: 'org.kordamp.gradle', name: 'stats-gradle-plugin', version: '0.2.2'
-        classpath group: 'se.transmode.gradle', name: 'gradle-docker', version: '1.2'
-        classpath group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: '1.5.1'
-    }
-}
-
 plugins {
+    id 'info.solidsoft.pitest' version '1.7.4'
+    id 'org.owasp.dependencycheck' version '7.1.1'
+    id 'com.palantir.docker' version '0.33.0'
     id 'org.springframework.boot' version '2.3.0.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
 }
-
-apply plugin: 'maven'
-apply plugin: 'info.solidsoft.pitest'
-apply plugin: 'org.owasp.dependencycheck'
-apply plugin: 'org.kordamp.gradle.stats'
-apply plugin: 'docker'
 
 group 'com.agonyforge'
 version '0.5.0-SNAPSHOT'
@@ -78,32 +61,36 @@ test {
     useJUnitPlatform()
 }
 
-task buildDocker(type: Docker) {
-    push = false
-    applicationName = jar.getArchiveBaseName().get()
-    dockerfile = file('src/main/docker/local/Dockerfile')
-    tagVersion = "latest"
-    tag = "scionaltera/${applicationName}"
+jar {
+    enabled = false // don't build the plain, non-executable jar
+}
 
-    doFirst {
-        copy {
-            from jar
-            into stageDir
-        }
+bootJar {
+    manifest {
+        attributes(
+            'Implementation-Title': jar.getArchiveBaseName().get(),
+            'Implementation-Version': getArchiveVersion())
     }
 }
 
-build.dependsOn project.tasks.buildDocker
+docker {
+    def applicationName = jar.getArchiveBaseName().get()
+    name "scionaltera/${applicationName}"
+    dockerfile file('src/main/docker/local/Dockerfile')
+    files tasks.bootJar.outputs
+}
+
+project.tasks.build.dependsOn tasks.docker
 
 pitest {
-    testPlugin = "junit5"
     excludedClasses = [
         'com.agonyforge.core.AgonyForge',
         'com.agonyforge.core.config.*'
     ]
     excludedMethods = [
         'hashCode',
-        'equals'
+        'equals',
+        'toString'
     ]
     coverageThreshold = 70
     mutationThreshold = 70
@@ -114,7 +101,7 @@ dependencyCheck {
     suppressionFile "codequality/cve-suppressions.xml"
 }
 
-check.dependsOn project.tasks.pitest, project.tasks.dependencyCheckAnalyze, project.tasks.stats
+check.dependsOn project.tasks.pitest, project.tasks.dependencyCheckAnalyze
 
 // ensure pitest runs after junit, because pitest requires all tests to have passed
 project.tasks.pitest.mustRunAfter test

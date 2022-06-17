@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM amazoncorretto:8-alpine-jdk
 MAINTAINER Peter Keeler <scion@agonyforge.com>
 EXPOSE 8080
 COPY agony-forge-*.jar /opt/mud/app.jar
