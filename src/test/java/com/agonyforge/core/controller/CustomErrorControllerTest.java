@@ -42,9 +42,4 @@ class CustomErrorControllerTest {
 
         assertEquals("error", view);
     }
-
-    @Test
-    void testErrorPath() {
-        assertEquals("/error", controller.getErrorPath());
-    }
 }
