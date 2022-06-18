@@ -12,8 +12,10 @@ services:
     networks:
       agonyforge:
   mysql:
-    image: mysql:5.6
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    image: mysql:8
+    command: --log-bin-trust-function-creators=1 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    cap_add:
+      - SYS_NICE
     ports:
       - "3306:3306"
     environment:

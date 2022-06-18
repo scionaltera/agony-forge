@@ -26,7 +26,7 @@ dependencies {
     implementation 'javax.interceptor:javax.interceptor-api:1.2.2'
 
     implementation 'mysql:mysql-connector-java:8.0.29'
-    implementation 'org.flywaydb:flyway-core:8.5.13'
+    implementation 'org.flywaydb:flyway-mysql:8.5.13'
 
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

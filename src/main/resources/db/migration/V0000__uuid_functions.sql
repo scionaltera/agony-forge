@@ -1,10 +1,10 @@
 DELIMITER $$
-CREATE FUNCTION uuid_bin(uuid_hex CHAR(36)) RETURNS BINARY(16) DETERMINISTIC
+CREATE FUNCTION agonyforge.uuid_bin(uuid_hex CHAR(36)) RETURNS BINARY(16) DETERMINISTIC
   BEGIN
     RETURN unhex(replace(uuid_hex, '-', ''));
   END $$
 
-CREATE FUNCTION uuid_hex(uuid_bin BINARY(16)) RETURNS CHAR(36) DETERMINISTIC
+CREATE FUNCTION agonyforge.uuid_hex(uuid_bin BINARY(16)) RETURNS CHAR(36) DETERMINISTIC
   BEGIN
     DECLARE uuid_hex CHAR(32);
     SELECT hex(uuid_bin) INTO uuid_hex;

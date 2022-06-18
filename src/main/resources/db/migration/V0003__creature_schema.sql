@@ -13,7 +13,7 @@ CREATE TABLE connection (
 
 CREATE TABLE creature_definition (
   id BINARY(16) NOT NULL,
-  player TINYINT(1) NOT NULL DEFAULT 0,
+  player TINYINT NOT NULL DEFAULT 0,
   name VARCHAR(191) NOT NULL,
   gender VARCHAR(10) NOT NULL,
   PRIMARY KEY (id)
