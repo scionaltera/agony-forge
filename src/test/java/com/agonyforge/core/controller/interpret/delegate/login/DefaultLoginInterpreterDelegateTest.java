@@ -57,7 +57,7 @@ class DefaultLoginInterpreterDelegateTest {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private SessionRepository sessionRepository;
+    private SessionRepository<Session> sessionRepository;
 
     @Mock
     private ConnectionRepository connectionRepository;
@@ -465,7 +465,6 @@ class DefaultLoginInterpreterDelegateTest {
         assertEquals(LOGIN_ASK_NAME.name(), connection.getSecondaryState());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void testInterpretLoginAskPassword() {
         Input input = new Input();
@@ -521,7 +520,7 @@ class DefaultLoginInterpreterDelegateTest {
 
         Output result = interpreter.interpret(primary, input, connection);
 
-        verifyZeroInteractions(sessionRepository, session);
+        verifyNoMoreInteractions(sessionRepository, session);
 
         assertEquals("[red]Sorry! Please try again!\n[default]Create a new character? [y/N]: ", result.toString());
         assertFalse(result.getSecret());
@@ -745,7 +744,6 @@ class DefaultLoginInterpreterDelegateTest {
         assertEquals(CREATE_CHOOSE_PASSWORD.name(), connection.getSecondaryState());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void testInterpretCreateChoosePassword() {
         Input input = new Input();
@@ -795,7 +793,7 @@ class DefaultLoginInterpreterDelegateTest {
 
         Output result = interpreter.interpret(primary, input, connection);
 
-        verifyZeroInteractions(sessionRepository, session);
+        verifyNoMoreInteractions(sessionRepository, session);
 
         assertEquals("[red]Passwords must be at least 8 characters.\n[default]Please choose a password: ", result.toString());
         assertTrue(result.getSecret());
@@ -819,7 +817,7 @@ class DefaultLoginInterpreterDelegateTest {
 
         Output result = interpreter.interpret(primary, input, connection);
 
-        verifyZeroInteractions(sessionRepository, session);
+        verifyNoMoreInteractions(sessionRepository, session);
 
         assertEquals("[red]Oops! Something bad happened. The error has been logged.\n[default]Please choose a password: ", result.toString());
         assertTrue(result.getSecret());
@@ -827,7 +825,6 @@ class DefaultLoginInterpreterDelegateTest {
         assertEquals(CREATE_CHOOSE_PASSWORD.name(), connection.getSecondaryState());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void testInterpretCreateConfirmPassword() {
         Input input = new Input();
@@ -848,7 +845,7 @@ class DefaultLoginInterpreterDelegateTest {
         verify(session).setAttribute(eq(SPRING_SECURITY_CONTEXT_KEY), securityContextCaptor.capture());
         verify(sessionRepository).save(session);
 
-        assertFalse(StringUtils.isEmpty(result.toString()));
+        assertTrue(StringUtils.hasText(result.toString()));
         assertFalse(result.getSecret());
         assertEquals(CREATION, connection.getPrimaryState());
         assertEquals(DEFAULT_SECONDARY_STATE, connection.getSecondaryState());
@@ -876,7 +873,7 @@ class DefaultLoginInterpreterDelegateTest {
 
         Output result = interpreter.interpret(primary, input, connection);
 
-        verifyZeroInteractions(sessionRepository, session);
+        verifyNoMoreInteractions(sessionRepository, session);
 
         assertEquals("[red]Passwords must be at least 8 characters.\n[default]Please confirm your password: ", result.toString());
         assertTrue(result.getSecret());
@@ -900,7 +897,7 @@ class DefaultLoginInterpreterDelegateTest {
 
         Output result = interpreter.interpret(primary, input, connection);
 
-        verifyZeroInteractions(sessionRepository, session);
+        verifyNoMoreInteractions(sessionRepository, session);
         verify(userDetailsManager).deleteUser(eq(connection.getName()));
 
         assertEquals("[red]Passwords do not match. Please try again!\n[default]Please choose a password: ", result.toString());

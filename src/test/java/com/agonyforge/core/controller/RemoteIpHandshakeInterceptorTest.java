@@ -18,7 +18,7 @@ import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP
 import static com.agonyforge.core.controller.RemoteIpHandshakeInterceptor.X_FORWARDED_FOR_HEADER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 class RemoteIpHandshakeInterceptorTest {
@@ -85,6 +85,6 @@ class RemoteIpHandshakeInterceptorTest {
     void testAfterHandshake() {
         interceptor.afterHandshake(request, response, wsHandler, null);
 
-        verifyZeroInteractions(request, response, wsHandler);
+        verifyNoMoreInteractions(request, response, wsHandler);
     }
 }

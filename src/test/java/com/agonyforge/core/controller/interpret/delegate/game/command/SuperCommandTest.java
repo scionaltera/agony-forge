@@ -76,8 +76,8 @@ class SuperCommandTest {
 
         command.invoke(creature, output);
 
-        verifyZeroInteractions(userDetailsManager);
-        verifyZeroInteractions(creatureRepository);
+        verifyNoMoreInteractions(userDetailsManager);
+        verifyNoMoreInteractions(creatureRepository);
         verify(verbRepository, never()).save(any());
     }
 }

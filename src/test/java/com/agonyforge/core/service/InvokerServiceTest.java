@@ -73,7 +73,7 @@ class InvokerServiceTest {
     void testEmptyTokens() {
         invokerService.invoke(ch, output, null, Collections.emptyList());
 
-        verifyZeroInteractions(applicationContext, verbRepository);
+        verifyNoMoreInteractions(applicationContext, verbRepository);
     }
 
     @Test
