@@ -52,7 +52,7 @@ class CommServiceTest {
         commService.echo(creature, interpreter, output);
 
         verify(simpMessagingTemplate).convertAndSendToUser(eq("username"), eq("/queue/output"), eq(output));
-        verifyZeroInteractions(creatureRepository);
+        verifyNoMoreInteractions(creatureRepository);
 
         assertEquals("Hello\n[default]> ", output.toString());
     }
@@ -64,7 +64,7 @@ class CommServiceTest {
 
         commService.echo(creature, interpreter, output);
 
-        verifyZeroInteractions(simpMessagingTemplate, creatureRepository);
+        verifyNoMoreInteractions(simpMessagingTemplate, creatureRepository);
     }
 
     @Test
@@ -77,7 +77,7 @@ class CommServiceTest {
 
         commService.echo(creature, interpreter, output);
 
-        verifyZeroInteractions(simpMessagingTemplate, creatureRepository);
+        verifyNoMoreInteractions(simpMessagingTemplate, creatureRepository);
     }
 
     @Test
