@@ -1,11 +1,11 @@
-var socket = null;
-var stompClient = null;
-var isReconnecting = false;
-var reconnectDelay = 2;
-var commandHistory = [];
-var commandHistoryIndex = -1;
-var commandHistoryLength = 50;
-var scrollBackLength = 500;
+let socket = null;
+let stompClient = null;
+let isReconnecting = false;
+let reconnectDelay = 2;
+let commandHistory = [];
+let commandHistoryIndex = -1;
+let commandHistoryLength = 50;
+let scrollBackLength = 500;
 
 $(document).ready(function () {
     $("form").submit(function (event) {
@@ -68,26 +68,14 @@ function connect() {
             reconnectDelay = 2;
 
             stompClient.subscribe('/user/queue/output', function (message) {
-                    var msg = JSON.parse(message.body);
-                    var plainInput = $("#user-input");
-                    var passwordInput = $("#user-password");
-
-                    if (msg.secret) {
-                        plainInput.addClass("d-none");
-                        passwordInput.removeClass("d-none");
-                        passwordInput.focus();
-                    } else {
-                        passwordInput.addClass("d-none");
-                        plainInput.removeClass("d-none");
-                        plainInput.focus();
-                    }
+                    let msg = JSON.parse(message.body);
 
                     showOutput(msg.output);
                 },
                 {});
         },
         function () {
-            var actualDelay = Math.random() * reconnectDelay;
+            let actualDelay = Math.random() * reconnectDelay;
 
             if (isReconnecting === false) {
                 showOutput(["[red]Disconnected from server. Will attempt to reconnect in " + actualDelay.toFixed(0) + " seconds."]);
@@ -109,30 +97,26 @@ function connect() {
 }
 
 function sendInput() {
-    var inputBox = $("form input:not(.d-none)");
+    let inputBox = $("form input:not(.d-none)");
 
-    if (inputBox[0].type === 'text') {
-        commandHistoryIndex = -1;
-        commandHistory.unshift(inputBox.val());
+    commandHistoryIndex = -1;
+    commandHistory.unshift(inputBox.val());
 
-        if (commandHistory.length > commandHistoryLength) {
-            commandHistory.pop();
-        }
-
-        $("#output-list").find("li:last-child").append("<span class='yellow'> " + htmlEscape(inputBox.val()).replace(/\s/g, '&nbsp;') + "</span>");
-    } else {
-        $("#output-list").find("li:last-child").append("<span class='yellow'> ********</span>");
+    if (commandHistory.length > commandHistoryLength) {
+        commandHistory.pop();
     }
+
+    $("#output-list").find("li:last-child").append("<span class='yellow'> " + htmlEscape(inputBox.val()).replace(/\s/g, '&nbsp;') + "</span>");
 
     stompClient.send("/app/input", JSON.stringify({'input': inputBox.val()}));
     inputBox.val('');
 }
 
 function showOutput(message) {
-    var outputBox = $("#output-box");
-    var outputList = $("#output-list");
+    let outputBox = $("#output-box");
+    let outputList = $("#output-list");
 
-    for (var i = 0; i < message.length; i++) {
+    for (let i = 0; i < message.length; i++) {
         if ("" === message[i]) {
             outputList.append("<li>&nbsp;</li>");
         } else {
@@ -142,7 +126,7 @@ function showOutput(message) {
 
     outputBox.prop("scrollTop", outputBox.prop("scrollHeight"));
 
-    var scrollBackOverflow = outputList.find("li").length - scrollBackLength;
+    let scrollBackOverflow = outputList.find("li").length - scrollBackLength;
 
     if (scrollBackOverflow > 0) {
         outputList.find("li").slice(0, scrollBackOverflow).remove();

@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 @Configuration
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private UserDetailsManager userDetailsManager;
+    private final UserDetailsManager userDetailsManager;
 
     @Inject
     public WebSecurityConfiguration(DataSource dataSource, AuthenticationManagerBuilder auth) throws Exception {
@@ -46,23 +46,24 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/**")
-            .authorizeRequests()
-            .antMatchers(
-                "/",
-                "/error",
+        http.csrf()
+            .and()
+            .logout()
+            .logoutSuccessUrl("/")
+            .and()
+            .authorizeRequests(authz -> authz.antMatchers(
+                "/*",
                 "/mud/**",
-                "/favicon.ico",
-                "/public/**",
-                "/login/**",
+                "/error",
                 "/webjars/**",
-                "/img/**",
-                "/css/**",
-                "/js/**",
-                "/actuator/health",
-                "/robots.txt")
-            .permitAll()
-            .anyRequest().authenticated()
-            .and().logout().logoutSuccessUrl("/").permitAll();
+                "/img/*",
+                "/css/*",
+                "/js/*"
+            ).permitAll()
+                .anyRequest()
+                .authenticated())
+            .oauth2Login(conf -> conf
+                .loginPage("/")
+                .defaultSuccessUrl("/"));
     }
 }

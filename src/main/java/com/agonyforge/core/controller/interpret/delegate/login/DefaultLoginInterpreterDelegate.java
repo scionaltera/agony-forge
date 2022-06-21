@@ -42,23 +42,23 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLoginInterpreterDelegate.class);
 
-    private LoginConfiguration loginConfiguration;
-    private UserDetailsManager userDetailsManager;
-    private AuthenticationManager authenticationManager;
-    private PasswordEncoder passwordEncoder;
-    private SessionRepository sessionRepository;
-    private ConnectionRepository connectionRepository;
-    private CreatureRepository creatureRepository;
-    private CreatureDefinitionRepository creatureDefinitionRepository;
-    private ZoneFactory zoneFactory;
-    private CreatureFactory creatureFactory;
-    private CommService commService;
+    private final LoginConfiguration loginConfiguration;
+    private final UserDetailsManager userDetailsManager;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final SessionRepository<Session> sessionRepository;
+    private final ConnectionRepository connectionRepository;
+    private final CreatureRepository creatureRepository;
+    private final CreatureDefinitionRepository creatureDefinitionRepository;
+    private final ZoneFactory zoneFactory;
+    private final CreatureFactory creatureFactory;
+    private final CommService commService;
 
     public DefaultLoginInterpreterDelegate(
         LoginConfiguration loginConfiguration,
         UserDetailsManager userDetailsManager,
         AuthenticationManager authenticationManager,
-        SessionRepository sessionRepository,
+        SessionRepository<Session> sessionRepository,
         ConnectionRepository connectionRepository,
         CreatureRepository creatureRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
@@ -94,7 +94,7 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
 
         switch (secondaryState) {
             case RECONNECT:
-                if (!StringUtils.isEmpty(input.toString())) {
+                if (!StringUtils.hasText(input.toString())) {
                     connection.setSecondaryState(DEFAULT.name());
                 } else {
                     creature = findOrBuildPlayer(connection.getName(), primary, connection);
@@ -266,7 +266,6 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         return in;
     }
 
-    @SuppressWarnings("unchecked")
     private void logUserIn(String name, String password, Connection connection) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(name, password);
         Authentication authentication = authenticationManager.authenticate(token);
