@@ -32,8 +32,10 @@
 </@security.authorize>
 
 <#include "inc/scripts.inc.ftlh">
+<@security.authorize access="isAuthenticated()">
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/webstomp-client@1.2.6/dist/webstomp.min.js"></script>
 <script type="text/javascript" src="<@spring.url '/js/client.js'/>"></script>
+</@security.authorize>
 </body>
 </html>

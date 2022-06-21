@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -35,10 +36,10 @@ import static org.springframework.web.socket.server.support.HttpSessionHandshake
 public class WebSocketController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
 
-    private List<String> greeting;
-    private ConnectionRepository connectionRepository;
-    private SessionRepository sessionRepository;
-    private Interpreter interpreter;
+    private final List<String> greeting;
+    private final ConnectionRepository connectionRepository;
+    private final SessionRepository sessionRepository;
+    private final Interpreter interpreter;
 
     @Inject
     public WebSocketController(
@@ -74,9 +75,12 @@ public class WebSocketController {
                 Authentication authentication = securityContext.getAuthentication();
 
                 if (authentication != null && authentication.isAuthenticated()) {
-                    connection.setName(authentication.getName());
-                    connection.setSecondaryState(RECONNECT.name());
+                    connection.setOauthUsername(authentication.getName());
                 }
+            }
+
+            if (StringUtils.hasText(connection.getName())) {
+                connection.setSecondaryState(RECONNECT.name());
             }
 
             Connection saved = connectionRepository.save(connection);
