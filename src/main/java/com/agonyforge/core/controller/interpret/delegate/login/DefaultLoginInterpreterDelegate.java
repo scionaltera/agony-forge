@@ -30,7 +30,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
-import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
@@ -93,21 +92,6 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         DefaultLoginConnectionState secondaryState = DefaultLoginConnectionState.valueOf(connection.getSecondaryState());
 
         switch (secondaryState) {
-            case RECONNECT:
-                if (!StringUtils.hasText(input.toString())) {
-                    connection.setSecondaryState(DEFAULT.name());
-                } else {
-                    creature = findOrBuildPlayer(connection.getName(), primary, connection);
-                    placePlayerInWorld(creature);
-
-                    output.append("[yellow]Welcome back, " + connection.getName() + "!");
-                    output.append(primary.interpret(new Input("look"), creature.getConnection(), false));
-
-                    commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has reconnected."), primary, creature);
-
-                    LOGGER.info("Reconnected {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
-                }
-                break;
             case DEFAULT:
                 if (input.toString().equalsIgnoreCase("Y")) {
                     connection.setSecondaryState(CREATE_CHOOSE_NAME.name());
@@ -194,7 +178,6 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         DefaultLoginConnectionState secondaryState = DefaultLoginConnectionState.valueOf(connection.getSecondaryState());
 
         switch (secondaryState) {
-            case RECONNECT:
             case DEFAULT:
             case LOGIN_ASK_NAME:
             case CREATE_CHOOSE_NAME:

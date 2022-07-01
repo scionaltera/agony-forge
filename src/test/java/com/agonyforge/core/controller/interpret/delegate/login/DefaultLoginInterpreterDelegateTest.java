@@ -11,43 +11,33 @@ import com.agonyforge.core.model.CreatureDefinition;
 import com.agonyforge.core.model.Room;
 import com.agonyforge.core.model.Zone;
 import com.agonyforge.core.model.factory.CreatureFactory;
-import com.agonyforge.core.model.Gender;
 import com.agonyforge.core.model.factory.ZoneFactory;
 import com.agonyforge.core.model.repository.ConnectionRepository;
 import com.agonyforge.core.model.repository.CreatureDefinitionRepository;
 import com.agonyforge.core.model.repository.CreatureRepository;
 import com.agonyforge.core.model.repository.RoleRepository;
 import com.agonyforge.core.service.CommService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
-import static com.agonyforge.core.model.Connection.DEFAULT_SECONDARY_STATE;
 import static com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginConnectionState.*;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 class DefaultLoginInterpreterDelegateTest {
     @Mock
@@ -83,17 +73,13 @@ class DefaultLoginInterpreterDelegateTest {
     @Mock
     private Interpreter primary;
 
-    @Captor
-    private ArgumentCaptor<SecurityContext> securityContextCaptor;
-
-    @Captor
-    private ArgumentCaptor<Creature> creatureCaptor;
+    private AutoCloseable closeable;
 
     private DefaultLoginInterpreterDelegate interpreter;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
 
         LoginConfiguration loginConfiguration = new LoginConfigurationBuilder().build();
         CreatureFactory creatureFactory = new CreatureFactory(
@@ -102,6 +88,9 @@ class DefaultLoginInterpreterDelegateTest {
             connectionRepository,
             roleRepository,
             userDetailsManager);
+
+        when(primary.interpret(any(Input.class), any(Connection.class), anyBoolean()))
+            .thenAnswer(invocation -> new Output("[yellow]Look sir! Droids!"));
 
         when(primary.prompt(any(Connection.class))).thenAnswer(invocation -> {
             Connection connection = invocation.getArgument(0);
@@ -112,6 +101,9 @@ class DefaultLoginInterpreterDelegateTest {
                 return new Output("", "[default]Dani> ");
             }
         });
+
+        when(authenticationManager.authenticate(any(Authentication.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(sessionRepository.findById(anyString())).thenReturn(session);
 
         when(connectionRepository.save(any(Connection.class))).thenAnswer(invocation -> {
             Connection connection = invocation.getArgument(0);
@@ -182,6 +174,11 @@ class DefaultLoginInterpreterDelegateTest {
             commService);
     }
 
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
+    }
+
     @Test
     void testPromptBadSecondaryState() {
         Connection connection = new Connection();
@@ -213,83 +210,6 @@ class DefaultLoginInterpreterDelegateTest {
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().startsWith("No enum constant"));
         }
-    }
-
-    @Test
-    void testReconnect() {
-        Connection oldConnection = new Connection();
-        oldConnection.setId(UUID.randomUUID());
-        oldConnection.setName("Dani");
-        oldConnection.setDisconnected(new Date());
-
-        Connection connection = new Connection();
-        connection.setId(UUID.randomUUID());
-        connection.setName("Dani");
-        connection.setPrimaryState(LOGIN);
-        connection.setSecondaryState(RECONNECT.name());
-
-        CreatureDefinition definition = new CreatureDefinition();
-        definition.setPlayer(true);
-        definition.setName("Dani");
-        definition.setGender(Gender.MALE);
-        definition.setId(UUID.randomUUID());
-
-        Creature creature = new Creature();
-        creature.setDefinition(definition);
-        creature.setName("Dani");
-        creature.setGender(Gender.MALE);
-        creature.setConnection(oldConnection);
-
-        Input input = new Input();
-        input.setInput("");
-
-        when(creatureDefinitionRepository.findByPlayerIsTrueAndName(eq("Dani")))
-            .thenReturn(Optional.of(definition));
-
-        when(creatureRepository.findByDefinition(eq(definition)))
-            .thenReturn(Stream.of(creature));
-
-        doAnswer(invocation -> {
-            Connection c = invocation.getArgument(0);
-
-            if (c.equals(creature.getConnection())) {
-                throw new RuntimeException("Can't delete this when there's a reference to it!");
-            }
-
-            return c;
-        }).when(connectionRepository).delete(any());
-
-        when(primary.interpret(any(), any(), anyBoolean())).thenReturn(new Output("LOOK"));
-
-        Output result = interpreter.interpret(primary, input, connection);
-
-        assertEquals(connection, creature.getConnection());
-        assertNotEquals(oldConnection, creature.getConnection());
-        assertEquals("[yellow]Welcome back, Dani!\nLOOK\n\n[default]Dani> ", result.toString());
-        assertEquals(DISCONNECTED, oldConnection.getPrimaryState());
-        assertEquals(DEFAULT_SECONDARY_STATE, oldConnection.getSecondaryState());
-        assertNotNull(creature.getRoom());
-
-        verify(commService).echo(eq(creature), eq(primary), any());
-        verify(commService).echoToWorld(any(), eq(primary), eq(creature));
-        verify(connectionRepository).save(eq(oldConnection));
-        verify(creatureRepository, atLeastOnce()).save(eq(creature));
-    }
-
-    @Test
-    void testReconnectChangeCharacter() {
-        Connection connection = new Connection();
-        connection.setName("Dani");
-        connection.setPrimaryState(LOGIN);
-        connection.setSecondaryState(RECONNECT.name());
-
-        Input input = new Input();
-        input.setInput("n");
-
-        Output result = interpreter.interpret(primary, input, connection);
-
-        assertEquals("[default]Create a new character? [y/N]: ", result.toString());
-        assertEquals(DEFAULT.name(), connection.getSecondaryState());
     }
 
     @Test
@@ -329,14 +249,14 @@ class DefaultLoginInterpreterDelegateTest {
         input.setInput("Dan");
         connection.setPrimaryState(LOGIN);
         connection.setSecondaryState(LOGIN_ASK_NAME.name());
+        connection.setHttpSessionId(UUID.randomUUID().toString());
 
         Output result = interpreter.interpret(primary, input, connection);
 
-        assertEquals("[default]Password: ", result.toString());
-        assertTrue(result.getSecret());
+        assertEquals("[yellow]Welcome back, Dan!\n[yellow]Look sir! Droids!\n\n[default]Dani> ", result.toString());
         assertEquals("Dan", connection.getName());
-        assertEquals(LOGIN, connection.getPrimaryState());
-        assertEquals(LOGIN_ASK_PASSWORD.name(), connection.getSecondaryState());
+        assertEquals(IN_GAME, connection.getPrimaryState());
+        assertEquals(DEFAULT.name(), connection.getSecondaryState());
     }
 
     @Test
@@ -347,14 +267,14 @@ class DefaultLoginInterpreterDelegateTest {
         input.setInput("Danidanidanidanidanidanidanida");
         connection.setPrimaryState(LOGIN);
         connection.setSecondaryState(LOGIN_ASK_NAME.name());
+        connection.setHttpSessionId(UUID.randomUUID().toString());
 
         Output result = interpreter.interpret(primary, input, connection);
 
-        assertEquals("[default]Password: ", result.toString());
-        assertTrue(result.getSecret());
-        assertEquals("Danidanidanidanidanidanidanida", connection.getName());
-        assertEquals(LOGIN, connection.getPrimaryState());
-        assertEquals(LOGIN_ASK_PASSWORD.name(), connection.getSecondaryState());
+        assertEquals("[yellow]Welcome back, Danidanidanidanidanidanidanida!\n[yellow]Look sir! Droids!\n\n[default]Dani> ", result.toString());
+
+        assertEquals(IN_GAME, connection.getPrimaryState());
+        assertEquals(DEFAULT.name(), connection.getSecondaryState());
     }
 
     @Test
@@ -463,69 +383,6 @@ class DefaultLoginInterpreterDelegateTest {
         assertNull(connection.getName());
         assertEquals(LOGIN, connection.getPrimaryState());
         assertEquals(LOGIN_ASK_NAME.name(), connection.getSecondaryState());
-    }
-
-    @Test
-    void testInterpretLoginAskPassword() {
-        Input input = new Input();
-        Connection connection = new Connection();
-
-        input.setInput("Not!A_Real123Password");
-        connection.setName("Dani");
-        connection.setPrimaryState(LOGIN);
-        connection.setSecondaryState(LOGIN_ASK_PASSWORD.name());
-        connection.setHttpSessionId(UUID.randomUUID().toString());
-
-        when(primary.interpret(any(), any(), anyBoolean())).thenReturn(new Output("LOOK"));
-        when(authenticationManager.authenticate(any(Authentication.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(sessionRepository.findById(anyString())).thenReturn(session);
-
-        Output result = interpreter.interpret(primary, input, connection);
-
-        verify(sessionRepository).findById(anyString());
-        verify(session).setAttribute(eq(SPRING_SECURITY_CONTEXT_KEY), securityContextCaptor.capture());
-        verify(sessionRepository).save(session);
-        verify(creatureRepository, times(2)).save(creatureCaptor.capture());
-        verify(commService).echoToWorld(any(), eq(primary), any());
-
-        assertEquals("[yellow]Welcome back, Dani!\nLOOK\n\n[default]Dani> ", result.toString());
-        assertFalse(result.getSecret());
-        assertEquals(IN_GAME, connection.getPrimaryState());
-
-        SecurityContext securityContext = securityContextCaptor.getValue();
-        Authentication authentication = securityContext.getAuthentication();
-
-        assertEquals("Dani", authentication.getPrincipal());
-        assertEquals("Not!A_Real123Password", authentication.getCredentials());
-
-        Creature creature = creatureCaptor.getValue();
-
-        assertEquals("Dani", creature.getName());
-        assertEquals(connection, creature.getConnection());
-        assertNotNull(creature.getRoom());
-    }
-
-    @Test
-    void testInterpretLoginAskPasswordBadCredentials() {
-        Input input = new Input();
-        Connection connection = new Connection();
-
-        input.setInput("password");
-        connection.setName("Dani");
-        connection.setPrimaryState(LOGIN);
-        connection.setSecondaryState(LOGIN_ASK_PASSWORD.name());
-        connection.setHttpSessionId(UUID.randomUUID().toString());
-
-        when(authenticationManager.authenticate(any(Authentication.class))).thenThrow(new BadCredentialsException("Boom!"));
-
-        Output result = interpreter.interpret(primary, input, connection);
-
-        verifyNoMoreInteractions(sessionRepository, session);
-
-        assertEquals("[red]Sorry! Please try again!\n[default]Create a new character? [y/N]: ", result.toString());
-        assertFalse(result.getSecret());
-        assertEquals(LOGIN, connection.getPrimaryState());
-        assertEquals(DEFAULT.name(), connection.getSecondaryState());
     }
 
     @Test
@@ -733,176 +590,15 @@ class DefaultLoginInterpreterDelegateTest {
         Connection connection = new Connection();
 
         input.setInput("y");
+        connection.setName("Scion");
         connection.setPrimaryState(LOGIN);
         connection.setSecondaryState(CREATE_CONFIRM_NAME.name());
-
-        Output result = interpreter.interpret(primary, input, connection);
-
-        assertEquals("[default]Please choose a password: ", result.toString());
-        assertTrue(result.getSecret());
-        assertEquals(LOGIN, connection.getPrimaryState());
-        assertEquals(CREATE_CHOOSE_PASSWORD.name(), connection.getSecondaryState());
-    }
-
-    @Test
-    void testInterpretCreateChoosePassword() {
-        Input input = new Input();
-        Connection connection = new Connection();
-
-        input.setInput("Not!A_PW");
-        connection.setName("Dani");
-        connection.setPrimaryState(LOGIN);
-        connection.setSecondaryState(CREATE_CHOOSE_PASSWORD.name());
         connection.setHttpSessionId(UUID.randomUUID().toString());
 
-        when(authenticationManager.authenticate(any(Authentication.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(sessionRepository.findById(anyString())).thenReturn(session);
-
         Output result = interpreter.interpret(primary, input, connection);
 
-        verify(userDetailsManager).createUser(any(User.class));
-        verify(sessionRepository).findById(anyString());
-        verify(session).setAttribute(eq(SPRING_SECURITY_CONTEXT_KEY), securityContextCaptor.capture());
-        verify(sessionRepository).save(session);
-
-        assertEquals("[default]Please confirm your password: ", result.toString());
-        assertTrue(result.getSecret());
-        assertEquals(LOGIN, connection.getPrimaryState());
-        assertEquals(CREATE_CONFIRM_PASSWORD.name(), connection.getSecondaryState());
-
-        SecurityContext securityContext = securityContextCaptor.getValue();
-        Authentication authentication = securityContext.getAuthentication();
-
-        assertEquals("Dani", authentication.getPrincipal());
-        assertEquals("Not!A_PW", authentication.getCredentials());
-    }
-
-    @Test
-    void testInterpretCreateChoosePasswordTooShort() {
-        Input input = new Input();
-        Connection connection = new Connection();
-
-        input.setInput("Not!A_P");
-        connection.setName("Dani");
-        connection.setPrimaryState(LOGIN);
-        connection.setSecondaryState(CREATE_CHOOSE_PASSWORD.name());
-        connection.setHttpSessionId(UUID.randomUUID().toString());
-
-        when(authenticationManager.authenticate(any(Authentication.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(sessionRepository.findById(anyString())).thenReturn(session);
-
-        Output result = interpreter.interpret(primary, input, connection);
-
-        verifyNoMoreInteractions(sessionRepository, session);
-
-        assertEquals("[red]Passwords must be at least 8 characters.\n[default]Please choose a password: ", result.toString());
-        assertTrue(result.getSecret());
-        assertEquals(LOGIN, connection.getPrimaryState());
-        assertEquals(CREATE_CHOOSE_PASSWORD.name(), connection.getSecondaryState());
-    }
-
-    @Test
-    void testInterpretCreateChoosePasswordSomethingBad() {
-        Input input = new Input();
-        Connection connection = new Connection();
-
-        input.setInput("Not!A_Real123Password");
-        connection.setName("Dani");
-        connection.setPrimaryState(LOGIN);
-        connection.setSecondaryState(CREATE_CHOOSE_PASSWORD.name());
-        connection.setHttpSessionId(UUID.randomUUID().toString());
-
-        when(authenticationManager.authenticate(any(Authentication.class))).thenThrow(new BadCredentialsException("Boom!"));
-        when(sessionRepository.findById(anyString())).thenReturn(session);
-
-        Output result = interpreter.interpret(primary, input, connection);
-
-        verifyNoMoreInteractions(sessionRepository, session);
-
-        assertEquals("[red]Oops! Something bad happened. The error has been logged.\n[default]Please choose a password: ", result.toString());
-        assertTrue(result.getSecret());
-        assertEquals(LOGIN, connection.getPrimaryState());
-        assertEquals(CREATE_CHOOSE_PASSWORD.name(), connection.getSecondaryState());
-    }
-
-    @Test
-    void testInterpretCreateConfirmPassword() {
-        Input input = new Input();
-        Connection connection = new Connection();
-
-        input.setInput("Not!A_Real123Password");
-        connection.setName("Dani");
-        connection.setPrimaryState(LOGIN);
-        connection.setSecondaryState(CREATE_CONFIRM_PASSWORD.name());
-        connection.setHttpSessionId(UUID.randomUUID().toString());
-
-        when(authenticationManager.authenticate(any(Authentication.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(sessionRepository.findById(anyString())).thenReturn(session);
-
-        Output result = interpreter.interpret(primary, input, connection);
-
-        verify(sessionRepository).findById(anyString());
-        verify(session).setAttribute(eq(SPRING_SECURITY_CONTEXT_KEY), securityContextCaptor.capture());
-        verify(sessionRepository).save(session);
-
-        assertTrue(StringUtils.hasText(result.toString()));
-        assertFalse(result.getSecret());
+        assertEquals("\n[default]Dani> ", result.toString());
         assertEquals(CREATION, connection.getPrimaryState());
-        assertEquals(DEFAULT_SECONDARY_STATE, connection.getSecondaryState());
-
-        SecurityContext securityContext = securityContextCaptor.getValue();
-        Authentication authentication = securityContext.getAuthentication();
-
-        assertEquals("Dani", authentication.getPrincipal());
-        assertEquals("Not!A_Real123Password", authentication.getCredentials());
-    }
-
-    @Test
-    void testInterpretCreateConfirmPasswordTooShort() {
-        Input input = new Input();
-        Connection connection = new Connection();
-
-        input.setInput("Not!A_R");
-        connection.setName("Dani");
-        connection.setPrimaryState(LOGIN);
-        connection.setSecondaryState(CREATE_CONFIRM_PASSWORD.name());
-        connection.setHttpSessionId(UUID.randomUUID().toString());
-
-        when(authenticationManager.authenticate(any(Authentication.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(sessionRepository.findById(anyString())).thenReturn(session);
-
-        Output result = interpreter.interpret(primary, input, connection);
-
-        verifyNoMoreInteractions(sessionRepository, session);
-
-        assertEquals("[red]Passwords must be at least 8 characters.\n[default]Please confirm your password: ", result.toString());
-        assertTrue(result.getSecret());
-        assertEquals(LOGIN, connection.getPrimaryState());
-        assertEquals(CREATE_CONFIRM_PASSWORD.name(), connection.getSecondaryState());
-    }
-
-    @Test
-    void testInterpretCreateConfirmPasswordSomethingBad() {
-        Input input = new Input();
-        Connection connection = new Connection();
-
-        input.setInput("Not!A_Real123Password");
-        connection.setName("Dani");
-        connection.setPrimaryState(LOGIN);
-        connection.setSecondaryState(CREATE_CONFIRM_PASSWORD.name());
-        connection.setHttpSessionId(UUID.randomUUID().toString());
-
-        when(authenticationManager.authenticate(any(Authentication.class))).thenThrow(new BadCredentialsException("Boom!"));
-        when(sessionRepository.findById(anyString())).thenReturn(session);
-
-        Output result = interpreter.interpret(primary, input, connection);
-
-        verifyNoMoreInteractions(sessionRepository, session);
-        verify(userDetailsManager).deleteUser(eq(connection.getName()));
-
-        assertEquals("[red]Passwords do not match. Please try again!\n[default]Please choose a password: ", result.toString());
-        assertTrue(result.getSecret());
-        assertEquals(LOGIN, connection.getPrimaryState());
-        assertEquals(CREATE_CHOOSE_PASSWORD.name(), connection.getSecondaryState());
+        assertEquals(DEFAULT.name(), connection.getSecondaryState());
     }
 }

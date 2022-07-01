@@ -37,10 +37,11 @@ class CrashCommandTest {
 
     @Test
     void testInvoke() {
+        Output output = new Output();
         boolean exceptionCaught = false;
 
         try {
-            command.invoke(actor);
+            command.invoke(actor, output);
         } catch (RuntimeException e) {
             exceptionCaught = true;
         }
