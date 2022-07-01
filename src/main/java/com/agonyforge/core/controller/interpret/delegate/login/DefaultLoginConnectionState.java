@@ -6,15 +6,12 @@ import com.agonyforge.core.model.util.PersistentEnum;
 public enum DefaultLoginConnectionState implements PersistentEnum {
     DEFAULT(0, "askNew"),
     LOGIN_ASK_NAME(1, "loginAskName"),
-    LOGIN_ASK_PASSWORD(2, "loginAskPassword"),
-    CREATE_CHOOSE_NAME(3, "createChooseName"),
-    CREATE_CONFIRM_NAME(4, "createConfirmName"),
-    CREATE_CHOOSE_PASSWORD(5, "createChoosePassword"),
-    CREATE_CONFIRM_PASSWORD(6, "createConfirmPassword"),
-    RECONNECT(7, "reconnect");
+    CREATE_CHOOSE_NAME(2, "createChooseName"),
+    CREATE_CONFIRM_NAME(3, "createConfirmName"),
+    RECONNECT(4, "reconnect");
 
-    private int index;
-    private String property;
+    private final int index;
+    private final String property;
 
     DefaultLoginConnectionState(int index, String property) {
         this.index = index;

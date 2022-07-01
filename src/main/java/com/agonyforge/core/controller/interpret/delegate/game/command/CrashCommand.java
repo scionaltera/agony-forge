@@ -29,7 +29,7 @@ public class CrashCommand {
 
     @Transactional
     @CommandDescription("Throws an exception")
-    public void invoke(Creature actor) {
+    public void invoke(Creature actor, Output output) {
         crashGame(actor);
     }
 

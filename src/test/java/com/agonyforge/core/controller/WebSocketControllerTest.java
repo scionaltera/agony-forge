@@ -4,6 +4,7 @@ import com.agonyforge.core.controller.greeting.GreetingLoader;
 import com.agonyforge.core.controller.interpret.Interpreter;
 import com.agonyforge.core.model.Connection;
 import com.agonyforge.core.model.repository.ConnectionRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,8 +15,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 
@@ -27,13 +26,10 @@ import java.util.UUID;
 
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_CONNECTION_ID_KEY;
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP_KEY;
-import static com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginConnectionState.RECONNECT;
 import static com.agonyforge.core.controller.interpret.PrimaryConnectionState.LOGIN;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import static org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME;
 
 class WebSocketControllerTest {
@@ -52,13 +48,15 @@ class WebSocketControllerTest {
     @Captor
     private ArgumentCaptor<Connection> connectionCaptor;
 
-    private Principal principal = new UsernamePasswordAuthenticationToken("user", "pass");
+    private final Principal principal = new UsernamePasswordAuthenticationToken("user", "pass");
+
+    private AutoCloseable closeable;
 
     private WebSocketController controller;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
 
         GreetingLoader loader = new GreetingLoader();
         Connection connection = new Connection();
@@ -86,6 +84,11 @@ class WebSocketControllerTest {
             interpreter);
     }
 
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
+    }
+
     @Test
     void testOnSubscribe() {
         Message<byte[]> message = buildMockMessage(true, false);
@@ -107,30 +110,6 @@ class WebSocketControllerTest {
         assertNotNull(UUID.fromString(connection.getHttpSessionId()));
         assertEquals("1.2.3.4", connection.getRemoteAddress());
         assertEquals(LOGIN, connection.getPrimaryState());
-    }
-
-    @Test
-    void testOnSubscribeReconnect() {
-        Message<byte[]> message = buildMockMessage(true, false);
-        Authentication authentication = mock(Authentication.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-
-        when(authentication.isAuthenticated()).thenReturn(true);
-        when(authentication.getName()).thenReturn("Scion");
-
-        when(session.getAttribute(eq(SPRING_SECURITY_CONTEXT_KEY))).thenReturn(securityContext);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-
-        Output result = controller.onSubscribe(principal, message);
-
-        assertNotNull(result);
-        verify(connectionRepository).save(connectionCaptor.capture());
-
-        Connection connection = connectionCaptor.getValue();
-
-        assertEquals("Scion", connection.getName());
-        assertEquals(LOGIN, connection.getPrimaryState());
-        assertEquals(RECONNECT.name(), connection.getSecondaryState());
     }
 
     @Test

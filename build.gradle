@@ -39,7 +39,12 @@ dependencies {
     }
     implementation 'org.springframework.boot:spring-boot-starter-jetty'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-oauth2-client'
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
+    implementation 'org.springframework.security:spring-security-taglibs'
+    implementation 'org.eclipse.jetty:apache-jsp:9.4.46.v20220331'
 
     implementation 'org.springframework.session:spring-session-jdbc'
 

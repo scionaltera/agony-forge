@@ -30,7 +30,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
-import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
@@ -42,23 +41,23 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLoginInterpreterDelegate.class);
 
-    private LoginConfiguration loginConfiguration;
-    private UserDetailsManager userDetailsManager;
-    private AuthenticationManager authenticationManager;
-    private PasswordEncoder passwordEncoder;
-    private SessionRepository sessionRepository;
-    private ConnectionRepository connectionRepository;
-    private CreatureRepository creatureRepository;
-    private CreatureDefinitionRepository creatureDefinitionRepository;
-    private ZoneFactory zoneFactory;
-    private CreatureFactory creatureFactory;
-    private CommService commService;
+    private final LoginConfiguration loginConfiguration;
+    private final UserDetailsManager userDetailsManager;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final SessionRepository<Session> sessionRepository;
+    private final ConnectionRepository connectionRepository;
+    private final CreatureRepository creatureRepository;
+    private final CreatureDefinitionRepository creatureDefinitionRepository;
+    private final ZoneFactory zoneFactory;
+    private final CreatureFactory creatureFactory;
+    private final CommService commService;
 
     public DefaultLoginInterpreterDelegate(
         LoginConfiguration loginConfiguration,
         UserDetailsManager userDetailsManager,
         AuthenticationManager authenticationManager,
-        SessionRepository sessionRepository,
+        SessionRepository<Session> sessionRepository,
         ConnectionRepository connectionRepository,
         CreatureRepository creatureRepository,
         CreatureDefinitionRepository creatureDefinitionRepository,
@@ -93,21 +92,6 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         DefaultLoginConnectionState secondaryState = DefaultLoginConnectionState.valueOf(connection.getSecondaryState());
 
         switch (secondaryState) {
-            case RECONNECT:
-                if (!StringUtils.isEmpty(input.toString())) {
-                    connection.setSecondaryState(DEFAULT.name());
-                } else {
-                    creature = findOrBuildPlayer(connection.getName(), primary, connection);
-                    placePlayerInWorld(creature);
-
-                    output.append("[yellow]Welcome back, " + connection.getName() + "!");
-                    output.append(primary.interpret(new Input("look"), creature.getConnection(), false));
-
-                    commService.echoToWorld(new Output("[yellow]" + creature.getName() + " has reconnected."), primary, creature);
-
-                    LOGGER.info("Reconnected {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
-                }
-                break;
             case DEFAULT:
                 if (input.toString().equalsIgnoreCase("Y")) {
                     connection.setSecondaryState(CREATE_CHOOSE_NAME.name());
@@ -118,14 +102,8 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
             case LOGIN_ASK_NAME:
                 try {
                     connection.setName(validateName(input.toString()));
-                    connection.setSecondaryState(LOGIN_ASK_PASSWORD.name());
-                } catch (InvalidInputException e) {
-                    output.append("[red]" + e.getMessage());
-                }
-                break;
-            case LOGIN_ASK_PASSWORD:
-                try {
-                    logUserIn(connection.getName(), input.toString(), connection);
+
+                    logUserIn(connection.getName(), connection);
                     creature = findOrBuildPlayer(connection.getName(), primary, connection);
                     placePlayerInWorld(creature);
 
@@ -139,7 +117,10 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                     output.append("[red]Sorry! Please try again!");
                     LOGGER.warn("Bad password attempt for {} {}@{}", connection.getName(), connection.getSessionId(), connection.getRemoteAddress());
                     connection.setSecondaryState(DEFAULT.name());
+                } catch (InvalidInputException e) {
+                    output.append("[red]" + e.getMessage());
                 }
+
                 break;
             case CREATE_CHOOSE_NAME:
                 try {
@@ -157,45 +138,30 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
                 break;
             case CREATE_CONFIRM_NAME:
                 if (input.toString().equalsIgnoreCase("Y")) {
-                    connection.setSecondaryState(CREATE_CHOOSE_PASSWORD.name());
-                } else {
-                    connection.setSecondaryState(CREATE_CHOOSE_NAME.name());
-                }
-                break;
-            case CREATE_CHOOSE_PASSWORD:
-                try {
-                    User user = new User(
-                        connection.getName(),
-                        passwordEncoder.encode(validatePassword(input.toString())),
-                        true,
-                        true,
-                        true,
-                        true,
-                        Collections.singletonList(new SimpleGrantedAuthority("PLAYER")));
+                    try {
+                        User user = new User(
+                            connection.getName(),
+                            passwordEncoder.encode("password"),
+                            true,
+                            true,
+                            true,
+                            true,
+                            Collections.singletonList(new SimpleGrantedAuthority("PLAYER")));
 
-                    userDetailsManager.createUser(user);
+                        userDetailsManager.createUser(user);
 
-                    logUserIn(connection.getName(), validatePassword(input.toString()), connection);
-                    connection.setSecondaryState(CREATE_CONFIRM_PASSWORD.name());
-                } catch (InvalidInputException e) {
-                    output.append("[red]" + e.getMessage());
-                } catch (BadCredentialsException e) {
-                    output.append("[red]Oops! Something bad happened. The error has been logged.");
-                    LOGGER.error("Unable to log in newly created player!", e);
-                }
+                        logUserIn(connection.getName(), connection);
+                    } catch (BadCredentialsException e) {
+                        output.append("[red]Oops! Something bad happened. The error has been logged.");
+                        LOGGER.error("Unable to log in newly created player!", e);
+                        userDetailsManager.deleteUser(connection.getName());
+                    }
 
-                break;
-            case CREATE_CONFIRM_PASSWORD:
-                try {
-                    logUserIn(connection.getName(), validatePassword(input.toString()), connection);
                     connection.setPrimaryState(CREATION);
                     connection.setSecondaryState(null);
-                } catch (InvalidInputException e) {
-                    output.append("[red]" + e.getMessage());
-                } catch (BadCredentialsException e) {
-                    output.append("[red]Passwords do not match. Please try again!");
+                } else {
+                    connection.setSecondaryState(CREATE_CHOOSE_NAME.name());
                     userDetailsManager.deleteUser(connection.getName());
-                    connection.setSecondaryState(CREATE_CHOOSE_PASSWORD.name());
                 }
                 break;
             default:
@@ -212,17 +178,11 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         DefaultLoginConnectionState secondaryState = DefaultLoginConnectionState.valueOf(connection.getSecondaryState());
 
         switch (secondaryState) {
-            case RECONNECT:
             case DEFAULT:
             case LOGIN_ASK_NAME:
             case CREATE_CHOOSE_NAME:
             case CREATE_CONFIRM_NAME:
                 return new Output(loginConfiguration.getPrompt(secondaryState.toProperty(), connection));
-
-            case LOGIN_ASK_PASSWORD:
-            case CREATE_CHOOSE_PASSWORD:
-            case CREATE_CONFIRM_PASSWORD:
-                return new Output(loginConfiguration.getPrompt(secondaryState.toProperty(), connection)).setSecret(true);
 
             default:
                 LOGGER.error("Reached default state in prompt()!");
@@ -258,17 +218,8 @@ public class DefaultLoginInterpreterDelegate implements LoginInterpreterDelegate
         return in;
     }
 
-    private String validatePassword(String in) throws InvalidInputException {
-        if (in.length() < 8) {
-            throw new InvalidInputException("Passwords must be at least 8 characters.");
-        }
-
-        return in;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void logUserIn(String name, String password, Connection connection) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(name, password);
+    private void logUserIn(String name, Connection connection) {
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(name, "password");
         Authentication authentication = authenticationManager.authenticate(token);
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Session session = sessionRepository.findById(connection.getHttpSessionId());

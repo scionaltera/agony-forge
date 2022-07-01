@@ -27,7 +27,6 @@ import java.util.UUID;
 
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_CONNECTION_ID_KEY;
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP_KEY;
-import static com.agonyforge.core.controller.interpret.delegate.login.DefaultLoginConnectionState.RECONNECT;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import static org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME;
 
@@ -35,10 +34,10 @@ import static org.springframework.web.socket.server.support.HttpSessionHandshake
 public class WebSocketController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketController.class);
 
-    private List<String> greeting;
-    private ConnectionRepository connectionRepository;
-    private SessionRepository sessionRepository;
-    private Interpreter interpreter;
+    private final List<String> greeting;
+    private final ConnectionRepository connectionRepository;
+    private final SessionRepository sessionRepository;
+    private final Interpreter interpreter;
 
     @Inject
     public WebSocketController(
@@ -74,8 +73,7 @@ public class WebSocketController {
                 Authentication authentication = securityContext.getAuthentication();
 
                 if (authentication != null && authentication.isAuthenticated()) {
-                    connection.setName(authentication.getName());
-                    connection.setSecondaryState(RECONNECT.name());
+                    connection.setOauthUsername(authentication.getName());
                 }
             }
 

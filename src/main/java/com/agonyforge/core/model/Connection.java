@@ -27,6 +27,7 @@ public class Connection {
     private String sessionId;
     private String httpSessionId;
     private String remoteAddress;
+    private String oauthUsername;
     private String name;
     private Date disconnected;
 
@@ -73,6 +74,14 @@ public class Connection {
 
     public void setRemoteAddress(String remoteAddress) {
         this.remoteAddress = remoteAddress;
+    }
+
+    public String getOauthUsername() {
+        return oauthUsername;
+    }
+
+    public void setOauthUsername(String oauthUsername) {
+        this.oauthUsername = oauthUsername;
     }
 
     public String getName() {
