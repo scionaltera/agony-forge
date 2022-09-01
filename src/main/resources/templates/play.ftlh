@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring>
-<#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
+<#include "inc/security.inc.ftlh">
 <!DOCTYPE html>
 <html lang="en">
 <#assign title="Play">
@@ -12,12 +12,12 @@
         Javascript being enabled. Please enable Javascript and reload this page!
     </span>
 </noscript>
-<@security.authorize access="isAnonymous()">
+<@anonymous "ROLE_USER">
 <div class="container-fluid">
     <a class="btn btn-primary" role="button" href="<@spring.url '/oauth2/authorization/cognito' />">Login</a>
 </div>
-</@security.authorize>
-<@security.authorize access="isAuthenticated()">
+</@anonymous>
+<@secure "ROLE_USER">
 <div>
     <div id="output-box">
         <ul id="output-list">
@@ -29,13 +29,13 @@
         </form>
     </div>
 </div>
-</@security.authorize>
+</@secure>
 
 <#include "inc/scripts.inc.ftlh">
-<@security.authorize access="isAuthenticated()">
+<@secure "ROLE_USER">
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/webstomp-client@1.2.6/dist/webstomp.min.js"></script>
 <script type="text/javascript" src="<@spring.url '/js/client.js'/>"></script>
-</@security.authorize>
+</@secure>
 </body>
 </html>
