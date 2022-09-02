@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
@@ -64,6 +66,14 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authenticated())
             .oauth2Login(conf -> conf
                 .loginPage("/")
-                .defaultSuccessUrl("/"));
+                .defaultSuccessUrl("/"))
+            .sessionManagement()
+            .maximumSessions(2)
+            .sessionRegistry(sessionRegistry());
+    }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 }

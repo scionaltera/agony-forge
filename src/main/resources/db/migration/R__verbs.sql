@@ -14,6 +14,7 @@ INSERT IGNORE INTO verb (name, priority, bean) VALUES ('look', 10, 'lookCommand'
 INSERT IGNORE INTO verb (name, priority, bean, quoting) VALUES ('say', 10, 'sayCommand', TRUE);
 INSERT IGNORE INTO verb (name, priority, bean) VALUES ('who', 10, 'whoCommand');
 INSERT IGNORE INTO verb (name, priority, bean) VALUES ('goto', 1000, 'gotoCommand');
+INSERT IGNORE INTO verb (name, priority, bean) VALUES ('sessions', 1000, 'sessionsCommand');
 INSERT IGNORE INTO verb (name, priority, bean) VALUES ('super', 1000, 'superCommand');
 INSERT IGNORE INTO verb (name, priority, bean) VALUES ('crash', 1000, 'crashCommand');
 
@@ -36,3 +37,4 @@ INSERT IGNORE INTO verb_roles (verb_name, roles_name) VALUES ('who', 'PLAYER');
 INSERT IGNORE INTO verb_roles (verb_name, roles_name) VALUES ('goto', 'PLAYER');
 INSERT IGNORE INTO verb_roles (verb_name, roles_name) VALUES ('super', 'PLAYER');
 INSERT IGNORE INTO verb_roles (verb_name, roles_name) VALUES ('crash', 'SUPER');
+INSERT IGNORE INTO verb_roles (verb_name, roles_name) VALUES ('sessions', 'SUPER');
