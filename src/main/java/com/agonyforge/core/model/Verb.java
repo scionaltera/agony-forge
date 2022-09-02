@@ -88,7 +88,7 @@ public class Verb {
 
                         buf.append("&lt;");
                         buf.append(description == null ? "argument" : description.value());
-                        buf.append("&gt;");
+                        buf.append("&gt;&nbsp;");
                     }
                 }
 
