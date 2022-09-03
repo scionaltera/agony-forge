@@ -11,6 +11,35 @@ services:
       - agonyforge.env
     networks:
       agonyforge:
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: dynamodb
+    ports:
+      - "8000:8000"
+    command: " -jar DynamoDBLocal.jar -sharedDb"
+    networks:
+      agonyforge:
+  # Run aws-cli in a short-lived container to perform basic initialization
+  # such as creating the table Agony Forge will use.
+  # https://aws.plainenglish.io/run-aws-dynamodb-locally-2788ad73c4db
+  dynamodb-init:
+    image: amazon/aws-cli
+    depends_on:
+      - dynamodb
+    environment:
+      AWS_DEFAULT_PROFILE: dynamodb-local
+      AWS_ENDPOINT: --endpoint-url=http://dynamodb:8000
+    entrypoint: /bin/sh -c
+    volumes:
+      - './src/main/bash/dynamo:/init-scripts'
+    command: >
+      '
+       for script_name in /init-scripts/*.sh; do
+        sh $$script_name
+       done
+      '
+    networks:
+      agonyforge:
   mysql:
     image: mysql:8
     command: --log-bin-trust-function-creators=1 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci

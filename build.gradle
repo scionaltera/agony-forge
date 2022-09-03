@@ -28,6 +28,9 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.29'
     implementation 'org.flywaydb:flyway-mysql:8.5.13'
 
+    implementation platform('software.amazon.awssdk:bom:2.17.266')
+    implementation group: 'software.amazon.awssdk', name: 'dynamodb'
+
     implementation 'com.hazelcast:hazelcast:5.1.2'
 
     implementation 'org.springframework.boot:spring-boot-starter'
