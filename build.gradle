@@ -25,7 +25,7 @@ dependencies {
     implementation 'javax.inject:javax.inject:1'
     implementation 'javax.interceptor:javax.interceptor-api:1.2.2'
 
-    implementation 'mysql:mysql-connector-java:8.0.29'
+    implementation 'mysql:mysql-connector-java:8.0.30'
     implementation 'org.flywaydb:flyway-mysql:8.5.13'
 
     implementation 'com.hazelcast:hazelcast:5.1.2'
