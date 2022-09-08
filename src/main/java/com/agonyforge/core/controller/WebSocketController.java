@@ -23,7 +23,6 @@ import javax.transaction.Transactional;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_CONNECTION_ID_KEY;
 import static com.agonyforge.core.controller.ControllerConstants.AGONY_REMOTE_IP_KEY;
@@ -79,11 +78,11 @@ public class WebSocketController {
 
             Connection saved = connectionRepository.save(connection);
 
-            attributes.put(AGONY_CONNECTION_ID_KEY, saved.getId());
+            attributes.put(AGONY_CONNECTION_ID_KEY, saved.getSessionId());
 
             LOGGER.info("New connection {}@{}", saved.getSessionId(), attributes.get(AGONY_REMOTE_IP_KEY));
 
-            return new Output(greeting).append(interpreter.prompt(connection));
+            return new Output(greeting).append(interpreter.prompt(saved));
         }
 
         LOGGER.error("Unable to get session attributes!");
@@ -98,10 +97,10 @@ public class WebSocketController {
         Map<String, Object> attributes = headerAccessor.getSessionAttributes();
 
         if (attributes != null) {
-            UUID connectionId = (UUID) attributes.get(AGONY_CONNECTION_ID_KEY);
+            String sessionId = (String) attributes.get(AGONY_CONNECTION_ID_KEY);
             Connection connection = connectionRepository
-                .findById(connectionId)
-                .orElseThrow(() -> new NullPointerException("Unable to fetch Connection by ID: " + connectionId));
+                .findBySessionId(sessionId)
+                .orElseThrow(() -> new NullPointerException("Unable to fetch Connection by ID: " + sessionId));
 
             return interpreter.interpret(input, connection);
         }
